@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block styles %}
+<style>
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h2 class="ui header teal">
+            <div classs="content">{% trans 'Join Us' %}!</div>
+        </h2>
+
+        <form class="ui large form {% if form.errors %}error{% endif %}" method="post">
+            {% csrf_token %}
+            <div class="ui piled segment">
+                <div class="required field {% if 'username' in form.errors.keys %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input name="username" placeholder="{% trans 'Username' %}" type="text" required>
+                    </div>
+                </div>
+
+                <div class="required field {% if 'password' in form.errors.keys %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input name="password" placeholder="{% trans 'Password' %}" type="password" required>
+                    </div>
+                </div>
+                <button type="submit" class="field ui fluid large basic teal button">{% trans 'Login' %}</button>
+                <button type="button" class="field ui fluid large facebook button">
+                    <i class="facebook icon"></i>
+                    {% trans 'Sign in with' %} Facebook
+                </button>
+                {% if form.non_field_errors %}
+                <div class="ui error message">
+                    <ul class="list">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    </ul>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </form>
+        <div class="ui message">
+            {% trans 'New to us' %}? <a href="#">{% trans 'Sign Up' %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
