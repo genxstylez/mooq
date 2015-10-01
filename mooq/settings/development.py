@@ -11,8 +11,10 @@ INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
 )
+
 # django-debug-toolbar
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
 if not DEBUG_TOOLBAR_PATCH_SETTINGS:
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
