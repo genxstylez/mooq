@@ -123,6 +123,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+AUTH_PROFILE_MODULE = 'member.models.Profile'
 
 AUTHENTICATION_BACKENDS = (
     'social.backends.facebook.FacebookOAuth2',
@@ -150,6 +151,8 @@ SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('FACEBOOK_KEY', '')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET', '')
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
+SLUGIFY_USERNAMES = True
+
 
 # https://github.com/omab/python-social-auth/issues/675
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
@@ -158,14 +161,18 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login/'
+SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'password']
+
+# SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/inactive/'
+# SOCIAL_AUTH_INACTIVE_USER_URL = '/accounts/inactive/'
 
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
     'social.pipeline.social_auth.social_uid',
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
-    'social.pipeline.user.get_username',
     'social.pipeline.social_auth.associate_by_email',
+    'member.pipeline.new_user', # let user input username here.
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
