@@ -51,6 +51,8 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'mooq',
     'member',
+    'chat',
+    'stock',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -152,7 +154,6 @@ SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET', '')
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 SLUGIFY_USERNAMES = True
-
 
 # https://github.com/omab/python-social-auth/issues/675
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {

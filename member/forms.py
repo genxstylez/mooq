@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 
 
-class UserCreationForm(forms.ModelForm):
+class SignupForm(forms.ModelForm):
     password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
 
     class Meta:
@@ -23,7 +23,7 @@ class UserCreationForm(forms.ModelForm):
 
 
     def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
+        user = super(SignupForm, self).save(commit=False)
         user.username = self.cleaned_data['username']
         user.set_password(self.cleaned_data["password"])
         if commit:
