@@ -20,7 +20,7 @@
 <div class="ui middle aligned center aligned grid">
     <div class="column">
         <h2 class="ui header teal">
-            <div classs="content">{% trans 'Join Us' %}!</div>
+            <div classs="content">{% trans 'Log In' %}</div>
         </h2>
 
         <form class="ui large form {% if form.errors %}error{% endif %}" method="post">
@@ -43,7 +43,7 @@
                 <a href="{% url 'social:begin' 'facebook' %}?next=/">
                     <button id="fb-connect" type="button" class="field ui fluid large facebook button">
                         <i class="facebook icon"></i>
-                        {% trans 'Sign in with' %} Facebook
+                        {% trans 'Sign in with Facebook' %}
                     </button>
                 </a>
 
@@ -59,7 +59,7 @@
             </div>
         </form>
         <div class="ui message">
-            {% trans 'New to us' %}? <a href="#">{% trans 'Sign Up' %}</a>
+            {% trans 'New to us' %}? <a href="{% url 'member-signup' %}">{% trans 'Sign Up' %}</a>
         </div>
     </div>
 </div>
