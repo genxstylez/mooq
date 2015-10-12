@@ -1,0 +1,33 @@
+{
+  "name": "mooq",
+  "version": "1.0.0",
+  "description": "dependencies for mooq",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "react-router": "^1.0.0-rc3",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^4.1.3",
+    "babelify": "^6.3.0",
+    "eslint": "^1.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/genxstylez/mooq.git"
+  },
+  "author": "Sam Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/genxstylez/mooq/issues"
+  },
+  "homepage": "https://github.com/genxstylez/mooq#readme"
+}

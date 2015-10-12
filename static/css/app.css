@@ -1,0 +1,11 @@
+body {
+    height: 100%;
+}
+
+body > #main {
+    height: 100%;
+}
+
+.ui.grid {
+    height: 100%;
+}

@@ -1,9 +1,10 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 class Chatroom(models.Model):
-    id = models.CharField(_('ID'), max_length=100, primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     is_system = models.BooleanField(_('System chatroom'), default=False)
     subscribers = models.ManyToManyField(User,
         verbose_name=_('Subscribers'), through='ChatroomSubscribers')

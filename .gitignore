@@ -62,5 +62,11 @@ target/
 # sqlite3
 *.sqlite3
 
-# foreman 
+# foreman
 *.env
+
+# node
+node_modules*
+
+# sublime
+*.sublime*
