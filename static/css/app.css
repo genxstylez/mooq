@@ -43,35 +43,29 @@ body > #main {
     color: #ffffff;
 }
 
-@media only screen and (max-width: 1144px) {
-    #profile-container  {
-        display: none;
-    }
-}
-
-#profile-menu {
-    width: 250px;
-    border-width: 0 1px 0 0;
-    box-shadow: none;
+.profile-menu {
+    width: 250px !important;
+    border-width: 0 1px 0 0 !important;
+    box-shadow: none !important;
     overflow: hidden;
-    will-change: transform;
-    background-color: rgba(39, 56, 72, 1);
-    color: #ffffff;
-    padding: 10px;
+    will-change: transform !important;
+    background-color: rgba(39, 56, 72, 1) !important;
+    color: #ffffff !important;
+    padding: 10px !important;
 }
 
-#profile-menu .ui.list {
-    margin-bottom: 3rem;
+.profile-menu .ui.list {
+    margin-bottom: 3rem !important;
 }
 
-#profile-menu .ui.header {
-    color: #ffffff;
-    margin-bottom: 5px;
+.profile-menu .ui.header {
+    color: #ffffff !important;
+    margin-bottom: 5px !important;
 }
-#profile-menu .item {
-    color: #ababab;
-    padding: 5px 0;
-    font-size: 1rem;
+.profile-menu .item {
+    color: #ababab !important;
+    padding: 5px 0 !important;
+    font-size: 1rem !important;
 }
 
 #avatar {
@@ -116,7 +110,7 @@ body > #main {
 #messages-container > #messages {
     padding: 0 0 0 32px;
     position: absolute;
-    top: 81px;
+    top: 85px;
     bottom: 61px;
     left: 0;
     right: 0;
@@ -133,3 +127,18 @@ body > #main {
     background-color: #eaeaea;
 }
 
+@media only screen and (max-width: 1145px) {
+    #profile-container  {
+        display: none;
+    }
+
+    #messages-container > #footer {
+        left: 0px;
+    }
+}
+
+@media only screen and (min-width: 1144px) {
+    #messages-container > .menu > #mobile-menu {
+        display: none;
+    }
+}

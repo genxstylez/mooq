@@ -18992,6 +18992,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _chatroomItem = require('./chatroom-item');
 
 var _chatroomItem2 = _interopRequireDefault(_chatroomItem);
@@ -19003,6 +19007,10 @@ var _avatar2 = _interopRequireDefault(_avatar);
 exports['default'] = _react2['default'].createClass({
     displayName: 'app',
 
+    ClickMobileMenu: function ClickMobileMenu() {
+        var sidebar = _reactDom2['default'].findDOMNode(this.refs.sidebar);
+        $(sidebar).sidebar('toggle');
+    },
     render: function render() {
         return _react2['default'].createElement(
             'div',
@@ -19012,7 +19020,40 @@ exports['default'] = _react2['default'].createClass({
                 { id: 'profile-container' },
                 _react2['default'].createElement(
                     'div',
-                    { id: 'profile-menu', className: 'ui vertical menu grid fixed' },
+                    { className: 'ui sidebar vertical grid menu profile-menu', ref: 'sidebar' },
+                    _react2['default'].createElement(_avatar2['default'], null),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui list' },
+                        _react2['default'].createElement(
+                            'h5',
+                            { className: 'ui header' },
+                            'Top 5 Stocks'
+                        ),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 1' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 2' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 3' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 4' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 5' })
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui list' },
+                        _react2['default'].createElement(
+                            'h5',
+                            { className: 'ui header' },
+                            'Your Stocks'
+                        ),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: '1101 中鋼' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: '2202 台積電' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'APPL' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'GOOG' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'MSFT' })
+                    )
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { id: 'profile-menu', className: 'ui vertical menu grid profile-menu' },
                     _react2['default'].createElement(_avatar2['default'], null),
                     _react2['default'].createElement(
                         'div',
@@ -19050,6 +19091,11 @@ exports['default'] = _react2['default'].createClass({
                 _react2['default'].createElement(
                     'div',
                     { className: 'ui top fixed menu' },
+                    _react2['default'].createElement(
+                        'a',
+                        { className: 'icon item', id: 'mobile-menu', onClick: this.ClickMobileMenu },
+                        _react2['default'].createElement('i', { className: 'content icon' })
+                    ),
                     _react2['default'].createElement(
                         'div',
                         { className: 'item' },
@@ -19706,7 +19752,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./avatar":159,"./chatroom-item":160,"react":157}],159:[function(require,module,exports){
+},{"./avatar":159,"./chatroom-item":160,"react":157,"react-dom":29}],159:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
