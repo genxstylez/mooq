@@ -13,7 +13,7 @@
         {% block styles %}{% endblock %}
         {% block pre_scripts %}{% endblock %}
     </head>
-    <body>
+    <body class="pushable">
         {% block content %}{% endblock %}
         <script type="text/javascript" src={% static 'js/main.js' %}></script>
         {% block post_scripts %}{% endblock %}

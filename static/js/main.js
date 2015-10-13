@@ -18980,6 +18980,733 @@ module.exports = validateDOMNesting;
 module.exports = require('./lib/React');
 
 },{"./lib/React":53}],158:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _chatroomItem = require('./chatroom-item');
+
+var _chatroomItem2 = _interopRequireDefault(_chatroomItem);
+
+var _avatar = require('./avatar');
+
+var _avatar2 = _interopRequireDefault(_avatar);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'app',
+
+    render: function render() {
+        return _react2['default'].createElement(
+            'div',
+            { className: 'full height' },
+            _react2['default'].createElement(
+                'div',
+                { id: 'profile-container' },
+                _react2['default'].createElement(
+                    'div',
+                    { id: 'profile-menu', className: 'ui vertical menu grid fixed' },
+                    _react2['default'].createElement(_avatar2['default'], null),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui list' },
+                        _react2['default'].createElement(
+                            'h5',
+                            { className: 'ui header' },
+                            'Top 5 Stocks'
+                        ),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 1' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 2' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 3' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 4' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'top 5' })
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui list' },
+                        _react2['default'].createElement(
+                            'h5',
+                            { className: 'ui header' },
+                            'Your Stocks'
+                        ),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: '1101 中鋼' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: '2202 台積電' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'APPL' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'GOOG' }),
+                        _react2['default'].createElement(_chatroomItem2['default'], { name: 'MSFT' })
+                    )
+                )
+            ),
+            _react2['default'].createElement(
+                'div',
+                { id: 'messages-container' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'ui top fixed menu' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'item' },
+                        _react2['default'].createElement(
+                            'h2',
+                            { className: 'ui header' },
+                            '#1101 中鋼'
+                        )
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'right menu' },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'item' },
+                            _react2['default'].createElement('i', { className: 'users icon' }),
+                            '10'
+                        )
+                    )
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { id: 'footer' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui form' },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'field' },
+                            _react2['default'].createElement('textarea', { rows: '1' })
+                        )
+                    )
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { id: 'messages' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui feed' },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'event' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'label' },
+                                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'content' },
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'summary' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'user' },
+                                        'Elliot Fu'
+                                    ),
+                                    ' added you as a friend',
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'date' },
+                                        '1 Hour Ago'
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'div',
+                                    { className: 'meta' },
+                                    _react2['default'].createElement(
+                                        'a',
+                                        { className: 'like' },
+                                        _react2['default'].createElement('i', { className: 'like icon' }),
+                                        ' 4 Likes'
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+});
+module.exports = exports['default'];
+
+
+},{"./avatar":159,"./chatroom-item":160,"react":157}],159:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18993,33 +19720,52 @@ var _react = require('react');
 var _react2 = _interopRequireDefault(_react);
 
 exports["default"] = _react2["default"].createClass({
-    displayName: "app",
+    displayName: "avatar",
 
     render: function render() {
         return _react2["default"].createElement(
             "div",
-            { className: "ui grid equal height padded" },
+            { id: "avatar" },
             _react2["default"].createElement(
-                "div",
-                { id: "channels", className: "three wide computer only five wide tablet only column purple" },
-                _react2["default"].createElement(
-                    "div",
-                    null,
-                    "chatroom list"
-                )
+                "span",
+                { className: "username overflow_ellipsis" },
+                "Username"
             ),
-            _react2["default"].createElement(
-                "div",
-                { id: "messages_container", className: "red thirteen wide computer eleven wide tablet sixteen wide mobile column" },
-                "chatroom content"
-            )
+            _react2["default"].createElement("i", { className: "chevron down icon" })
         );
     }
 });
 module.exports = exports["default"];
 
 
-},{"react":157}],159:[function(require,module,exports){
+},{"react":157}],160:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+exports["default"] = _react2["default"].createClass({
+    displayName: "chatroom-item",
+
+    render: function render() {
+        return _react2["default"].createElement(
+            "div",
+            { className: "item" },
+            this.props.name
+        );
+    }
+});
+module.exports = exports["default"];
+
+
+},{"react":157}],161:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -19039,4 +19785,4 @@ var _react2 = _interopRequireDefault(_react);
 _reactDom2['default'].render(_react2['default'].createElement(_componentsApp2['default'], null), document.getElementById('main'));
 
 
-},{"./components/app":158,"react":157,"react-dom":29}]},{},[159]);
+},{"./components/app":158,"react":157,"react-dom":29}]},{},[161]);

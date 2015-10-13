@@ -1,8 +1,9 @@
 var gulp = require('gulp');
-var browserify = require('browserify');
-var reactify = require('reactify');
-var source = require('vinyl-source-stream');
-var babelify = require('babelify');
+    browserify = require('browserify');
+    reactify = require('reactify');
+    source = require('vinyl-source-stream');
+    babelify = require('babelify');
+    livereload = require('gulp-livereload');
 
 gulp.task('browserify', function() {
     browserify('./src/js/main.js')
@@ -11,13 +12,15 @@ gulp.task('browserify', function() {
         .bundle()
         .pipe(source('main.js'))
         .pipe(gulp.dest('static/js'))
+        .pipe(livereload())
     });
 
 gulp.task('copy', function() {
-    gulp.src('src/assets/**/*.*')
-        .pipe(gulp.dest('dist/assets'))
+    gulp.src('./src/css/**/*.*')
+        .pipe(gulp.dest('static/css'))
     });
 
-gulp.task('default', ['browserify'], function() {
-    return gulp.watch('./src/**/*.*', ['browserify'])
+gulp.task('default', ['browserify', 'copy'], function() {
+    livereload.listen();
+    return gulp.watch('./src/**/*.*', ['browserify', 'copy'])
     });
