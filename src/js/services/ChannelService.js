@@ -29,6 +29,18 @@ class ChannelService {
         });
     }
 
+    get_history(channel, count, timetoken) {
+        pubnub.history({
+            channel: channel.id,
+            start: timetoken,
+            count: count || 100,
+            callback: (history) => {
+                ChannelActions.got_history(channel, history)
+                console.log(history);
+            }
+        });
+    }
+
 }
 
 export default new ChannelService()

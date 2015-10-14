@@ -20,8 +20,18 @@ class ChannelStore extends BaseStore {
                 this.emitChange();
                 break;
 
+            case ChannelConstants.GOT_HISTORY:
+                var channel = _.filter(this._channels, {id: action.channel.id})[0];
+                console.log(channel);
+                if(_.has(channel, 'messages'))
+                    channel.messages.unshift(action.history[0])
+                else
+                    channel['messages'] = action.history[0]
+                this.emitChange();
+                break;
+
             case ChannelConstants.NEW_MESSAGE:
-                let channel = _.filter(this._channels, {id: action.msgObj.channel})[0];
+                var channel = _.filter(this._channels, {id: action.msgObj.channel})[0];
                 if(_.has(channel, 'messages'))
                     channel.messages.push(action.msgObj)
                 else

@@ -40770,6 +40770,10 @@ var _constantsChannelConstants = require('../constants/ChannelConstants');
 
 var _constantsChannelConstants2 = _interopRequireDefault(_constantsChannelConstants);
 
+var _servicesChannelService = require('../services/ChannelService');
+
+var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+
 exports['default'] = {
     /*
     @param  {object} id Channel object
@@ -40780,6 +40784,7 @@ exports['default'] = {
                 actionType: _constantsChannelConstants2['default'].CHANNEL_JOIN,
                 channel: channel
             });
+            _servicesChannelService2['default'].get_history(channel, 100); // get history upon joining channel
         });
     },
 
@@ -40805,6 +40810,14 @@ exports['default'] = {
         });
     },
 
+    got_history: function got_history(channel, history) {
+        _dispatchersAppDispatcher2['default'].dispatch({
+            actionType: _constantsChannelConstants2['default'].GOT_HISTORY,
+            channel: channel,
+            history: history
+        });
+    },
+
     /*
     @param {object} msgObj new message object that is published to the channel
     */
@@ -40825,7 +40838,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":223,"../dispatchers/AppDispatcher":224,"lodash":56}],216:[function(require,module,exports){
+},{"../constants/ChannelConstants":223,"../dispatchers/AppDispatcher":224,"../services/ChannelService":226,"lodash":56}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41370,6 +41383,7 @@ exports['default'] = (0, _keymirror2['default'])({
     CHANNEL_ACTIVE: null,
     CHANNEL_HAS_NEW_MESSAGE: null,
     NEW_MESSAGE: null,
+    GOT_HISTORY: null,
     API_URL: 'http://localhost:8000/api/channels'
 });
 module.exports = exports['default'];
@@ -41477,6 +41491,19 @@ var ChannelService = (function () {
                 },
                 restore: true,
                 connect: _actionsChannelActions2['default'].join(channels)
+            });
+        }
+    }, {
+        key: 'get_history',
+        value: function get_history(channel, count, timetoken) {
+            pubnub.history({
+                channel: channel.id,
+                start: timetoken,
+                count: count || 100,
+                callback: function callback(history) {
+                    _actionsChannelActions2['default'].got_history(channel, history);
+                    console.log(history);
+                }
             });
         }
     }]);
@@ -41606,6 +41633,13 @@ var ChannelStore = (function (_BaseStore) {
                 case _constantsChannelConstants2['default'].CHANNEL_JOIN:
                     this._channels.push(action.channel);
                     this._channels = _lodash2['default'].union(this._channels);
+                    this.emitChange();
+                    break;
+
+                case _constantsChannelConstants2['default'].GOT_HISTORY:
+                    var channel = _lodash2['default'].filter(this._channels, { id: action.channel.id })[0];
+                    console.log(channel);
+                    if (_lodash2['default'].has(channel, 'messages')) channel.messages.unshift(action.history[0]);else channel['messages'] = action.history[0];
                     this.emitChange();
                     break;
 

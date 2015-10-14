@@ -7,5 +7,6 @@ export default KeyMirror({
     CHANNEL_ACTIVE: null,
     CHANNEL_HAS_NEW_MESSAGE: null,
     NEW_MESSAGE: null,
+    GOT_HISTORY: null,
     API_URL: 'http://localhost:8000/api/channels',
 })

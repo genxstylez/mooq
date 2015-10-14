@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import AppDispatcher from '../dispatchers/AppDispatcher';
 import ChannelConstants from '../constants/ChannelConstants';
+import ChannelService from '../services/ChannelService';
 
 export default {
     /*
@@ -12,6 +13,7 @@ export default {
                 actionType: ChannelConstants.CHANNEL_JOIN,
                 channel: channel
             });
+            ChannelService.get_history(channel, 100); // get history upon joining channel
         });
     },
 
@@ -37,6 +39,13 @@ export default {
         });
     },
 
+    got_history(channel, history) {
+        AppDispatcher.dispatch({
+            actionType: ChannelConstants.GOT_HISTORY,
+            channel: channel,
+            history: history
+        });
+    },
 
     /*
     @param {object} msgObj new message object that is published to the channel
