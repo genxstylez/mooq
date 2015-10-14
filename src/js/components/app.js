@@ -1,13 +1,47 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChatroomItem from './chatroom-item';
-import Avatar from './avatar';
+import ChannelItem from './ChannelItem';
+import ChannelList from './ChannelList';
+import ChannelService from '../services/ChannelService';
+import ChannelStore from '../stores/ChannelStore';
+import SidebarChannelList from './SidebarChannelList';
+import Avatar from './Avatar';
+import ActiveChannel from './ActiveChannel';
+
+let user_channels = [{id: 'test_channel', name: '1101 台泥'}, {id: 'test_channel1', name: 'APPL'}];
 
 export default React.createClass({
+    componentWillMount() {
+        // Subscribing channels.
+        ChannelService.join_subscribed(user_channels);
+        var channel = {};
+        if(this.props.params.channelId) {
+            channel = ChannelStore.get_channel(this.props.params.channelId)[0]
+        }
+        else
+            channel = user_channels[0]
+        this.setState({
+            active_channel: channel
+        });
+    },
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.params.channelId)
+            this.setState({
+                active_channel: ChannelStore.get_channel(nextProps.params.channelId)[0]
+            });
+    },
+
+    componentDidUpdate() {
+
+    },
+
+
     ClickMobileMenu() {
        let sidebar = ReactDOM.findDOMNode(this.refs.sidebar)
        $(sidebar).sidebar('toggle');
     },
+
     render() {
         return (
             <div className="full height">
@@ -16,39 +50,25 @@ export default React.createClass({
                         <Avatar />
                         <div className="ui list">
                             <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChatroomItem name="top 1" />
-                            <ChatroomItem name="top 2" />
-                            <ChatroomItem name="top 3" />
-                            <ChatroomItem name="top 4" />
-                            <ChatroomItem name="top 5" />
+                            <ChannelItem name="top 1" />
+                            <ChannelItem name="top 2" />
+                            <ChannelItem name="top 3" />
+                            <ChannelItem name="top 4" />
+                            <ChannelItem name="top 5" />
                         </div>
-                        <div className="ui list">
-                            <h5 className="ui header">Your Stocks</h5>
-                            <ChatroomItem name="1101 中鋼"/>
-                            <ChatroomItem name="2202 台積電"/>
-                            <ChatroomItem name="APPL"/>
-                            <ChatroomItem name="GOOG"/>
-                            <ChatroomItem name="MSFT"/>
-                        </div>
+                        <SidebarChannelList channels={user_channels} />
                     </div>
                     <div id="profile-menu" className="ui vertical menu grid profile-menu">
                         <Avatar />
                         <div className="ui list">
                             <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChatroomItem name="top 1" />
-                            <ChatroomItem name="top 2" />
-                            <ChatroomItem name="top 3" />
-                            <ChatroomItem name="top 4" />
-                            <ChatroomItem name="top 5" />
+                            <ChannelItem name="top 1" />
+                            <ChannelItem name="top 2" />
+                            <ChannelItem name="top 3" />
+                            <ChannelItem name="top 4" />
+                            <ChannelItem name="top 5" />
                         </div>
-                        <div className="ui list">
-                            <h5 className="ui header">Your Stocks</h5>
-                            <ChatroomItem name="1101 中鋼"/>
-                            <ChatroomItem name="2202 台積電"/>
-                            <ChatroomItem name="APPL"/>
-                            <ChatroomItem name="GOOG"/>
-                            <ChatroomItem name="MSFT"/>
-                        </div>
+                        <ChannelList channels={user_channels} />
                     </div>
                 </div>
                 <div id="messages-container">
@@ -57,7 +77,7 @@ export default React.createClass({
                             <i className="content icon"></i>
                         </a>
                         <div className="item">
-                            <h2 className="ui header">#1101 中鋼</h2>
+                            <h2 className="ui header">#{this.state.active_channel.name}</h2>
                         </div>
                         <div className="right menu">
                             <div className="item">
@@ -72,330 +92,7 @@ export default React.createClass({
                             </div>
                         </div>
                     </div>
-                    <div id="messages">
-                        <div className="ui feed">
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="event">
-                                <div className="label">
-                                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                                </div>
-                                <div className="content">
-                                    <div className="summary">
-                                        <a className="user">
-                                            Elliot Fu
-                                        </a> added you as a friend
-                                        <div className="date">
-                                        1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div className="meta">
-                                        <a className="like">
-                                            <i className="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                    </div>
+                    <ActiveChannel channel={this.state.active_channel} />
                 </div>
             </div>
         );
