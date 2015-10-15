@@ -15,27 +15,42 @@ class ChannelService {
 
     }
 
-    join_channels(channels, cb) {
+    create_message(channel_id, username, text, cb) {
+        pubnub.publish({
+            channel: channel_id,
+            message: {
+                text: text,
+                username: username,
+                timestamp: Date.now(),
+                channel: channel_id
+            },
+            callback: (message) => {
+                cb(channel_id, message)
+            }
+        });
+    }
+
+    join_channels(channels, msgCb, ConnectCb) {
         pubnub.subscribe({
             channel: _.pluck(channels, 'id'),
-            message: function(msgObj) {
-                ChannelActions.new_message(msgObj)
+            message: (msgObj) => {
+                msgCb(msgObj)
             },
             error: function(error) {
                 console.log(JSON.stringify(error));
             },
             restore: true,
-            connect: cb()
+            connect: ConnectCb()
         });
     }
 
-    get_history(channel, cb, count, timetoken) {
+    get_history(channel_id, cb, count, timetoken) {
         pubnub.history({
-            channel: channel.id,
+            channel: channel_id,
             start: timetoken,
             count: count || 100,
             callback: (history) => {
-                cb(channel, history, timetoken);
+                cb(channel_id, history, timetoken);
             }
         });
     }

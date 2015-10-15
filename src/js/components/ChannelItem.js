@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import ChannelStore from '../stores/ChannelStore';
 import ChannelActions from '../actions/ChannelActions';
 import MessageItem from './MessageItem';
+import MessageInput from './MessageInput';
 import classnames from 'classnames';
 
 
@@ -20,7 +21,7 @@ export default React.createClass({
         var node = ReactDOM.findDOMNode(this);
         setTimeout(() => {
             node.scrollTop = node.scrollHeight;
-        }, 800);
+        }, 1000);
         */
     },
 
@@ -36,7 +37,7 @@ export default React.createClass({
     },
 
     componentDidUpdate() {
-        var node = ReactDOM.findDOMNode(this);
+        var node = ReactDOM.findDOMNode(this.refs.messages);
         $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
     },
 
@@ -49,16 +50,21 @@ export default React.createClass({
     render() {
         var cls = classnames({
             active: this.props.is_active,
-            messages: true
+            channel: true
         })
         return (
             <div className={cls}>
-                <div className="ui feed">
-                    {_.map(this.state.messages, (message) => {
-                        return (
-                            <MessageItem key={message.timestamp} message={message}  />
-                        );
-                    })}
+                <div className="messages" ref="messages">
+                    <div className="ui feed">
+                        {_.map(this.state.messages, (message) => {
+                            return (
+                                <MessageItem key={message.timestamp} message={message}  />
+                            );
+                        })}
+                    </div>
+                </div>
+                 <div className="footer">
+                    <MessageInput id={this.props.id} />
                 </div>
             </div>
 

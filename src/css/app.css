@@ -113,11 +113,11 @@ body > #main {
     color: #585252;
 }
 
-#messages-container > .messages {
-    padding: 0 0 0 32px;
+#messages-container > .channel {
+
     position: absolute;
     top: 85px;
-    bottom: 61px;
+    bottom: 0px;
     left: 0;
     right: 0;
     overflow: auto;
@@ -129,19 +129,35 @@ body > #main {
     transition: opacity 200ms ease-in;
 }
 
-#messages-container > .messages.active {
+#messages-container > .channel.active {
     opacity: 1;
     z-index: 1;
 }
 
-#messages-container > #footer {
-    height: 61px;
+#messages-container > .channel > .messages {
+    position: absolute;
+    padding: 0 0 0 32px;
+    top: 0;
+    bottom: 78px;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    z-index: -1;
+    -webkit-transition: opacity 200ms ease-in;
+    -moz-transition: opacity 200ms ease-in;
+    -o-transition: opacity 200ms ease-in;
+    -ms-transition: opacity 200ms ease-in;
+    transition: opacity 200ms ease-in;
+}
+
+#messages-container > .channel > .footer {
     bottom: 0px;
-    position: fixed;
-    right: 10px;
-    left: 250px;
-    padding: 10px 5px 10px 32px;
+    position: absolute;
+    right: 0;
+    left: 0px;
+    padding: 10px 15px 10px 32px;
     background-color: #eaeaea;
+    z-index: 2;
 }
 
 @media only screen and (max-width: 1145px) {

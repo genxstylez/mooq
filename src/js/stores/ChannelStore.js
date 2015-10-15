@@ -21,7 +21,7 @@ class ChannelStore extends BaseStore {
                 break;
 
             case ChannelConstants.GOT_HISTORY:
-                var channel = _.filter(this._channels, {id: action.channel.id})[0];
+                var channel = _.filter(this._channels, {id: action.channel_id})[0];
                 if(_.has(channel, 'messages'))
                     channel.messages.unshift(action.history[0])
                 else
@@ -29,7 +29,7 @@ class ChannelStore extends BaseStore {
                 this.emitChange();
                 break;
 
-            case ChannelConstants.NEW_MESSAGE:
+            case ChannelConstants.RECV_NEW_MESSAGE:
                 var channel = _.filter(this._channels, {id: action.msgObj.channel})[0];
                 if(_.has(channel, 'messages'))
                     channel.messages.push(action.msgObj)
@@ -42,14 +42,29 @@ class ChannelStore extends BaseStore {
                 break;
 
             case ChannelConstants.CHANNEL_ACTIVE:
-                action.channel.unread = false;
-                this._active_channel = action.channel;
+                this._active_channel = this.get_channel(action.channel_id);
+                this._active_channel.unread = false;
                 this.emitChange();
                 break;
 
+            case ChannelConstants.CREATE_NEW_MESSAGE:
+                this.emitMessageCreated(this._active_channel.id);
+                break;
             default:
                 break;
         }
+    }
+
+    emitMessageCreated(channel_id) {
+        this.emit('MESSAGE_CREATED', channel_id);
+    }
+
+    addMessageCreatedListener(cb) {
+        this.on('MESSAGE_CREATED', cb)
+    }
+
+    removeMessageCreatedListener(cb) {
+        this.removeListener('MESSAGE_CREATED', cb);
     }
 
     get_channel(id) {

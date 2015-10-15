@@ -6,6 +6,7 @@ import ChannelItem from './ChannelItem';
 import ChannelStore from '../stores/ChannelStore';
 import ChannelActions from '../actions/ChannelActions';
 import SidebarChannelList from './SidebarChannelList';
+import MessageInput from './MessageInput';
 import Avatar from './Avatar';
 
 
@@ -17,17 +18,11 @@ export default React.createClass({
     },
 
     componentWillMount() {
-        var channel = {};
-        if(this.props.params.channelId) {
-            channel = ChannelStore.get_channel(this.props.params.channelId)
-        }
-        else
-            channel = ChannelStore.channels[0]
-
-        ChannelActions.mark_as_active(channel);
+        var channel_id = this.props.params.channelId || ChannelStore.channels[0].id;
+        ChannelActions.mark_as_active(channel_id);
 
         this.setState({
-            active_channel: channel
+            active_channel: ChannelStore.active_channel
         });
     },
 
@@ -36,7 +31,7 @@ export default React.createClass({
             this.setState({
                 active_channel: ChannelStore.get_channel(nextProps.params.channelId)
             });
-            ChannelActions.mark_as_active(ChannelStore.get_channel(nextProps.params.channelId));
+            ChannelActions.mark_as_active(nextProps.params.channelId);
         }
 
     },
@@ -94,13 +89,6 @@ export default React.createClass({
                             id={channel.id}
                             is_active={this.state.active_channel.id == channel.id} />);
                     })}
-                    <div id="footer">
-                        <div className="ui form">
-                            <div className="field">
-                                <textarea rows="1" />
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         );

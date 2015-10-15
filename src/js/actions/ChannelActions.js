@@ -8,15 +8,19 @@ export default {
     @param  {object} id Channel object
     */
     join(channels) {
-        ChannelService.join_channels(channels, () => {
-            _.forEach(channels, (channel) => {
-                AppDispatcher.dispatch({
-                    actionType: ChannelConstants.CHANNEL_JOIN,
-                    channel: channel
+        ChannelService.join_channels(channels, (msgObj) => {
+                this.recv_new_message(msgObj);
+            },
+            () => {
+                _.forEach(channels, (channel) => {
+                    AppDispatcher.dispatch({
+                        actionType: ChannelConstants.CHANNEL_JOIN,
+                        channel: channel
+                    });
+                    ChannelService.get_history(channel.id, this.got_history); // get history upon joining channel
                 });
-                ChannelService.get_history(channel, this.got_history); // get history upon joining channel
-            });
-        });
+            }
+        );
     },
 
     /*
@@ -33,37 +37,40 @@ export default {
     @param {string} id The ID of the channel
     @param {object} msgObj new message object that is published to the channel
     */
-    update(channel, msgObj) {
-        AppDispatcher.dispatch({
-            actionType: ChannelConstants.CHANNEL_UPDATE,
-            id: id,
-            msgObj: msgObj
-        });
-    },
-
-    got_history(channel, history, timetoken) {
-        AppDispatcher.dispatch({
-            actionType: ChannelConstants.GOT_HISTORY,
-            channel: channel,
-            history: history,
-            timetoken: timetoken
+    create_new_message(channel_id, username, msgObj) {
+        ChannelService.create_message(channel_id, username, msgObj, () => {
+            AppDispatcher.dispatch({
+                actionType: ChannelConstants.CREATE_NEW_MESSAGE,
+                msgObj: msgObj
+            });
         });
     },
 
     /*
     @param {object} msgObj new message object that is published to the channel
     */
-    new_message(msgObj) {
+    recv_new_message(msgObj) {
         AppDispatcher.dispatch({
-            actionType: ChannelConstants.NEW_MESSAGE,
+            actionType: ChannelConstants.RECV_NEW_MESSAGE,
             msgObj: msgObj
         });
     },
 
-    mark_as_active(channel) {
+    got_history(channel_id, history, timetoken) {
+        AppDispatcher.dispatch({
+            actionType: ChannelConstants.GOT_HISTORY,
+            channel_id: channel_id,
+            history: history,
+            timetoken: timetoken
+        });
+    },
+
+
+
+    mark_as_active(channel_id) {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.CHANNEL_ACTIVE,
-            channel: channel
+            channel_id: channel_id
         });
     }
 }
