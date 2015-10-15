@@ -8,7 +8,8 @@ export default {
     @param  {object} id Channel object
     */
     join(channels) {
-        ChannelService.join_channels(channels, (msgObj) => {
+        ChannelService.join_channels(channels,
+            (msgObj) => {
                 this.recv_new_message(msgObj);
             },
             () => {
@@ -65,7 +66,14 @@ export default {
         });
     },
 
-
+    get_here_now() {
+        ChannelService.get_here_now((Obj) => {
+            AppDispatcher.dispatch({
+                actionType: ChannelConstants.GOT_HERE_NOW,
+                Obj: Obj
+            });
+        });
+    },
 
     mark_as_active(channel_id) {
         AppDispatcher.dispatch({

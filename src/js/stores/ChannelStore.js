@@ -47,6 +47,14 @@ class ChannelStore extends BaseStore {
                 this.emitChange();
                 break;
 
+            case ChannelConstants.GOT_HERE_NOW:
+                _.forEach(action.Obj.channels, (value, key) => {
+                    this.get_channel(key)['occupancy'] = value['occupancy']
+                    this.get_channel(key)['users'] = value['uuids']
+                });
+                this.emitChange();
+                break;
+
             case ChannelConstants.CREATE_NEW_MESSAGE:
                 this.emitMessageCreated(this._active_channel.id);
                 break;

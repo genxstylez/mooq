@@ -56,7 +56,8 @@ export default React.createClass({
                         placeholder="輸入訊息..."
                         value={this.state.value}
                         onKeyPress={this.handleKeyPress}
-                        onChange={this.handleChange} />
+                        onChange={this.handleChange}
+                        onHeightChange={this.props.onHeightChange} />
                 </div>
             </div>
         );

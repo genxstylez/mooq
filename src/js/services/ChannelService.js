@@ -30,17 +30,19 @@ class ChannelService {
         });
     }
 
-    join_channels(channels, msgCb, ConnectCb) {
+    join_channels(channels, msgCb, connectCb) {
         pubnub.subscribe({
             channel: _.pluck(channels, 'id'),
             message: (msgObj) => {
-                msgCb(msgObj)
+                msgCb(msgObj);
             },
             error: function(error) {
+                alert('error join channel, please try again!');
                 console.log(JSON.stringify(error));
             },
             restore: true,
-            connect: ConnectCb()
+            heartbeat: 10,
+            connect: connectCb()
         });
     }
 
@@ -53,6 +55,14 @@ class ChannelService {
                 cb(channel_id, history, timetoken);
             }
         });
+    }
+
+    get_here_now(cb) {
+        pubnub.here_now({
+            callback: (Obj) => {
+                cb(Obj);
+            }
+        })
     }
 
 }

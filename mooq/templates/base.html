@@ -12,17 +12,17 @@
         <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
         <script type="text/javascript" src="//cdn.pubnub.com/pubnub-dev.js"></script>
         <script type="text/javascript">
-
-        var pubnub = PUBNUB.init({
-            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
-            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f'
-        });
+            var pubnub = PUBNUB.init({
+                publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
+                subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
+                uuid: 'genxstylez' + Math.random().toString(36).substring(5)
+            });
 
         </script>
         {% block styles %}{% endblock %}
         {% block pre_scripts %}{% endblock %}
     </head>
-    <body class="pushable">
+    <body>
         {% block content %}{% endblock %}
         <script type="text/javascript" src={% static 'js/main.js' %}></script>
         {% block post_scripts %}{% endblock %}

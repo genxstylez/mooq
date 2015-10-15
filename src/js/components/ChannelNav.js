@@ -11,7 +11,6 @@ export default React.createClass({
         return (
             <Link activeClassName="active" className={cls} to={`/channels/${this.props.id}/`}>
                 {this.props.name}
-
             </Link>
         )
     }

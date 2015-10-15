@@ -2,8 +2,12 @@ body {
     height: 100%;
 }
 
-body > #main {
+body > #app{
     height: 100%;
+}
+
+body > #app > #main {
+    height: 100%
 }
 
 .ui.form textarea {
@@ -114,9 +118,8 @@ body > #main {
 }
 
 #messages-container > .channel {
-
     position: absolute;
-    top: 85px;
+    top: 0px;
     bottom: 0px;
     left: 0;
     right: 0;
@@ -137,17 +140,12 @@ body > #main {
 #messages-container > .channel > .messages {
     position: absolute;
     padding: 0 0 0 32px;
-    top: 0;
+    top: 85px;
     bottom: 78px;
     left: 0;
     right: 0;
     overflow: auto;
     z-index: -1;
-    -webkit-transition: opacity 200ms ease-in;
-    -moz-transition: opacity 200ms ease-in;
-    -o-transition: opacity 200ms ease-in;
-    -ms-transition: opacity 200ms ease-in;
-    transition: opacity 200ms ease-in;
 }
 
 #messages-container > .channel > .footer {
@@ -171,7 +169,7 @@ body > #main {
 }
 
 @media only screen and (min-width: 1144px) {
-    #messages-container > .menu > #mobile-menu {
-        display: none;
+    .mobile-menu {
+        display: none !important;
     }
 }

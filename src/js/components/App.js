@@ -8,13 +8,25 @@ import ChannelActions from '../actions/ChannelActions';
 import SidebarChannelList from './SidebarChannelList';
 import MessageInput from './MessageInput';
 import Avatar from './Avatar';
+import SetIntervalMixin from '../mixins/SetIntervalMixin';
 
+import UserStore from '../stores/UserStore';
 
 export default React.createClass({
+    mixins: [SetIntervalMixin],
+
     getInitialState() {
         return {
             channels: ChannelStore.channels
         }
+    },
+
+    componentDidMount() {
+        $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar({
+            context: $('#main')
+        }).sidebar('attach events', '.mobile-menu');
+
+        this.setInterval(ChannelActions.get_here_now, 10000, true);
     },
 
     componentWillMount() {
@@ -23,6 +35,13 @@ export default React.createClass({
 
         this.setState({
             active_channel: ChannelStore.active_channel
+        });
+
+    },
+
+    componentWillUnmount() {
+        pubnub.unsubscribe({
+            channel: UserStore.user.channels
         });
     },
 
@@ -33,62 +52,50 @@ export default React.createClass({
             });
             ChannelActions.mark_as_active(nextProps.params.channelId);
         }
-
-    },
-
-    ClickMobileMenu() {
-       let sidebar = ReactDOM.findDOMNode(this.refs.sidebar)
-       $(sidebar).sidebar('toggle');
+        $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide');
     },
 
     render() {
         return (
-            <div className="full height">
-                <div id="profile-container">
-                    <div className="ui sidebar vertical grid menu profile-menu" ref="sidebar">
-                        <Avatar />
-                        <div className="ui list">
-                            <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChannelNav name="top 1" />
-                            <ChannelNav name="top 2" />
-                            <ChannelNav name="top 3" />
-                            <ChannelNav name="top 4" />
-                            <ChannelNav name="top 5" />
-                        </div>
-                        <SidebarChannelList channels={this.state.channels} />
+            <div id="main">
+                <div className="ui sidebar vertical left inline grid menu profile-menu" ref="sidebar">
+                    <Avatar />
+                    <div className="ui list">
+                        <h5 className="ui header">Top 5 Stocks</h5>
+                        <ChannelNav name="top 1" />
+                        <ChannelNav name="top 2" />
+                        <ChannelNav name="top 3" />
+                        <ChannelNav name="top 4" />
+                        <ChannelNav name="top 5" />
                     </div>
-                    <div id="profile-menu" className="ui vertical menu grid profile-menu">
-                        <Avatar />
-                        <div className="ui list">
-                            <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChannelNav name="top 1" />
-                            <ChannelNav name="top 2" />
-                            <ChannelNav name="top 3" />
-                            <ChannelNav name="top 4" />
-                            <ChannelNav name="top 5" />
-                        </div>
-                        <ChannelList channels={this.state.channels} />
-                    </div>
+                    <ChannelList  />
                 </div>
-                <div id="messages-container">
-                    <div className="ui top fixed menu">
-                        <a className="icon item" id="mobile-menu" onClick={this.ClickMobileMenu}>
-                            <i className="content icon"></i>
-                        </a>
-                        <div className="item">
-                            <h2 className="ui header">#{this.state.active_channel.name}</h2>
-                        </div>
-                        <div className="right menu">
-                            <div className="item">
-                                <i className="users icon"></i>10
+                <div className="full height pusher">
+                    <div id="profile-container">
+                        <div id="profile-menu" className="ui vertical menu grid profile-menu">
+                            <Avatar />
+                            <div className="ui list">
+                                <h5 className="ui header">Top 5 Stocks</h5>
+                                <ChannelNav name="top 1" />
+                                <ChannelNav name="top 2" />
+                                <ChannelNav name="top 3" />
+                                <ChannelNav name="top 4" />
+                                <ChannelNav name="top 5" />
                             </div>
+                            <ChannelList  />
                         </div>
                     </div>
-                    {this.state.channels.map((channel) => {
-                        return (<ChannelItem key={channel.id}
-                            id={channel.id}
-                            is_active={this.state.active_channel.id == channel.id} />);
-                    })}
+                    <div id="messages-container">
+                        {this.state.channels.map((channel) => {
+                            return (<ChannelItem key={channel.id}
+                                id={channel.id}
+                                name={channel.name}
+                                occupancy={channel.occupancy}
+                                users={channel.users}
+                                messages={channel.messages}
+                                is_active={this.state.active_channel.id == channel.id} />);
+                        })}
+                    </div>
                 </div>
             </div>
         );

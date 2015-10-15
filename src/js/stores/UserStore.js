@@ -8,6 +8,7 @@ class UserStore extends BaseStore {
         this.subscribe(() => this._registerToActions.bind(this));
         this._user = {
                 username: 'genxstylez',
+                uuid: 'genxstylez',
                 channels: [{id: 'test_channel', name: '1101 台泥'}, {id: 'test_channel1', name: 'APPL'}]
             };
     }
