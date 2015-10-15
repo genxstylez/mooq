@@ -40843,93 +40843,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":224,"../dispatchers/AppDispatcher":225,"../services/ChannelService":227,"lodash":56}],216:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = require('react-dom');
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _storesChannelStore = require('../stores/ChannelStore');
-
-var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
-
-var _actionsChannelActions = require('../actions/ChannelActions');
-
-var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
-
-var _MessageItem = require('./MessageItem');
-
-var _MessageItem2 = _interopRequireDefault(_MessageItem);
-
-exports['default'] = _react2['default'].createClass({
-    displayName: 'ActiveChannel',
-
-    getInitialState: function getInitialState() {
-        return {
-            messages: this.props.channel.messages
-        };
-    },
-
-    componentDidMount: function componentDidMount() {
-        _storesChannelStore2['default'].addChangeListener(this._onChange);
-        _actionsChannelActions2['default'].mark_as_active(this.props.channel);
-    },
-
-    componentWillUnmount: function componentWillUnmount() {
-        _storesChannelStore2['default'].removeChangeListener(this._onChange);
-    },
-
-    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        if (nextProps.channel) this.setState({
-            messages: nextProps.channel.messages
-        });
-        _actionsChannelActions2['default'].mark_as_active(nextProps.channel);
-    },
-
-    componentDidUpdate: function componentDidUpdate() {
-        var node = _reactDom2['default'].findDOMNode(this);
-        $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
-    },
-
-    _onChange: function _onChange() {
-        this.setState({
-            messages: _storesChannelStore2['default'].active_channel.messages
-        });
-    },
-
-    render: function render() {
-        return _react2['default'].createElement(
-            'div',
-            { id: 'messages' },
-            _react2['default'].createElement(
-                'div',
-                { className: 'ui feed' },
-                _lodash2['default'].map(this.state.messages, function (message) {
-                    return _react2['default'].createElement(_MessageItem2['default'], { key: message.timestamp, message: message });
-                })
-            )
-        );
-    }
-});
-module.exports = exports['default'];
-
-
-},{"../actions/ChannelActions":215,"../stores/ChannelStore":229,"./MessageItem":222,"lodash":56,"react":211,"react-dom":59}],217:[function(require,module,exports){
+},{"../constants/ChannelConstants":223,"../dispatchers/AppDispatcher":224,"../services/ChannelService":226,"lodash":56}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40962,6 +40876,10 @@ var _storesChannelStore = require('../stores/ChannelStore');
 
 var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
 
+var _actionsChannelActions = require('../actions/ChannelActions');
+
+var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
+
 var _SidebarChannelList = require('./SidebarChannelList');
 
 var _SidebarChannelList2 = _interopRequireDefault(_SidebarChannelList);
@@ -40969,10 +40887,6 @@ var _SidebarChannelList2 = _interopRequireDefault(_SidebarChannelList);
 var _Avatar = require('./Avatar');
 
 var _Avatar2 = _interopRequireDefault(_Avatar);
-
-var _ActiveChannel = require('./ActiveChannel');
-
-var _ActiveChannel2 = _interopRequireDefault(_ActiveChannel);
 
 exports['default'] = _react2['default'].createClass({
     displayName: 'App',
@@ -40988,15 +40902,21 @@ exports['default'] = _react2['default'].createClass({
         if (this.props.params.channelId) {
             channel = _storesChannelStore2['default'].get_channel(this.props.params.channelId);
         } else channel = _storesChannelStore2['default'].channels[0];
+
+        _actionsChannelActions2['default'].mark_as_active(channel);
+
         this.setState({
             active_channel: channel
         });
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        if (nextProps.params.channelId) this.setState({
-            active_channel: _storesChannelStore2['default'].get_channel(nextProps.params.channelId)
-        });
+        if (nextProps.params.channelId) {
+            this.setState({
+                active_channel: _storesChannelStore2['default'].get_channel(nextProps.params.channelId)
+            });
+            _actionsChannelActions2['default'].mark_as_active(_storesChannelStore2['default'].get_channel(nextProps.params.channelId));
+        }
     },
 
     ClickMobileMenu: function ClickMobileMenu() {
@@ -41088,7 +41008,7 @@ exports['default'] = _react2['default'].createClass({
                 ),
                 this.state.channels.map(function (channel) {
                     return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
-                        channel: channel,
+                        id: channel.id,
                         is_active: _this.state.active_channel.id == channel.id });
                 }),
                 _react2['default'].createElement(
@@ -41111,7 +41031,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":229,"./ActiveChannel":216,"./Avatar":218,"./ChannelItem":219,"./ChannelList":220,"./ChannelNav":221,"./SidebarChannelList":223,"react":211,"react-dom":59}],218:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../stores/ChannelStore":228,"./Avatar":217,"./ChannelItem":218,"./ChannelList":219,"./ChannelNav":220,"./SidebarChannelList":222,"react":211,"react-dom":59}],217:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41143,7 +41063,7 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react":211}],219:[function(require,module,exports){
+},{"react":211}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41185,13 +41105,18 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            messages: this.props.channel.messages
+            messages: _storesChannelStore2['default'].get_channel(this.props.id).messages
         };
     },
 
     componentDidMount: function componentDidMount() {
         _storesChannelStore2['default'].addChangeListener(this._onChange);
-        //ChannelActions.mark_as_active(this.props.channel);
+        /* HACK for render callback
+        var node = ReactDOM.findDOMNode(this);
+        setTimeout(() => {
+            node.scrollTop = node.scrollHeight;
+        }, 800);
+        */
     },
 
     componentWillUnmount: function componentWillUnmount() {
@@ -41200,9 +41125,8 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps.channel) this.setState({
-            messages: nextProps.channel.messages
+            messages: _storesChannelStore2['default'].get_channel(nextProps.id).messages
         });
-        //ChannelActions.mark_as_active(nextProps.channel);
     },
 
     componentDidUpdate: function componentDidUpdate() {
@@ -41212,28 +41136,24 @@ exports['default'] = _react2['default'].createClass({
 
     _onChange: function _onChange() {
         this.setState({
-            messages: _storesChannelStore2['default'].get_channel(this.props.channel.id).messages
+            messages: _storesChannelStore2['default'].get_channel(this.props.id).messages
         });
     },
 
     render: function render() {
         var cls = (0, _classnames2['default'])({
             active: this.props.is_active,
-            channel: true
+            messages: true
         });
         return _react2['default'].createElement(
             'div',
             { className: cls },
             _react2['default'].createElement(
                 'div',
-                { className: 'messages' },
-                _react2['default'].createElement(
-                    'div',
-                    { className: 'ui feed' },
-                    _lodash2['default'].map(this.state.messages, function (message) {
-                        return _react2['default'].createElement(_MessageItem2['default'], { key: message.timestamp, message: message });
-                    })
-                )
+                { className: 'ui feed' },
+                _lodash2['default'].map(this.state.messages, function (message) {
+                    return _react2['default'].createElement(_MessageItem2['default'], { key: message.timestamp, message: message });
+                })
             )
         );
     }
@@ -41241,7 +41161,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":215,"../stores/ChannelStore":229,"./MessageItem":222,"classnames":2,"lodash":56,"react":211,"react-dom":59}],220:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../stores/ChannelStore":228,"./MessageItem":221,"classnames":2,"lodash":56,"react":211,"react-dom":59}],219:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41311,7 +41231,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":229,"./ChannelNav":221,"lodash":56,"react":211}],221:[function(require,module,exports){
+},{"../stores/ChannelStore":228,"./ChannelNav":220,"lodash":56,"react":211}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41348,7 +41268,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"classnames":2,"react":211,"react-router":79}],222:[function(require,module,exports){
+},{"classnames":2,"react":211,"react-router":79}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41415,7 +41335,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":57,"react":211}],223:[function(require,module,exports){
+},{"moment":57,"react":211}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41468,7 +41388,7 @@ exports['default'] = SidebarChannelList;
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":229,"./ChannelList":220}],224:[function(require,module,exports){
+},{"../stores/ChannelStore":228,"./ChannelList":219}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41494,7 +41414,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":55}],225:[function(require,module,exports){
+},{"keymirror":55}],224:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41507,7 +41427,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":34}],226:[function(require,module,exports){
+},{"flux":34}],225:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -41545,7 +41465,7 @@ _reactDom2['default'].render(_react2['default'].createElement(
 ), document.getElementById('main'));
 
 
-},{"./actions/ChannelActions":215,"./components/App":217,"react":211,"react-dom":59,"react-router":79}],227:[function(require,module,exports){
+},{"./actions/ChannelActions":215,"./components/App":216,"react":211,"react-dom":59,"react-router":79}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41615,8 +41535,6 @@ var ChannelService = (function () {
                 count: count || 100,
                 callback: function callback(history) {
                     cb(channel, history, timetoken);
-                    //ChannelActions.got_history(channel, history)
-                    console.log(history);
                 }
             });
         }
@@ -41629,7 +41547,7 @@ exports['default'] = new ChannelService();
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":215,"../constants/ChannelConstants":224,"lodash":56,"superagent":213}],228:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../constants/ChannelConstants":223,"lodash":56,"superagent":213}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41695,7 +41613,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":225,"events":1}],229:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":224,"events":1}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41759,7 +41677,9 @@ var ChannelStore = (function (_BaseStore) {
                 case _constantsChannelConstants2['default'].NEW_MESSAGE:
                     var channel = _lodash2['default'].filter(this._channels, { id: action.msgObj.channel })[0];
                     if (_lodash2['default'].has(channel, 'messages')) channel.messages.push(action.msgObj);else channel['messages'] = [action.msgObj];
-                    if (channel != this._active_channel) channel['unread'] = true;
+                    if (channel.id != this._active_channel.id) {
+                        channel['unread'] = true;
+                    }
                     this.emitChange();
                     break;
 
@@ -41797,4 +41717,4 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":224,"./BaseStore":228,"lodash":56}]},{},[226]);
+},{"../constants/ChannelConstants":223,"./BaseStore":227,"lodash":56}]},{},[225]);

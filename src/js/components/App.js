@@ -4,9 +4,9 @@ import ChannelNav from './ChannelNav';
 import ChannelList from './ChannelList';
 import ChannelItem from './ChannelItem';
 import ChannelStore from '../stores/ChannelStore';
+import ChannelActions from '../actions/ChannelActions';
 import SidebarChannelList from './SidebarChannelList';
 import Avatar from './Avatar';
-import ActiveChannel from './ActiveChannel';
 
 
 export default React.createClass({
@@ -23,16 +23,22 @@ export default React.createClass({
         }
         else
             channel = ChannelStore.channels[0]
+
+        ChannelActions.mark_as_active(channel);
+
         this.setState({
             active_channel: channel
         });
     },
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.params.channelId)
+        if(nextProps.params.channelId) {
             this.setState({
                 active_channel: ChannelStore.get_channel(nextProps.params.channelId)
             });
+            ChannelActions.mark_as_active(ChannelStore.get_channel(nextProps.params.channelId));
+        }
+
     },
 
     ClickMobileMenu() {
@@ -85,7 +91,7 @@ export default React.createClass({
                     </div>
                     {this.state.channels.map((channel) => {
                         return (<ChannelItem key={channel.id}
-                            channel={channel}
+                            id={channel.id}
                             is_active={this.state.active_channel.id == channel.id} />);
                     })}
                     <div id="footer">

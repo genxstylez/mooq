@@ -10,13 +10,18 @@ import classnames from 'classnames';
 export default React.createClass({
     getInitialState() {
         return {
-            messages: this.props.channel.messages
+            messages: ChannelStore.get_channel(this.props.id).messages
         }
     },
 
     componentDidMount() {
         ChannelStore.addChangeListener(this._onChange);
-        //ChannelActions.mark_as_active(this.props.channel);
+        /* HACK for render callback
+        var node = ReactDOM.findDOMNode(this);
+        setTimeout(() => {
+            node.scrollTop = node.scrollHeight;
+        }, 800);
+        */
     },
 
     componentWillUnmount() {
@@ -26,41 +31,37 @@ export default React.createClass({
     componentWillReceiveProps(nextProps) {
         if(nextProps.channel)
             this.setState({
-                messages: nextProps.channel.messages
+                messages: ChannelStore.get_channel(nextProps.id).messages
             });
-            //ChannelActions.mark_as_active(nextProps.channel);
     },
 
     componentDidUpdate() {
-        let node = ReactDOM.findDOMNode(this);
+        var node = ReactDOM.findDOMNode(this);
         $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
     },
 
     _onChange() {
         this.setState({
-            messages: ChannelStore.get_channel(this.props.channel.id).messages
+            messages: ChannelStore.get_channel(this.props.id).messages
         });
     },
 
     render() {
         var cls = classnames({
             active: this.props.is_active,
-            channel: true
+            messages: true
         })
         return (
             <div className={cls}>
-                <div className="messages">
-                    <div className="ui feed">
-                        {_.map(this.state.messages, (message) => {
-                            return (
-                                <MessageItem key={message.timestamp} message={message}  />
-                            );
-                        })}
-                    </div>
+                <div className="ui feed">
+                    {_.map(this.state.messages, (message) => {
+                        return (
+                            <MessageItem key={message.timestamp} message={message}  />
+                        );
+                    })}
                 </div>
-
-
             </div>
+
         )
     }
 });

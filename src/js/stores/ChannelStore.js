@@ -35,8 +35,9 @@ class ChannelStore extends BaseStore {
                     channel.messages.push(action.msgObj)
                 else
                     channel['messages'] = [action.msgObj];
-                if(channel != this._active_channel)
+                if(channel.id != this._active_channel.id) {
                     channel['unread'] = true;
+                }
                 this.emitChange();
                 break;
 

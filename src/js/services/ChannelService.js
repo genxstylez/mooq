@@ -36,8 +36,6 @@ class ChannelService {
             count: count || 100,
             callback: (history) => {
                 cb(channel, history, timetoken);
-                //ChannelActions.got_history(channel, history)
-                console.log(history);
             }
         });
     }
