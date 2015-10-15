@@ -40779,12 +40779,16 @@ exports['default'] = {
     @param  {object} id Channel object
     */
     join: function join(channels) {
-        _lodash2['default'].forEach(channels, function (channel) {
-            _dispatchersAppDispatcher2['default'].dispatch({
-                actionType: _constantsChannelConstants2['default'].CHANNEL_JOIN,
-                channel: channel
+        var _this = this;
+
+        _servicesChannelService2['default'].join_channels(channels, function () {
+            _lodash2['default'].forEach(channels, function (channel) {
+                _dispatchersAppDispatcher2['default'].dispatch({
+                    actionType: _constantsChannelConstants2['default'].CHANNEL_JOIN,
+                    channel: channel
+                });
+                _servicesChannelService2['default'].get_history(channel, _this.got_history); // get history upon joining channel
             });
-            _servicesChannelService2['default'].get_history(channel, 100); // get history upon joining channel
         });
     },
 
@@ -40810,11 +40814,12 @@ exports['default'] = {
         });
     },
 
-    got_history: function got_history(channel, history) {
+    got_history: function got_history(channel, history, timetoken) {
         _dispatchersAppDispatcher2['default'].dispatch({
             actionType: _constantsChannelConstants2['default'].GOT_HISTORY,
             channel: channel,
-            history: history
+            history: history,
+            timetoken: timetoken
         });
     },
 
@@ -40838,7 +40843,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":223,"../dispatchers/AppDispatcher":224,"../services/ChannelService":226,"lodash":56}],216:[function(require,module,exports){
+},{"../constants/ChannelConstants":224,"../dispatchers/AppDispatcher":225,"../services/ChannelService":227,"lodash":56}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40924,7 +40929,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":215,"../stores/ChannelStore":228,"./MessageItem":221,"lodash":56,"react":211,"react-dom":59}],217:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../stores/ChannelStore":229,"./MessageItem":222,"lodash":56,"react":211,"react-dom":59}],217:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40941,17 +40946,17 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _ChannelItem = require('./ChannelItem');
+var _ChannelNav = require('./ChannelNav');
 
-var _ChannelItem2 = _interopRequireDefault(_ChannelItem);
+var _ChannelNav2 = _interopRequireDefault(_ChannelNav);
 
 var _ChannelList = require('./ChannelList');
 
 var _ChannelList2 = _interopRequireDefault(_ChannelList);
 
-var _servicesChannelService = require('../services/ChannelService');
+var _ChannelItem = require('./ChannelItem');
 
-var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+var _ChannelItem2 = _interopRequireDefault(_ChannelItem);
 
 var _storesChannelStore = require('../stores/ChannelStore');
 
@@ -40969,18 +40974,20 @@ var _ActiveChannel = require('./ActiveChannel');
 
 var _ActiveChannel2 = _interopRequireDefault(_ActiveChannel);
 
-var user_channels = [{ id: 'test_channel', name: '1101 台泥' }, { id: 'test_channel1', name: 'APPL' }];
-
 exports['default'] = _react2['default'].createClass({
     displayName: 'App',
 
+    getInitialState: function getInitialState() {
+        return {
+            channels: _storesChannelStore2['default'].channels
+        };
+    },
+
     componentWillMount: function componentWillMount() {
-        // Subscribing channels.
-        _servicesChannelService2['default'].join_subscribed(user_channels);
         var channel = {};
         if (this.props.params.channelId) {
-            channel = _storesChannelStore2['default'].get_channel(this.props.params.channelId)[0];
-        } else channel = user_channels[0];
+            channel = _storesChannelStore2['default'].get_channel(this.props.params.channelId);
+        } else channel = _storesChannelStore2['default'].channels[0];
         this.setState({
             active_channel: channel
         });
@@ -40988,11 +40995,9 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps.params.channelId) this.setState({
-            active_channel: _storesChannelStore2['default'].get_channel(nextProps.params.channelId)[0]
+            active_channel: _storesChannelStore2['default'].get_channel(nextProps.params.channelId)
         });
     },
-
-    componentDidUpdate: function componentDidUpdate() {},
 
     ClickMobileMenu: function ClickMobileMenu() {
         var sidebar = _reactDom2['default'].findDOMNode(this.refs.sidebar);
@@ -41000,6 +41005,8 @@ exports['default'] = _react2['default'].createClass({
     },
 
     render: function render() {
+        var _this = this;
+
         return _react2['default'].createElement(
             'div',
             { className: 'full height' },
@@ -41018,13 +41025,13 @@ exports['default'] = _react2['default'].createClass({
                             { className: 'ui header' },
                             'Top 5 Stocks'
                         ),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 1' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 2' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 3' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 4' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 5' })
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 1' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 2' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 3' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 4' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 5' })
                     ),
-                    _react2['default'].createElement(_SidebarChannelList2['default'], { channels: user_channels })
+                    _react2['default'].createElement(_SidebarChannelList2['default'], { channels: this.state.channels })
                 ),
                 _react2['default'].createElement(
                     'div',
@@ -41038,13 +41045,13 @@ exports['default'] = _react2['default'].createClass({
                             { className: 'ui header' },
                             'Top 5 Stocks'
                         ),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 1' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 2' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 3' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 4' }),
-                        _react2['default'].createElement(_ChannelItem2['default'], { name: 'top 5' })
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 1' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 2' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 3' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 4' }),
+                        _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 5' })
                     ),
-                    _react2['default'].createElement(_ChannelList2['default'], { channels: user_channels })
+                    _react2['default'].createElement(_ChannelList2['default'], { channels: this.state.channels })
                 )
             ),
             _react2['default'].createElement(
@@ -41079,6 +41086,11 @@ exports['default'] = _react2['default'].createClass({
                         )
                     )
                 ),
+                this.state.channels.map(function (channel) {
+                    return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
+                        channel: channel,
+                        is_active: _this.state.active_channel.id == channel.id });
+                }),
                 _react2['default'].createElement(
                     'div',
                     { id: 'footer' },
@@ -41091,8 +41103,7 @@ exports['default'] = _react2['default'].createClass({
                             _react2['default'].createElement('textarea', { rows: '1' })
                         )
                     )
-                ),
-                _react2['default'].createElement(_ActiveChannel2['default'], { channel: this.state.active_channel })
+                )
             )
         );
     }
@@ -41100,7 +41111,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":226,"../stores/ChannelStore":228,"./ActiveChannel":216,"./Avatar":218,"./ChannelItem":219,"./ChannelList":220,"./SidebarChannelList":222,"react":211,"react-dom":59}],218:[function(require,module,exports){
+},{"../stores/ChannelStore":229,"./ActiveChannel":216,"./Avatar":218,"./ChannelItem":219,"./ChannelList":220,"./ChannelNav":221,"./SidebarChannelList":223,"react":211,"react-dom":59}],218:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41141,11 +41152,29 @@ Object.defineProperty(exports, '__esModule', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouter = require('react-router');
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _storesChannelStore = require('../stores/ChannelStore');
+
+var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
+
+var _actionsChannelActions = require('../actions/ChannelActions');
+
+var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
+
+var _MessageItem = require('./MessageItem');
+
+var _MessageItem2 = _interopRequireDefault(_MessageItem);
 
 var _classnames = require('classnames');
 
@@ -41154,22 +41183,65 @@ var _classnames2 = _interopRequireDefault(_classnames);
 exports['default'] = _react2['default'].createClass({
     displayName: 'ChannelItem',
 
+    getInitialState: function getInitialState() {
+        return {
+            messages: this.props.channel.messages
+        };
+    },
+
+    componentDidMount: function componentDidMount() {
+        _storesChannelStore2['default'].addChangeListener(this._onChange);
+        //ChannelActions.mark_as_active(this.props.channel);
+    },
+
+    componentWillUnmount: function componentWillUnmount() {
+        _storesChannelStore2['default'].removeChangeListener(this._onChange);
+    },
+
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        if (nextProps.channel) this.setState({
+            messages: nextProps.channel.messages
+        });
+        //ChannelActions.mark_as_active(nextProps.channel);
+    },
+
+    componentDidUpdate: function componentDidUpdate() {
+        var node = _reactDom2['default'].findDOMNode(this);
+        $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
+    },
+
+    _onChange: function _onChange() {
+        this.setState({
+            messages: _storesChannelStore2['default'].get_channel(this.props.channel.id).messages
+        });
+    },
+
     render: function render() {
         var cls = (0, _classnames2['default'])({
-            'unread': this.props.unread,
-            'item': true
+            active: this.props.is_active,
+            channel: true
         });
         return _react2['default'].createElement(
-            _reactRouter.Link,
-            { activeClassName: 'active', className: cls, to: '/channels/' + this.props.id + '/' },
-            this.props.name
+            'div',
+            { className: cls },
+            _react2['default'].createElement(
+                'div',
+                { className: 'messages' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'ui feed' },
+                    _lodash2['default'].map(this.state.messages, function (message) {
+                        return _react2['default'].createElement(_MessageItem2['default'], { key: message.timestamp, message: message });
+                    })
+                )
+            )
         );
     }
 });
 module.exports = exports['default'];
 
 
-},{"classnames":2,"react":211,"react-router":79}],220:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../stores/ChannelStore":229,"./MessageItem":222,"classnames":2,"lodash":56,"react":211,"react-dom":59}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41190,13 +41262,9 @@ var _storesChannelStore = require('../stores/ChannelStore');
 
 var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
 
-var _servicesChannelService = require('../services/ChannelService');
+var _ChannelNav = require('./ChannelNav');
 
-var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
-
-var _ChannelItem = require('./ChannelItem');
-
-var _ChannelItem2 = _interopRequireDefault(_ChannelItem);
+var _ChannelNav2 = _interopRequireDefault(_ChannelNav);
 
 exports['default'] = _react2['default'].createClass({
     displayName: 'ChannelList',
@@ -41231,7 +41299,7 @@ exports['default'] = _react2['default'].createClass({
                 'Your Stocks'
             ),
             _lodash2['default'].map(this.state.channels, function (channel) {
-                return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
+                return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id,
                     id: channel.id,
                     unread: channel.unread,
                     name: channel.name });
@@ -41243,7 +41311,44 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":226,"../stores/ChannelStore":228,"./ChannelItem":219,"lodash":56,"react":211}],221:[function(require,module,exports){
+},{"../stores/ChannelStore":229,"./ChannelNav":221,"lodash":56,"react":211}],221:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'ChannelNav',
+
+    render: function render() {
+        var cls = (0, _classnames2['default'])({
+            'unread': this.props.unread,
+            'item': true
+        });
+        return _react2['default'].createElement(
+            _reactRouter.Link,
+            { activeClassName: 'active', className: cls, to: '/channels/' + this.props.id + '/' },
+            this.props.name
+        );
+    }
+});
+module.exports = exports['default'];
+
+
+},{"classnames":2,"react":211,"react-router":79}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41310,7 +41415,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":57,"react":211}],222:[function(require,module,exports){
+},{"moment":57,"react":211}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41363,7 +41468,7 @@ exports['default'] = SidebarChannelList;
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":228,"./ChannelList":220}],223:[function(require,module,exports){
+},{"../stores/ChannelStore":229,"./ChannelList":220}],224:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41389,7 +41494,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":55}],224:[function(require,module,exports){
+},{"keymirror":55}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41402,7 +41507,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":34}],225:[function(require,module,exports){
+},{"flux":34}],226:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -41421,6 +41526,14 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRouter = require('react-router');
 
+var _actionsChannelActions = require('./actions/ChannelActions');
+
+var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
+
+var user_channels = [{ id: 'test_channel', name: '1101 台泥' }, { id: 'test_channel1', name: 'APPL' }];
+
+_actionsChannelActions2['default'].join(user_channels);
+
 _reactDom2['default'].render(_react2['default'].createElement(
     _reactRouter.Router,
     null,
@@ -41432,7 +41545,7 @@ _reactDom2['default'].render(_react2['default'].createElement(
 ), document.getElementById('main'));
 
 
-},{"./components/App":217,"react":211,"react-dom":59,"react-router":79}],226:[function(require,module,exports){
+},{"./actions/ChannelActions":215,"./components/App":217,"react":211,"react-dom":59,"react-router":79}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41479,8 +41592,8 @@ var ChannelService = (function () {
 
         }
     }, {
-        key: 'join_subscribed',
-        value: function join_subscribed(channels) {
+        key: 'join_channels',
+        value: function join_channels(channels, cb) {
             pubnub.subscribe({
                 channel: _lodash2['default'].pluck(channels, 'id'),
                 message: function message(msgObj) {
@@ -41490,18 +41603,19 @@ var ChannelService = (function () {
                     console.log(JSON.stringify(_error));
                 },
                 restore: true,
-                connect: _actionsChannelActions2['default'].join(channels)
+                connect: cb()
             });
         }
     }, {
         key: 'get_history',
-        value: function get_history(channel, count, timetoken) {
+        value: function get_history(channel, cb, count, timetoken) {
             pubnub.history({
                 channel: channel.id,
                 start: timetoken,
                 count: count || 100,
                 callback: function callback(history) {
-                    _actionsChannelActions2['default'].got_history(channel, history);
+                    cb(channel, history, timetoken);
+                    //ChannelActions.got_history(channel, history)
                     console.log(history);
                 }
             });
@@ -41515,7 +41629,7 @@ exports['default'] = new ChannelService();
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":215,"../constants/ChannelConstants":223,"lodash":56,"superagent":213}],227:[function(require,module,exports){
+},{"../actions/ChannelActions":215,"../constants/ChannelConstants":224,"lodash":56,"superagent":213}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41581,7 +41695,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":224,"events":1}],228:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":225,"events":1}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41638,7 +41752,6 @@ var ChannelStore = (function (_BaseStore) {
 
                 case _constantsChannelConstants2['default'].GOT_HISTORY:
                     var channel = _lodash2['default'].filter(this._channels, { id: action.channel.id })[0];
-                    console.log(channel);
                     if (_lodash2['default'].has(channel, 'messages')) channel.messages.unshift(action.history[0]);else channel['messages'] = action.history[0];
                     this.emitChange();
                     break;
@@ -41663,7 +41776,7 @@ var ChannelStore = (function (_BaseStore) {
     }, {
         key: 'get_channel',
         value: function get_channel(id) {
-            return _lodash2['default'].filter(this._channels, { 'id': id });
+            return _lodash2['default'].filter(this._channels, { 'id': id })[0];
         }
     }, {
         key: 'channels',
@@ -41684,4 +41797,4 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":223,"./BaseStore":227,"lodash":56}]},{},[225]);
+},{"../constants/ChannelConstants":224,"./BaseStore":228,"lodash":56}]},{},[226]);

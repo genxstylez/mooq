@@ -113,10 +113,29 @@ body > #main {
     color: #585252;
 }
 
-#messages-container > #messages {
+#messages-container > .channel {
+    position: absolute;
+    opacity: 0;
+    top: 85px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    -webkit-transition: opacity 200ms ease-in;
+    -moz-transition: opacity 200ms ease-in;
+    -o-transition: opacity 200ms ease-in;
+    -ms-transition: opacity 200ms ease-in;
+    transition: opacity 200ms ease-in;
+}
+
+#messages-container > .channel.active {
+    opacity: 1;
+}
+
+#messages-container > .channel > .messages {
     padding: 0 0 0 32px;
     position: absolute;
-    top: 85px;
     bottom: 61px;
     left: 0;
     right: 0;

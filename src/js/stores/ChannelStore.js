@@ -22,7 +22,6 @@ class ChannelStore extends BaseStore {
 
             case ChannelConstants.GOT_HISTORY:
                 var channel = _.filter(this._channels, {id: action.channel.id})[0];
-                console.log(channel);
                 if(_.has(channel, 'messages'))
                     channel.messages.unshift(action.history[0])
                 else
@@ -53,7 +52,7 @@ class ChannelStore extends BaseStore {
     }
 
     get_channel(id) {
-        return _.filter(this._channels, {'id': id})
+        return _.filter(this._channels, {'id': id})[0]
     }
 
     get channels() {

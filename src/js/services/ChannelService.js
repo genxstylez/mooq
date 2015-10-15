@@ -15,7 +15,7 @@ class ChannelService {
 
     }
 
-    join_subscribed(channels) {
+    join_channels(channels, cb) {
         pubnub.subscribe({
             channel: _.pluck(channels, 'id'),
             message: function(msgObj) {
@@ -25,17 +25,18 @@ class ChannelService {
                 console.log(JSON.stringify(error));
             },
             restore: true,
-            connect: ChannelActions.join(channels)
+            connect: cb()
         });
     }
 
-    get_history(channel, count, timetoken) {
+    get_history(channel, cb, count, timetoken) {
         pubnub.history({
             channel: channel.id,
             start: timetoken,
             count: count || 100,
             callback: (history) => {
-                ChannelActions.got_history(channel, history)
+                cb(channel, history, timetoken);
+                //ChannelActions.got_history(channel, history)
                 console.log(history);
             }
         });

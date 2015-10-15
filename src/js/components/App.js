@@ -1,25 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChannelItem from './ChannelItem';
+import ChannelNav from './ChannelNav';
 import ChannelList from './ChannelList';
-import ChannelService from '../services/ChannelService';
+import ChannelItem from './ChannelItem';
 import ChannelStore from '../stores/ChannelStore';
 import SidebarChannelList from './SidebarChannelList';
 import Avatar from './Avatar';
 import ActiveChannel from './ActiveChannel';
 
-let user_channels = [{id: 'test_channel', name: '1101 台泥'}, {id: 'test_channel1', name: 'APPL'}];
 
 export default React.createClass({
+    getInitialState() {
+        return {
+            channels: ChannelStore.channels
+        }
+    },
+
     componentWillMount() {
-        // Subscribing channels.
-        ChannelService.join_subscribed(user_channels);
         var channel = {};
         if(this.props.params.channelId) {
-            channel = ChannelStore.get_channel(this.props.params.channelId)[0]
+            channel = ChannelStore.get_channel(this.props.params.channelId)
         }
         else
-            channel = user_channels[0]
+            channel = ChannelStore.channels[0]
         this.setState({
             active_channel: channel
         });
@@ -28,14 +31,9 @@ export default React.createClass({
     componentWillReceiveProps(nextProps) {
         if(nextProps.params.channelId)
             this.setState({
-                active_channel: ChannelStore.get_channel(nextProps.params.channelId)[0]
+                active_channel: ChannelStore.get_channel(nextProps.params.channelId)
             });
     },
-
-    componentDidUpdate() {
-
-    },
-
 
     ClickMobileMenu() {
        let sidebar = ReactDOM.findDOMNode(this.refs.sidebar)
@@ -50,25 +48,25 @@ export default React.createClass({
                         <Avatar />
                         <div className="ui list">
                             <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChannelItem name="top 1" />
-                            <ChannelItem name="top 2" />
-                            <ChannelItem name="top 3" />
-                            <ChannelItem name="top 4" />
-                            <ChannelItem name="top 5" />
+                            <ChannelNav name="top 1" />
+                            <ChannelNav name="top 2" />
+                            <ChannelNav name="top 3" />
+                            <ChannelNav name="top 4" />
+                            <ChannelNav name="top 5" />
                         </div>
-                        <SidebarChannelList channels={user_channels} />
+                        <SidebarChannelList channels={this.state.channels} />
                     </div>
                     <div id="profile-menu" className="ui vertical menu grid profile-menu">
                         <Avatar />
                         <div className="ui list">
                             <h5 className="ui header">Top 5 Stocks</h5>
-                            <ChannelItem name="top 1" />
-                            <ChannelItem name="top 2" />
-                            <ChannelItem name="top 3" />
-                            <ChannelItem name="top 4" />
-                            <ChannelItem name="top 5" />
+                            <ChannelNav name="top 1" />
+                            <ChannelNav name="top 2" />
+                            <ChannelNav name="top 3" />
+                            <ChannelNav name="top 4" />
+                            <ChannelNav name="top 5" />
                         </div>
-                        <ChannelList channels={user_channels} />
+                        <ChannelList channels={this.state.channels} />
                     </div>
                 </div>
                 <div id="messages-container">
@@ -85,6 +83,11 @@ export default React.createClass({
                             </div>
                         </div>
                     </div>
+                    {this.state.channels.map((channel) => {
+                        return (<ChannelItem key={channel.id}
+                            channel={channel}
+                            is_active={this.state.active_channel.id == channel.id} />);
+                    })}
                     <div id="footer">
                         <div className="ui form">
                             <div className="field">
@@ -92,7 +95,6 @@ export default React.createClass({
                             </div>
                         </div>
                     </div>
-                    <ActiveChannel channel={this.state.active_channel} />
                 </div>
             </div>
         );

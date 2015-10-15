@@ -8,12 +8,14 @@ export default {
     @param  {object} id Channel object
     */
     join(channels) {
-        _.forEach(channels, (channel) => {
-            AppDispatcher.dispatch({
-                actionType: ChannelConstants.CHANNEL_JOIN,
-                channel: channel
+        ChannelService.join_channels(channels, () => {
+            _.forEach(channels, (channel) => {
+                AppDispatcher.dispatch({
+                    actionType: ChannelConstants.CHANNEL_JOIN,
+                    channel: channel
+                });
+                ChannelService.get_history(channel, this.got_history); // get history upon joining channel
             });
-            ChannelService.get_history(channel, 100); // get history upon joining channel
         });
     },
 
@@ -39,11 +41,12 @@ export default {
         });
     },
 
-    got_history(channel, history) {
+    got_history(channel, history, timetoken) {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.GOT_HISTORY,
             channel: channel,
-            history: history
+            history: history,
+            timetoken: timetoken
         });
     },
 
