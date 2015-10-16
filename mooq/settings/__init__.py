@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'member',
     'chat',
     'stock',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -148,6 +149,15 @@ MEDIA_ROOT = os.path.join(ROOT_PATH, '../media/')
 
 MEDIA_URL = os.environ.get('DJANGO_MEDIA_URL', '/media/')
 
+# DRF
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
 # Social auth
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('FACEBOOK_KEY', '')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET', '')
@@ -179,4 +189,3 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details'
 )
-

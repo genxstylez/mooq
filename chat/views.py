@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from chat.models import Channel
+from chat.serializers import ChannelSerializer
 
-# Create your views here.
+from rest_framework import viewsets
+
+class ChannelViewSet(viewsets.ModelViewSet):
+    queryset = Channel.objects.all()
+    serializer_class = ChannelSerializer

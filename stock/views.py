@@ -2,9 +2,6 @@ import requests
 import json
 from django.shortcuts import render, JsonResponse
 
-# Create your views here.
-
-
 def get_stock_price(stock_id):
     req = requests.session()
     req.get('http://mis.twse.com.tw/stock/index.jsp', headers={'Accept-Language': 'zh-TW'})

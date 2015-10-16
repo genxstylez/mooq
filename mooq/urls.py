@@ -17,8 +17,19 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
+from rest_framework.routers import DefaultRouter
+from chat import views as ChatView
+from member import views as MemberView
+
+router = DefaultRouter()
+router.register(r'channels', ChatView.ChannelViewSet, base_name='channels')
+router.register(r'users', MemberView.UserViewSet, base_name='users')
+router.register(r'me', MemberView.MeViewSet, base_name='me')
+
 urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'accounts/', include('member.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', TemplateView.as_view(template_name='index.html'), name='index'),
