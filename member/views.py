@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions,status
 from rest_framework.response import Response
 
-from member.serializers import UserSerializer
+from member.serializers import PublicUserSerializer, PrivateUserSerializer
 from member.forms import SignupForm
 
 def new_social(request):
@@ -31,7 +31,7 @@ def signup(request):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = PublicUserSerializer
 
 
 class MeViewSet(viewsets.ViewSet):
@@ -39,11 +39,11 @@ class MeViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
 
     def list(self, request, format=None):
-        serializer = UserSerializer(request.user)
+        serializer = PrivateUserSerializer(request.user)
         return Response(serializer.data)
 
     def update(self, request, format=None):
-        serializer = UserSerializer(request.user, data=request.data)
+        serializer = PrivateUserSerializer(request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
