@@ -48,11 +48,18 @@ class ChannelStore extends BaseStore {
                 break;
 
             case ChannelConstants.GOT_HERE_NOW:
+                var changed = false
                 _.forEach(action.Obj.channels, (value, key) => {
+                    if(!changed) {
+                        // skip this if change is already true, an CHANGE event will fire anyway
+                        changed = !_.isEqual(this.get_channel(key)['occupancy'], value['occupancy']) ||
+                            !_.isEqual(this.get_channel(key)['users'], value['uuids'].sort());
+                    }
                     this.get_channel(key)['occupancy'] = value['occupancy']
-                    this.get_channel(key)['users'] = value['uuids']
+                    this.get_channel(key)['users'] = value['uuids'].sort()
                 });
-                this.emitChange();
+                if(changed)
+                    this.emitChange();
                 break;
 
             case ChannelConstants.CREATE_NEW_MESSAGE:

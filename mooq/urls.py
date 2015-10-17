@@ -30,10 +30,16 @@ router.register(r'users', MemberView.UserViewSet, base_name='users')
 router.register(r'me', MemberView.MeViewSet, base_name='me')
 
 urlpatterns = [
-    url('', include('social.apps.django_app.urls', namespace='social')),
+    #url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-social-auth/$', 'member.views.social_auth'), # 網頁端送backend及access_token, 回傳jwt_token
+    url(r'^api-token-auth/$', 'rest_framework_jwt.views.obtain_jwt_token', name="api-token-auth"),
     url(r'accounts/', include('member.urls')),
+    url(r'^login/$', 'django.contrib.auth.views.login',
+        {'template_name': 'member/login.html'}, name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': 'index'}, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^jsreverse/$', cache_page(3600)(urls_js), name='js_reverse'),
     url(r'^', TemplateView.as_view(template_name='index.html'), name='index'),

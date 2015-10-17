@@ -49,12 +49,41 @@ export default React.createClass({
     },
 
     componentWillMount() {
-        if(!this.props.params.channelId) {
-            if(this.state.is_authenticated) {
+        this.handleSession();
+    },
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.params.channelId != this.props.params.channelId) {
+            console.log('in if recv props');
+            this.join_channel(nextProps.params.channelId);
+        }
+        $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide');
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log('didupdate');
+        if(prevState.is_authenticated != this.state.is_authenticated) {
+            // handle user login or logout, refresh session again
+            this.handleSession()
+        }
+    },
+
+    handleSession() {
+        var first_channel;
+        if(this.state.is_authenticated) {
+               if(this.state.user.channels.length > 0) {
+                // handles user with channels
                 ChannelService.join_channels(this.state.user.channels)
-                this.history.pushState(null, `/channels/${this.state.user.channels[0].id}/`)
-           } else {
-                // render a join a channel page.
+                first_channel = this.state.user.channels[0];
+                //Select first channel for further use.
+            }
+        }
+
+        if(!this.props.params.channelId) {
+            // if channelId is not provided on url, go to first channel
+            if(first_channel)  {
+                this.history.pushState(first_channel.name, `/channels/${first_channel.id}/`)
+            } else {
                 this.setState({
                     prompt_to_join: true
                 });
@@ -64,45 +93,31 @@ export default React.createClass({
         }
     },
 
-    componentWillReceiveProps(nextProps) {
-        if(nextProps.params.channelId != this.props.params.channelId) {
-            this.join_channel(nextProps.params.channelId);
-        }
-        $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide');
-    },
-
-    componentDidUpdate(prevProps, prevState) {
-        if(this.state.is_authenticated != prevState.is_authenticated) {
-            // means a state change in authentication
-            if(this.state.is_authenticated) {
-                ChannelService.join_channels(this.state.user.channels)
-                this.history.pushState(null, `/channels/${this.state.user.channels[0].id}/`)
-
-            } else {
-                // logout here
-            }
-        }
-    },
-
     join_channel(id) {
         var channel = ChannelStore.get_channel(id);
         if(!channel) {
             // If channel not found, get complete channel info from server
-            let onSuccess = (channel) => {
-                ChannelService.join_channels([channel])
-                ChannelActions.mark_as_active(channel.id);
-            }
-            let onError = () => {
-                alert('Something went wrong!');
-            }
-            ChannelService.get_channel_info(id, onSuccess, onError);
+            var promise = ChannelService.async_get_channel_info(id);
+            promise
+                .then((res) => {
+                    // res.body is a channel object
+                    channel = res.body;
+                    ChannelService.join_channels([channel]);
+                    ChannelActions.mark_as_active(channel.id);
+                    this.setState({
+                        prompt_to_join: false
+                    });
+                }, (err) => {
+                    alert('Something went wrong');
+                })
         } else {
             // if channel exists in store, means we already joined, just mark it as active
             ChannelActions.mark_as_active(channel.id);
+            this.setState({
+                prompt_to_join: false
+            });
         }
-        this.setState({
-            prompt_to_join: false
-        });
+
     },
 
     _onUserChange() {

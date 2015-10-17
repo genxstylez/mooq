@@ -9,7 +9,7 @@ import UserActions from './actions/UserActions';
 import ChannelActions from './actions/ChannelActions';
 
 
-var render_func = () => {
+var render_react = () => {
     ReactDOM.render((
         <Router history={createBrowserHistory()}>
             <Route path="/" component={App}>
@@ -20,14 +20,5 @@ var render_func = () => {
     ), document.getElementById('app'));
 };
 
-var promise = UserService.authenticate()
-promise.then((res) => {
-    UserActions.authenticated(res.body);
-    render_func()
-}).catch((err) => {
-    UserActions.create_guest()
-    render_func()
-});
-
-//ChannelActions.join(user.channels);
-
+// Get user session before rendering.
+UserService.get_session(render_react);

@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import request from 'superagent';
+import when from 'when';
+import request from 'superagent-bluebird-promise';
 import ChannelActions from '../actions/ChannelActions';
 import ChannelConstants from '../constants/ChannelConstants';
 
@@ -15,12 +16,10 @@ class ChannelService {
 
     }
 
-    get_channel_info(channel_id, onSuccess, onError) {
+    async_get_channel_info(channel_id) {
         return request
             .get(Urls['channels-detail'](channel_id))
-            .end((err, res) => {
-                res.ok ? onSuccess(res.body) : onError()
-            });
+            .promise()
     }
 
     create_message(channel_id, username, text, cb) {

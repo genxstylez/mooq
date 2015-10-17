@@ -17,6 +17,60 @@
 </style>
 {% endblock %}
 {% block content %}
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '860499974063343',
+      xfbml      : true,
+      version    : 'v2.4'
+    });
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    if (response.status === 'connected') {
+        var access_token = response.authResponse.accessToken;
+        $.ajax({
+            url: '/api-social-auth/',
+            type: 'post',
+            data: {
+                    access_token: access_token,
+                    backend: 'facebook'
+            },
+            success: function(data) {
+                console.log(data);
+            }
+            });
+    } else if (response.status === 'not_authorized') {
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this app.';
+    } else {
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+    }
+  }
+  function checkLoginState() {
+    FB.login(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+
+
+</script>
 <div class="ui middle aligned center aligned grid">
     <div class="column">
         <h2 class="ui header teal">
@@ -40,12 +94,13 @@
                     </div>
                 </div>
                 <button type="submit" class="field ui fluid large basic teal button">{% trans 'Login' %}</button>
-                <a href="{% url 'social:begin' 'facebook' %}?next=/">
+                <a href="#" onClick="checkLoginState();">
                     <button id="fb-connect" type="button" class="field ui fluid large facebook button">
                         <i class="facebook icon"></i>
                         {% trans 'Sign in with Facebook' %}
                     </button>
                 </a>
+
 
                 {% if form.non_field_errors %}
                 <div class="ui error message">
