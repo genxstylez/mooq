@@ -1,21 +1,33 @@
-import App from './components/App';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { Router, Route } from 'react-router';
+
+import App from './components/App';
+import UserService from './services/UserService';
+import UserActions from './actions/UserActions';
 import ChannelActions from './actions/ChannelActions';
 
-import UserStore from './stores/UserStore';
 
-let user = UserStore.user;
+var render_func = () => {
+    ReactDOM.render((
+        <Router history={createBrowserHistory()}>
+            <Route path="/" component={App}>
+                <Route name="channels" path="channels/:channelId/" component={App} />
+            </Route>
+        </Router>
 
-ChannelActions.join(user.channels);
+    ), document.getElementById('app'));
+};
 
-ReactDOM.render((
-    <Router history={createBrowserHistory()}>
-        <Route path="/" component={App}>
-            <Route name="channels" path="channels/:channelId/" component={App} />
-        </Route>
-    </Router>
+var promise = UserService.authenticate()
+promise.then((res) => {
+    UserActions.authenticated(res.body);
+    render_func()
+}).catch((err) => {
+    UserActions.create_guest()
+    render_func()
+});
 
-), document.getElementById('app'));
+//ChannelActions.join(user.channels);
+

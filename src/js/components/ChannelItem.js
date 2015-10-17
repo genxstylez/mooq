@@ -112,38 +112,6 @@ export default React.createClass({
         })
         return (
             <div className={cls}>
-                <div className="ui dimmer" ref="dimmer">
-                  <div className="content">
-                    <div className="center">
-                        <div className="ui horizontal inverted list">
-                            {_.map(this.state.users, (username) => {
-                                return (
-                                    <div className="item">
-                                        <div className="content">
-                                            <div className="header">{username}</div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="ui top fixed menu">
-                    <a className="icon item mobile-menu" onClick={this.props.onClickMobileMenu}>
-                        <i className="content icon"></i>
-                    </a>
-                    <div className="item">
-                        <h2 className="ui header">#{this.props.name}</h2>
-                    </div>
-                    <div className="item">{this.state.price}</div>
-
-                    <div className="right menu">
-                        <div className="item here_now" onClick={this.handleHereNow}>
-                            <i className="users icon"></i>{this.state.occupancy}
-                        </div>
-                    </div>
-                </div>
                 <div className="messages" ref="messages">
                     <div className="ui feed">
                         {_.map(this.state.messages, (message) => {

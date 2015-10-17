@@ -9,13 +9,18 @@
         <link rel="stylesheet" href="{% static 'vendor/semantic/semantic.min.css' %}" />
         <link rel="stylesheet" href="{% static 'css/app.css' %}" />
         <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
         <script type="text/javascript" src="//cdn.pubnub.com/pubnub-dev.js"></script>
+        <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
+        <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         <script type="text/javascript">
             var pubnub = PUBNUB.init({
                 publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
                 subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
-                uuid: 'genxstylez' + Math.random().toString(36).substring(5)
+                {% if request.user.is_authenticated %}
+                uuid: '{{ request.user.username }}'
+                {% else %}
+                uuid: 'Guest' + Math.floor((Math.random() * 9999999) + 1)
+                {% endif %}
             });
 
         </script>

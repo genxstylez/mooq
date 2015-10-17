@@ -15,6 +15,14 @@ class ChannelService {
 
     }
 
+    get_channel_info(channel_id, onSuccess, onError) {
+        return request
+            .get(Urls['channels-detail'](channel_id))
+            .end((err, res) => {
+                res.ok ? onSuccess(res.body) : onError()
+            });
+    }
+
     create_message(channel_id, username, text, cb) {
         pubnub.publish({
             channel: channel_id,
@@ -30,11 +38,11 @@ class ChannelService {
         });
     }
 
-    join_channels(channels, msgCb, connectCb) {
+    join_channels(channels) {
         pubnub.subscribe({
             channel: _.pluck(channels, 'id'),
             message: (msgObj) => {
-                msgCb(msgObj);
+                ChannelActions.recv_new_message(msgObj);
             },
             error: function(error) {
                 alert('error join channel, please try again!');
@@ -42,7 +50,7 @@ class ChannelService {
             },
             restore: true,
             heartbeat: 10,
-            connect: connectCb()
+            connect: ChannelActions.joined_channels(channels)
         });
     }
 
@@ -52,15 +60,15 @@ class ChannelService {
             start: timetoken,
             count: count || 100,
             callback: (history) => {
-                cb(channel_id, history, timetoken);
+                ChannelActions.got_history(channel_id, history, timetoken);
             }
         });
     }
 
-    get_here_now(cb) {
+    get_here_now() {
         pubnub.here_now({
             callback: (Obj) => {
-                cb(Obj);
+                ChannelActions.got_here_now(Obj);
             }
         })
     }

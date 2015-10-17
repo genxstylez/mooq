@@ -5,23 +5,17 @@ import ChannelService from '../services/ChannelService';
 
 export default {
     /*
-    @param  {object} id Channel object
+    @param  {Array}  an array Channel objects
     */
-    join(channels) {
-        ChannelService.join_channels(channels,
-            (msgObj) => {
-                this.recv_new_message(msgObj);
-            },
-            () => {
-                _.forEach(channels, (channel) => {
-                    AppDispatcher.dispatch({
-                        actionType: ChannelConstants.CHANNEL_JOIN,
-                        channel: channel
-                    });
-                    ChannelService.get_history(channel.id, this.got_history); // get history upon joining channel
-                });
-            }
-        );
+    joined_channels(channels) {
+        _.forEach(channels, (channel) => {
+            AppDispatcher.dispatch({
+                actionType: ChannelConstants.CHANNEL_JOIN,
+                channel: channel
+            });
+            console.log(channel.name);
+            ChannelService.get_history(channel.id); // get history upon joining channel
+        });
     },
 
     /*
@@ -66,12 +60,10 @@ export default {
         });
     },
 
-    get_here_now() {
-        ChannelService.get_here_now((Obj) => {
-            AppDispatcher.dispatch({
-                actionType: ChannelConstants.GOT_HERE_NOW,
-                Obj: Obj
-            });
+    got_here_now(Obj) {
+        AppDispatcher.dispatch({
+            actionType: ChannelConstants.GOT_HERE_NOW,
+            Obj: Obj
         });
     },
 

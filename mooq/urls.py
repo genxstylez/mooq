@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
+from django.views.decorators.cache import cache_page
+
+from django_js_reverse.views import urls_js
 
 from rest_framework.routers import DefaultRouter
 from chat import views as ChatView
@@ -32,5 +35,6 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'accounts/', include('member.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^jsreverse/$', cache_page(3600)(urls_js), name='js_reverse'),
     url(r'^', TemplateView.as_view(template_name='index.html'), name='index'),
 ]
