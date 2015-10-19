@@ -18,16 +18,14 @@ class UserStore extends BaseStore {
         switch(action.actionType) {
             case UserConstants.LOGIN:
                 this._jwt = action.jwt
-                console.log(this._jwt)
                 this._user = jwt_decode(this._jwt)
-                console.log(this._user)
                 this._user['uuid'] = this._user.username
                 this._isGuest = false
                 this.emitChange()
-                console.log(this._user)
                 break
 
             case UserConstants.LOGOUT:
+                // TODO: unsubscribe channels before setting user to null
                 this._user = null;
                 this.emitChange()
                 break
@@ -40,6 +38,7 @@ class UserStore extends BaseStore {
                     channels: []
                 }
                 this._user = user
+                this._isGuest = true
                 this.emitChange()
                 break
 
@@ -60,6 +59,8 @@ class UserStore extends BaseStore {
     }
 
     get is_authenticated() {
+        console.log(!!this._user)
+        console.log(this._isGuest, !this.is_Guest)
         return !!this._user && !this._isGuest
     }
 

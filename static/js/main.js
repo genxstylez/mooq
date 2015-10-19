@@ -48787,7 +48787,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":258,"../dispatchers/AppDispatcher":260,"../services/ChannelService":265,"lodash":62}],243:[function(require,module,exports){
+},{"../constants/ChannelConstants":259,"../dispatchers/AppDispatcher":261,"../services/ChannelService":266,"lodash":62}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48814,7 +48814,6 @@ var _constantsUserConstants2 = _interopRequireDefault(_constantsUserConstants);
 
 exports['default'] = {
     login: function login(jwt) {
-        console.log(jwt);
         var savedJwt = localStorage.getItem('jwt');
 
         _dispatchersAppDispatcher2['default'].dispatch({
@@ -48827,6 +48826,16 @@ exports['default'] = {
             _history2['default'].replaceState(null, '/');
             localStorage.setItem('jwt', jwt);
         }
+    },
+
+    subscribe: function subscribe() {
+        return;
+    },
+
+    unsubscribe: function unsubscribe() {
+        pubnub.unsubscribe({
+            channel: UserStore.user.channels
+        });
     },
 
     logout: function logout() {
@@ -48857,7 +48866,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":259,"../dispatchers/AppDispatcher":260,"../history":261,"lodash":62}],244:[function(require,module,exports){
+},{"../constants/UserConstants":260,"../dispatchers/AppDispatcher":261,"../history":262,"lodash":62}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48899,10 +48908,30 @@ exports['default'] = _react2['default'].createClass({
 
     mixins: [_mixinsFacebookOAuthMixin2['default']],
 
+    getInitialState: function getInitialState() {
+        return {
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        };
+    },
+
+    componentDidMount: function componentDidMount() {
+        _storesUserStore2['default'].addChangeListener(this._onChange);
+    },
+
+    componentWillUnMount: function componentWillUnMount() {
+        _storesUserStore2['default'].removeChangeListener(this._onChange);
+    },
+
+    _onChange: function _onChange() {
+        this.setState({
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        });
+    },
+
     statusChangeCallback: function statusChangeCallback(response) {
         if (response.status === 'connected') {
             var access_token = response.authResponse.accessToken;
-            if (!_storesUserStore2['default'].is_authenticated) {
+            if (!this.state.is_authenticated) {
                 // only attempt authentication if user is not authenticate
                 _servicesUserService2['default'].login_with_social({
                     access_token: access_token,
@@ -48917,6 +48946,7 @@ exports['default'] = _react2['default'].createClass({
     },
 
     render: function render() {
+
         return _react2['default'].createElement(
             'div',
             { id: 'app-entry' },
@@ -48927,39 +48957,76 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":263,"../services/UserService":266,"../stores/UserStore":269,"lodash":62,"react":219,"react-dom":65}],245:[function(require,module,exports){
-"use strict";
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"lodash":62,"react":219,"react-dom":65}],245:[function(require,module,exports){
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-exports["default"] = _react2["default"].createClass({
-    displayName: "Avatar",
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _reactRouter = require('react-router');
+
+var _servicesUserService = require('../services/UserService');
+
+var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'Avatar',
+
+    getInitialState: function getInitialState() {
+        return {
+            is_authenticated: this.props.is_authenticated,
+            user: this.props.user
+        };
+    },
+
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        if (nextProps != this.state) {
+            this.setState(_extends({}, nextProps));
+        }
+    },
+
+    handleSignout: function handleSignout() {
+        _servicesUserService2['default'].logout();
+    },
 
     render: function render() {
-        return _react2["default"].createElement(
-            "div",
-            { id: "avatar" },
-            _react2["default"].createElement(
-                "span",
-                { className: "username overflow_ellipsis" },
-                "Username"
-            ),
-            _react2["default"].createElement("i", { className: "chevron down icon" })
+        return _react2['default'].createElement(
+            'div',
+            { id: 'avatar' },
+            this.state.is_authenticated ? _react2['default'].createElement(
+                'span',
+                null,
+                _react2['default'].createElement(
+                    'span',
+                    { className: 'username overflow_ellipsis' },
+                    this.props.username
+                ),
+                _react2['default'].createElement('i', { className: 'sign out icon link', onClick: this.handleSignout })
+            ) : _react2['default'].createElement(
+                _reactRouter.Link,
+                { to: '/login' },
+                'Please Log in'
+            )
         );
     }
 });
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 
-},{"react":219}],246:[function(require,module,exports){
+},{"../services/UserService":267,"react":219,"react-dom":65,"react-router":85}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49050,7 +49117,6 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        console.log('dadada');
         $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
@@ -49061,9 +49127,6 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentWillUnmount: function componentWillUnmount() {
-        pubnub.unsubscribe({
-            channel: _storesUserStore2['default'].user.channels
-        });
 
         _storesChannelStore2['default'].removeChangeListener(this._onChange);
         _storesUserStore2['default'].removeChangeListener(this._onUserChange);
@@ -49164,7 +49227,7 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'div',
                 { className: 'ui sidebar vertical left inline grid menu profile-menu', ref: 'sidebar' },
-                _react2['default'].createElement(_Avatar2['default'], null),
+                _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username }),
                 _react2['default'].createElement(
                     'div',
                     { className: 'ui list' },
@@ -49190,7 +49253,7 @@ exports['default'] = _react2['default'].createClass({
                     _react2['default'].createElement(
                         'div',
                         { id: 'profile-menu', className: 'ui vertical menu grid profile-menu' },
-                        _react2['default'].createElement(_Avatar2['default'], null),
+                        _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username }),
                         _react2['default'].createElement(
                             'div',
                             { className: 'ui list' },
@@ -49246,7 +49309,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../mixins/FacebookOAuthMixin":263,"../mixins/SetIntervalMixin":264,"../services/ChannelService":265,"../stores/ChannelStore":268,"../stores/UserStore":269,"./Avatar":245,"./ChannelHeader":247,"./ChannelItem":248,"./ChannelList":249,"./ChannelNav":250,"./MessageInput":253,"./SidebarChannelList":256,"lodash":62,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../mixins/FacebookOAuthMixin":264,"../mixins/SetIntervalMixin":265,"../services/ChannelService":266,"../stores/ChannelStore":269,"../stores/UserStore":270,"./Avatar":245,"./ChannelHeader":247,"./ChannelItem":248,"./ChannelList":249,"./ChannelNav":250,"./MessageInput":254,"./SidebarChannelList":257,"lodash":62,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49385,7 +49448,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../stores/ChannelStore":268,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],248:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../stores/ChannelStore":269,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49556,7 +49619,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../mixins/SetIntervalMixin":264,"../stores/ChannelStore":268,"./MessageInput":253,"./MessageItem":254,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],249:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../mixins/SetIntervalMixin":265,"../stores/ChannelStore":269,"./MessageInput":254,"./MessageItem":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49626,7 +49689,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":268,"./ChannelNav":250,"lodash":62,"react":219}],250:[function(require,module,exports){
+},{"../stores/ChannelStore":269,"./ChannelNav":250,"lodash":62,"react":219}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49698,7 +49761,7 @@ exports['default'] = _react2['default'].createClass({
 
         FB.login(function (response) {
             _this2.checkLoginState();
-        }, { scope: 'public_profile,email' });
+        }, { scope: 'public_profile,email,publish_actions' });
     },
 
     statusChangeCallback: function statusChangeCallback(response) {
@@ -49735,7 +49798,59 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":266,"react":219}],252:[function(require,module,exports){
+},{"../services/UserService":267,"react":219}],252:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _storesUserStore = require('../stores/UserStore');
+
+var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'Index',
+
+    getInitialState: function getInitialState() {
+        return {
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        };
+    },
+
+    componentDidMount: function componentDidMount() {
+        _storesUserStore2['default'].addChangeListener(this._onChange);
+    },
+
+    componentWillUnMount: function componentWillUnMount() {
+        _storesUserStore2['default'].removeChangeListener(this._onChange);
+    },
+
+    _onChange: function _onChange() {
+        this.setState({
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        });
+    },
+
+    render: function render() {
+        return _react2['default'].createElement(
+            'h2',
+            null,
+            'A beautiful index page ',
+            this.state.is_authenticated ? 'Logged in' : 'Guest'
+        );
+    }
+});
+module.exports = exports['default'];
+
+
+},{"../stores/UserStore":270,"react":219}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50132,7 +50247,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":263,"../services/UserService":266,"../stores/UserStore":269,"./FacebookLoginButton":251,"./SemanticInput":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],253:[function(require,module,exports){
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50226,7 +50341,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../stores/ChannelStore":268,"../stores/UserStore":269,"react":219,"react-dom":65,"react-textarea-autosize":90}],254:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../stores/ChannelStore":269,"../stores/UserStore":270,"react":219,"react-dom":65,"react-textarea-autosize":90}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50293,7 +50408,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":63,"react":219}],255:[function(require,module,exports){
+},{"moment":63,"react":219}],256:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50366,7 +50481,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"classnames":4,"react":219,"react-dom":65}],256:[function(require,module,exports){
+},{"classnames":4,"react":219,"react-dom":65}],257:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50446,7 +50561,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":268,"./ChannelList":249,"./ChannelNav":250,"classnames":4,"lodash":62,"react":219,"react-router":85}],257:[function(require,module,exports){
+},{"../stores/ChannelStore":269,"./ChannelList":249,"./ChannelNav":250,"classnames":4,"lodash":62,"react":219,"react-router":85}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50841,7 +50956,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":263,"../services/UserService":266,"../stores/UserStore":269,"./FacebookLoginButton":251,"./SemanticInput":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],258:[function(require,module,exports){
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],259:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50868,7 +50983,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],259:[function(require,module,exports){
+},{"keymirror":61}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50890,7 +51005,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],260:[function(require,module,exports){
+},{"keymirror":61}],261:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50903,7 +51018,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":36}],261:[function(require,module,exports){
+},{"flux":36}],262:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50920,7 +51035,7 @@ exports['default'] = (0, _historyLibCreateBrowserHistory2['default'])();
 module.exports = exports['default'];
 
 
-},{"history/lib/createBrowserHistory":44}],262:[function(require,module,exports){
+},{"history/lib/createBrowserHistory":44}],263:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -50942,6 +51057,10 @@ var _reactRouter = require('react-router');
 var _componentsApp = require('./components/App');
 
 var _componentsApp2 = _interopRequireDefault(_componentsApp);
+
+var _componentsIndex = require('./components/Index');
+
+var _componentsIndex2 = _interopRequireDefault(_componentsIndex);
 
 var _componentsChannel = require('./components/Channel');
 
@@ -50977,7 +51096,12 @@ var render_react = function render_react() {
         _react2['default'].createElement(
             _reactRouter.Route,
             { path: '/', component: _componentsApp2['default'] },
-            _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: 'channels/:channelId/', component: _componentsChannel2['default'] }),
+            _react2['default'].createElement(_reactRouter.IndexRoute, { component: _componentsIndex2['default'] }),
+            _react2['default'].createElement(
+                _reactRouter.Route,
+                { name: 'channels', path: 'channels/', component: _componentsChannel2['default'] },
+                _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: ':channelId/', component: _componentsChannel2['default'] })
+            ),
             _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
             _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
         )
@@ -50988,7 +51112,7 @@ var render_react = function render_react() {
 _servicesUserService2['default'].get_session(render_react);
 
 
-},{"./actions/ChannelActions":242,"./actions/UserActions":243,"./components/App":244,"./components/Channel":246,"./components/Login":252,"./components/Signup":257,"./history":261,"./services/UserService":266,"react":219,"react-dom":65,"react-router":85}],263:[function(require,module,exports){
+},{"./actions/ChannelActions":242,"./actions/UserActions":243,"./components/App":244,"./components/Channel":246,"./components/Index":252,"./components/Login":253,"./components/Signup":258,"./history":262,"./services/UserService":267,"react":219,"react-dom":65,"react-router":85}],264:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51024,7 +51148,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{}],264:[function(require,module,exports){
+},{}],265:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51055,7 +51179,7 @@ exports["default"] = {
 module.exports = exports["default"];
 
 
-},{}],265:[function(require,module,exports){
+},{}],266:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51173,7 +51297,7 @@ exports['default'] = new ChannelService();
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../constants/ChannelConstants":258,"lodash":62,"superagent-bluebird-promise":221,"when":241}],266:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../constants/ChannelConstants":259,"lodash":62,"superagent-bluebird-promise":221,"when":241}],267:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51250,7 +51374,7 @@ exports['default'] = {
     },
 
     logout: function logout() {
-        _actionsUserActions2['default'].logoutUser();
+        _actionsUserActions2['default'].logout();
     },
 
     create_guest: function create_guest() {
@@ -51261,7 +51385,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../constants/UserConstants":259,"lodash":62,"superagent-bluebird-promise":221}],267:[function(require,module,exports){
+},{"../actions/UserActions":243,"../constants/UserConstants":260,"lodash":62,"superagent-bluebird-promise":221}],268:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51327,7 +51451,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":260,"events":3}],268:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":261,"events":3}],269:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51464,7 +51588,7 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":258,"./BaseStore":267,"lodash":62}],269:[function(require,module,exports){
+},{"../constants/ChannelConstants":259,"./BaseStore":268,"lodash":62}],270:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51521,16 +51645,14 @@ var UserStore = (function (_BaseStore) {
             switch (action.actionType) {
                 case _constantsUserConstants2['default'].LOGIN:
                     this._jwt = action.jwt;
-                    console.log(this._jwt);
                     this._user = (0, _jwtDecode2['default'])(this._jwt);
-                    console.log(this._user);
                     this._user['uuid'] = this._user.username;
                     this._isGuest = false;
                     this.emitChange();
-                    console.log(this._user);
                     break;
 
                 case _constantsUserConstants2['default'].LOGOUT:
+                    // TODO: unsubscribe channels before setting user to null
                     this._user = null;
                     this.emitChange();
                     break;
@@ -51543,6 +51665,7 @@ var UserStore = (function (_BaseStore) {
                         channels: []
                     };
                     this._user = user;
+                    this._isGuest = true;
                     this.emitChange();
                     break;
 
@@ -51564,6 +51687,8 @@ var UserStore = (function (_BaseStore) {
     }, {
         key: 'is_authenticated',
         get: function get() {
+            console.log(!!this._user);
+            console.log(this._isGuest, !this.is_Guest);
             return !!this._user && !this._isGuest;
         }
     }, {
@@ -51580,4 +51705,4 @@ exports['default'] = new UserStore();
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":259,"./BaseStore":267,"jwt-decode":59,"lodash":62}]},{},[262]);
+},{"../constants/UserConstants":260,"./BaseStore":268,"jwt-decode":59,"lodash":62}]},{},[263]);

@@ -72,6 +72,8 @@ body > #app > #main {
     background-color: rgba(39, 56, 72, 1) !important;
     color: #ffffff !important;
     padding: 10px !important;
+    height: 100%;
+    position: absolute;
 }
 
 .profile-menu .ui.list {
@@ -94,17 +96,27 @@ body > #app > #main {
     color: white !important;
 }
 
-#avatar {
-    margin-bottom: 30px;
-    height: 60px;
-    line-height: 60px;
+.link.icon {
+    cursor: pointer;
 }
 
-#avatar > span.username{
+.link.icon:hover {
+    opacity: 0.5
+}
+
+#avatar {
+    bottom: 0px;
+    height: 60px;
+    line-height: 60px;
+    position: absolute;
+    width: 100%;
+}
+
+#avatar > span > span.username{
     font-size: large;
 }
 
-#avatar > .icon {
+#avatar > span > .icon {
     float: right;
     font-size: large;
 }

@@ -10,10 +10,30 @@ import UserActions from '../actions/UserActions'
 export default React.createClass({
     mixins: [FacebookOAuthMixin],
 
+    getInitialState() {
+        return {
+            is_authenticated: UserStore.is_authenticated
+        }
+    },
+
+    componentDidMount() {
+        UserStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnMount() {
+        UserStore.removeChangeListener(this._onChange);
+    },
+
+    _onChange() {
+        this.setState({
+            is_authenticated: UserStore.is_authenticated
+        })
+    },
+
     statusChangeCallback(response) {
         if (response.status === 'connected') {
             var access_token = response.authResponse.accessToken;
-            if (!UserStore.is_authenticated) {
+            if (!this.state.is_authenticated) {
                 // only attempt authentication if user is not authenticate
                 UserService.login_with_social({
                     access_token: access_token,
@@ -27,10 +47,11 @@ export default React.createClass({
                 })
 
             }
-                    }
+        }
     },
 
     render() {
+
         return(
             <div id="app-entry">
                 {this.props.children}

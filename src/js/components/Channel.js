@@ -31,7 +31,6 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        console.log('dadada')
         $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
@@ -42,9 +41,7 @@ export default React.createClass({
     },
 
     componentWillUnmount() {
-        pubnub.unsubscribe({
-            channel: UserStore.user.channels
-        });
+
 
         ChannelStore.removeChangeListener(this._onChange);
         UserStore.removeChangeListener(this._onUserChange);
@@ -140,7 +137,7 @@ export default React.createClass({
         return (
             <div id="main">
                 <div className="ui sidebar vertical left inline grid menu profile-menu" ref="sidebar">
-                    <Avatar />
+                    <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     <div className="ui list">
                         <h5 className="ui header">Top 5 Stocks</h5>
                         <ChannelNav name="top 1" />
@@ -154,7 +151,7 @@ export default React.createClass({
                 <div className="full height pusher">
                     <div id="profile-container">
                         <div id="profile-menu" className="ui vertical menu grid profile-menu">
-                            <Avatar />
+                            <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                             <div className="ui list">
                                 <h5 className="ui header">Top 5 Stocks</h5>
                                 <ChannelNav name="top 1" />

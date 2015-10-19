@@ -82,7 +82,7 @@ export default {
     },
 
     logout() {
-        UserActions.logoutUser()
+        UserActions.logout()
     },
 
     create_guest() {

@@ -5,7 +5,6 @@ import UserConstants from '../constants/UserConstants'
 
 export default {
     login(jwt) {
-        console.log(jwt);
         var savedJwt = localStorage.getItem('jwt');
 
         AppDispatcher.dispatch({
@@ -18,6 +17,16 @@ export default {
             history.replaceState(null, '/')
             localStorage.setItem('jwt', jwt);
         }
+    },
+
+    subscribe() {
+        return
+    },
+
+    unsubscribe() {
+        pubnub.unsubscribe({
+            channel: UserStore.user.channels
+        });
     },
 
     logout() {
