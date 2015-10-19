@@ -22,7 +22,8 @@ export default React.createClass({
             password: '',
             username: '',
             email: '',
-            invalid_messages: []
+            invalid_messages: [],
+            access_token: '',
         })
     },
 
@@ -146,8 +147,27 @@ export default React.createClass({
         e.preventDefault();
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
             UserService.register({...this.state})
+            .then((res) => {
+                UserActions.login(res.body.jwt)
+            })
+            .catch((err) => {
+                alert('An error occured, please try again!')
+            })
         }
+    },
 
+    handleNewSocialSubmit(e) {
+        e.preventDefault();
+        if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
+            UserService.register({...this.state})
+            .then(UserService.login_with_social({...this.state}))
+            .then((res) => {
+                UserActions.login(res.body.jwt)
+            })
+            .catch((err) => {
+                alert('An error occured, please try again!')
+            })
+        }
     },
 
     handleNewSocial(access_token) {
@@ -156,14 +176,16 @@ export default React.createClass({
             pw_is_valid: true,
             email_is_valid: true,
             username_is_valid: true,
+            access_token: access_token,
+            backend: 'facebook'
         });
         let that = this
-        FB.api('/me?fields=email', function(response) {
+        FB.api('/me?fields=email', (response) => {
             that.setState({
                 email: response.email,
                 new_social: true
             });
-          });
+        });
     },
 
     handleCancelDimmer() {
@@ -242,12 +264,7 @@ export default React.createClass({
                         <div className="center">
                             <div style={{maxWidth: '450px', minWidth: '400px', margin: '0 auto'}}>
                                 <h2>Please enter username and password</h2>
-                                <form className="ui large form" method="post" onSubmit={this.handleSubmit}>
-
-                                    <SemanticInput required={true} icon={true} name="email" placeholder="Email" is_valid={this.state.email_is_valid}
-                                        type="email" value={this.state.email} onChange={this.handleChangeUsername} autoComplete="off">
-                                        <i className="mail icon" />
-                                    </SemanticInput>
+                                <form className="ui large form" method="post" onSubmit={this.handleNewSocialSubmit}>
 
                                     <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
                                         type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>

@@ -38,17 +38,12 @@ export default {
     },
 
     register(credentials) {
-        request
+        return request
             .post(Urls['api-register']())
             .send(credentials)
             .set('X-CSRFTOKEN', csrf_token)
             .promise()
-            .then((res) => {
-                UserActions.login(res.body.jwt)
-            })
-            .catch((err) => {
-                alert('An error occured, please try again!')
-            })
+
     },
 
     login(credentials) {

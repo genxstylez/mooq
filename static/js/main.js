@@ -49946,9 +49946,15 @@ exports['default'] = _react2['default'].createClass({
         });
     },
 
-    handleSubmitNewSocial: function handleSubmitNewSocial(e) {
+    handleNewSocialSubmit: function handleNewSocialSubmit(e) {
         e.preventDefault();
-        _servicesUserService2['default'].register(_extends({}, this.state));
+        if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
+            _servicesUserService2['default'].register(_extends({}, this.state)).then(_servicesUserService2['default'].login_with_social(_extends({}, this.state))).then(function (res) {
+                _actionsUserActions2['default'].login(res.body.jwt);
+            })['catch'](function (err) {
+                alert('An error occured, please try again!');
+            });
+        }
     },
 
     handleNewSocial: function handleNewSocial(access_token) {
@@ -49956,7 +49962,9 @@ exports['default'] = _react2['default'].createClass({
             invalid_messages: [],
             pw_is_valid: true,
             email_is_valid: true,
-            username_is_valid: true
+            username_is_valid: true,
+            access_token: access_token,
+            backend: 'facebook'
         });
         var that = this;
         FB.api('/me?fields=email', function (response) {
@@ -50075,13 +50083,7 @@ exports['default'] = _react2['default'].createClass({
                             ),
                             _react2['default'].createElement(
                                 'form',
-                                { className: 'ui large form', method: 'post', onSubmit: this.handleSubmitNewSocial },
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'email', placeholder: 'Email', is_valid: this.state.email_is_valid,
-                                        type: 'email', value: this.state.email, onChange: this.handleChangeUsername, autoComplete: 'off' },
-                                    _react2['default'].createElement('i', { className: 'mail icon' })
-                                ),
+                                { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
                                 _react2['default'].createElement(
                                     _SemanticInput2['default'],
                                     { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
@@ -50511,7 +50513,8 @@ exports['default'] = _react2['default'].createClass({
             password: '',
             username: '',
             email: '',
-            invalid_messages: []
+            invalid_messages: [],
+            access_token: ''
         };
     },
 
@@ -50636,7 +50639,22 @@ exports['default'] = _react2['default'].createClass({
     handleSubmit: function handleSubmit(e) {
         e.preventDefault();
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
-            _servicesUserService2['default'].register(_extends({}, this.state));
+            _servicesUserService2['default'].register(_extends({}, this.state)).then(function (res) {
+                _actionsUserActions2['default'].login(res.body.jwt);
+            })['catch'](function (err) {
+                alert('An error occured, please try again!');
+            });
+        }
+    },
+
+    handleNewSocialSubmit: function handleNewSocialSubmit(e) {
+        e.preventDefault();
+        if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
+            _servicesUserService2['default'].register(_extends({}, this.state)).then(_servicesUserService2['default'].login_with_social(_extends({}, this.state))).then(function (res) {
+                _actionsUserActions2['default'].login(res.body.jwt);
+            })['catch'](function (err) {
+                alert('An error occured, please try again!');
+            });
         }
     },
 
@@ -50645,7 +50663,9 @@ exports['default'] = _react2['default'].createClass({
             invalid_messages: [],
             pw_is_valid: true,
             email_is_valid: true,
-            username_is_valid: true
+            username_is_valid: true,
+            access_token: access_token,
+            backend: 'facebook'
         });
         var that = this;
         FB.api('/me?fields=email', function (response) {
@@ -50772,13 +50792,7 @@ exports['default'] = _react2['default'].createClass({
                             ),
                             _react2['default'].createElement(
                                 'form',
-                                { className: 'ui large form', method: 'post', onSubmit: this.handleSubmit },
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'email', placeholder: 'Email', is_valid: this.state.email_is_valid,
-                                        type: 'email', value: this.state.email, onChange: this.handleChangeUsername, autoComplete: 'off' },
-                                    _react2['default'].createElement('i', { className: 'mail icon' })
-                                ),
+                                { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
                                 _react2['default'].createElement(
                                     _SemanticInput2['default'],
                                     { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
@@ -51207,11 +51221,7 @@ exports['default'] = {
     },
 
     register: function register(credentials) {
-        _superagentBluebirdPromise2['default'].post(Urls['api-register']()).send(credentials).set('X-CSRFTOKEN', csrf_token).promise().then(function (res) {
-            _actionsUserActions2['default'].login(res.body.jwt);
-        })['catch'](function (err) {
-            alert('An error occured, please try again!');
-        });
+        return _superagentBluebirdPromise2['default'].post(Urls['api-register']()).send(credentials).set('X-CSRFTOKEN', csrf_token).promise();
     },
 
     login: function login(credentials) {
