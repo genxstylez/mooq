@@ -1,8 +1,8 @@
 import KeyMirror from 'keymirror';
 
 export default KeyMirror({
+    LOGIN: null,
+    LOGOUT: null,
     CREATE_GUEST: null,
-    AUTHENTICATED: null,
-
-    API_URL: 'http://localhost:8000/api/channels',
+    AUTHENTICATED: null
 })

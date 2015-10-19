@@ -32,12 +32,14 @@ router.register(r'me', MemberView.MeViewSet, base_name='me')
 urlpatterns = [
     #url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^api/', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api-social-auth/$', 'member.views.social_auth'), # 網頁端送backend及access_token, 回傳jwt_token
-    url(r'^api-token-auth/$', 'rest_framework_jwt.views.obtain_jwt_token', name="api-token-auth"),
-    url(r'accounts/', include('member.urls')),
-    url(r'^login/$', 'django.contrib.auth.views.login',
-        {'template_name': 'member/login.html'}, name='login'),
+    url(r'^api-register/', 'member.views.create_user', name='api-register'),
+    url(r'^api-login/', 'rest_framework_jwt.views.obtain_jwt_token', name='api-login'), # jwt login
+    url(r'^api-social-auth/$', 'member.views.social_auth', name='api-social-auth'),
+
+    url(r'^api-check-username/', 'member.views.check_username', name='api-check-username'),
+    url(r'^api-check-email/', 'member.views.check_email', name='api-check-email'),
+
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')), # login/logout view for browsable api
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': 'index'}, name='logout'),
     url(r'^admin/', include(admin.site.urls)),

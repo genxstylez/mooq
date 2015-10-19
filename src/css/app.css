@@ -6,12 +6,28 @@ body > #app{
     height: 100%;
 }
 
+#app > #app-entry {
+    height: 100%;
+}
+
 body > #app > #main {
     height: 100%
 }
 
 .ui.form textarea {
     resize: none;
+}
+
+.login {
+    height: 100%;
+}
+
+.login .image {
+    margin-top: -100px;
+}
+.login .column {
+    max-width: 450px;
+    min-width: 400px;
 }
 
 #main > .full.height {
