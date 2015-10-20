@@ -194,6 +194,47 @@ body > #app > #main {
     z-index: 2;
 }
 
+.mobile-menu {
+    position: relative;
+    vertical-align: middle;
+    line-height: 1;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: 0 0;
+    padding: .92857143em 1.14285714em;
+    text-transform: none;
+    color: rgba(0,0,0,.7);
+    font-weight: 400;
+    -webkit-transition: background .1s ease,box-shadow .1s ease,color .1s ease;
+    transition: background .1s ease,box-shadow .1s ease,color .1s ease;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: fixed;
+    height: 80px;
+    width: 88px;
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+.mobile-menu:hover {
+    opacity: 1;
+    color: rgba(0,0,0,1);
+}
+
 @media only screen and (max-width: 1145px) {
     #profile-container  {
         display: none;
@@ -201,6 +242,12 @@ body > #app > #main {
 
     #messages-container > #footer {
         left: 0px;
+    }
+    .mobile-menu {
+        z-index: 102;
+    }
+    .channel-header > .channel-name {
+        margin-left: 88px;
     }
 }
 

@@ -21,4 +21,7 @@ class ChannelSubscribers(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'), related_name='channels')
     is_moderator = models.BooleanField(_('is_moderator'))
 
+    def __str__(self):
+        return '{} : {}'.format(self.channel, self.user)
+
 

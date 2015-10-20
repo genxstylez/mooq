@@ -30,7 +30,7 @@ export default React.createClass({
                             <span className="username overflow_ellipsis">{this.props.username}</span>
                             <i className="sign out icon link" onClick={this.handleSignout}></i>
                         </span>
-                    : <Link to='/login'>Please Log in</Link>
+                    : <Link to='/login/'>Please Log in</Link>
                     }
 
                 </div>

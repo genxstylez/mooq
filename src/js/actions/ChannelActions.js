@@ -18,6 +18,7 @@ export default {
         });
     },
 
+
     /*
     @param {string} id The ID of the channel
     */
@@ -44,11 +45,23 @@ export default {
     /*
     @param {object} msgObj new message object that is published to the channel
     */
-    recv_new_message(msgObj) {
+    recv_new_message(msg, event, channel) {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.RECV_NEW_MESSAGE,
-            msgObj: msgObj
+            msg: msg,
+            event: event,
+            channel: channel
         });
+    },
+
+    recv_presence(presence, event, channel) {
+        AppDispatcher.dispatch({
+            actionType: ChannelConstants.RECV_PRESENCE,
+            presence: presence,
+            event: event,
+            channel: channel
+        })
+
     },
 
     got_history(channel_id, history, timetoken) {

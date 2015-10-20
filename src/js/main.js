@@ -16,23 +16,21 @@ import ChannelActions from './actions/ChannelActions'
 let jwt = localStorage.getItem('jwt')
 if (jwt)
     UserActions.login(jwt)
+else
+    UserActions.create_guest()
 
-var render_react = () => {
-    ReactDOM.render((
-        <Router history={history}>
-            <Route path="/" component={App}>
-                <IndexRoute component={Index} />
-                <Route name="channels" path="channels/" component={Channel}>
-                    <Route name="channels" path=":channelId/" component={Channel} />
-                </Route>
-                <Route name="login" path="login/" component={Login} />
-                <Route name="signup" path="signup/" component={Signup} />
+ReactDOM.render((
+    <Router history={history}>
+        <Route path="/" component={App}>
+            <IndexRoute component={Index} />
+            <Route name="channels" path="channels/" component={Channel}>
+                <Route name="channels" path=":channelId/" component={Channel} />
             </Route>
+            <Route name="join-channel" path="join-channel/" component={Channel} />
+            <Route name="login" path="login/" component={Login} />
+            <Route name="signup" path="signup/" component={Signup} />
+        </Route>
 
-        </Router>
+    </Router>
 
-    ), document.getElementById('app'));
-};
-
-// Get user session before rendering.
-UserService.get_session(render_react);
+), document.getElementById('app'));

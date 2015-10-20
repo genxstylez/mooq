@@ -48754,10 +48754,21 @@ exports['default'] = {
     /*
     @param {object} msgObj new message object that is published to the channel
     */
-    recv_new_message: function recv_new_message(msgObj) {
+    recv_new_message: function recv_new_message(msg, event, channel) {
         _dispatchersAppDispatcher2['default'].dispatch({
             actionType: _constantsChannelConstants2['default'].RECV_NEW_MESSAGE,
-            msgObj: msgObj
+            msg: msg,
+            event: event,
+            channel: channel
+        });
+    },
+
+    recv_presence: function recv_presence(presence, event, channel) {
+        _dispatchersAppDispatcher2['default'].dispatch({
+            actionType: _constantsChannelConstants2['default'].RECV_PRESENCE,
+            presence: presence,
+            event: event,
+            channel: channel
         });
     },
 
@@ -48957,7 +48968,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"lodash":62,"react":219,"react-dom":65}],245:[function(require,module,exports){
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":271,"lodash":62,"react":219,"react-dom":65}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49017,7 +49028,7 @@ exports['default'] = _react2['default'].createClass({
                 _react2['default'].createElement('i', { className: 'sign out icon link', onClick: this.handleSignout })
             ) : _react2['default'].createElement(
                 _reactRouter.Link,
-                { to: '/login' },
+                { to: '/login/' },
                 'Please Log in'
             )
         );
@@ -49123,85 +49134,60 @@ exports['default'] = _react2['default'].createClass({
 
         _storesChannelStore2['default'].addChangeListener(this._onChange);
         _storesUserStore2['default'].addChangeListener(this._onUserChange);
-        this.setInterval(_servicesChannelService2['default'].get_here_now, 10000, true);
+        //this.setInterval(ChannelService.get_here_now, 10000, true);
     },
 
     componentWillUnmount: function componentWillUnmount() {
-
         _storesChannelStore2['default'].removeChangeListener(this._onChange);
         _storesUserStore2['default'].removeChangeListener(this._onUserChange);
     },
 
     componentWillMount: function componentWillMount() {
-        this.handleSession();
+        var _this = this;
+
+        if (this.state.is_authenticated) {
+            // Get channel list and join them
+            _servicesChannelService2['default'].get_subscribed_channels(this.state.user.user_id).then(function (res) {
+                console.log(res);
+                if (res.body.length > 0) {
+                    _servicesChannelService2['default'].join_channels(res.body);
+                    if (!_this.props.params.channelId) {
+                        // if no channel Id is provided, go to the first channel of the list
+                        _this.history.replaceState(null, '/channels/' + res.body[0].id + '/');
+                    } else {
+                        _actionsChannelActions2['default'].mark_as_active(_this.props.params.channelId);
+                    }
+                } else {
+                    history.replaceState(null, 'join-channel');
+                }
+            });
+        } else {
+            if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else history.pushState(null, 'join-channel');
+        }
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps.params.channelId != this.props.params.channelId) {
-            console.log('in if recv props');
-            this.join_channel(nextProps.params.channelId);
+            var id = nextProps.params.channelId;
+            if (this.state.is_authenticated) _actionsChannelActions2['default'].mark_as_active(id);else this.handleGuestSession(id);
         }
         $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar('hide');
     },
 
-    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-        console.log('didupdate');
-        if (prevState.is_authenticated != this.state.is_authenticated) {
-            // handle user login or logout, refresh session again
-            this.handleSession();
-        }
-    },
+    handleGuestSession: function handleGuestSession(id) {
+        var _this2 = this;
 
-    handleSession: function handleSession() {
-        var first_channel;
-        if (this.state.is_authenticated) {
-            if (this.state.user.channels.length > 0) {
-                // handles user with channels
-                _servicesChannelService2['default'].join_channels(this.state.user.channels);
-                first_channel = this.state.user.channels[0];
-                //Select first channel for further use.
-            }
-        }
-
-        if (!this.props.params.channelId) {
-            // if channelId is not provided on url, go to first channel
-            if (first_channel) {
-                this.history.pushState(first_channel.name, '/channels/' + first_channel.id + '/');
-            } else {
-                this.setState({
-                    prompt_to_join: true
-                });
-            }
-        } else {
-            this.join_channel(this.props.params.channelId);
-        }
-    },
-
-    join_channel: function join_channel(id) {
-        var _this = this;
-
-        var channel = _storesChannelStore2['default'].get_channel(id);
-        if (!channel) {
-            // If channel not found, get complete channel info from server
-            var promise = _servicesChannelService2['default'].async_get_channel_info(id);
-            promise.then(function (res) {
-                // res.body is a channel object
-                channel = res.body;
-                _servicesChannelService2['default'].join_channels([channel]);
-                _actionsChannelActions2['default'].mark_as_active(channel.id);
-                _this.setState({
-                    prompt_to_join: false
-                });
-            }, function (err) {
-                alert('Something went wrong');
-            });
-        } else {
-            // if channel exists in store, means we already joined, just mark it as active
+        _servicesChannelService2['default'].async_get_channel_info(id).then(function (res) {
+            // res.body is a channel object
+            var channel = res.body;
+            _servicesChannelService2['default'].join_channels([channel]);
             _actionsChannelActions2['default'].mark_as_active(channel.id);
-            this.setState({
+            _this2.setState({
                 prompt_to_join: false
             });
-        }
+        }, function (err) {
+            alert('Something went wrong');
+        });
     },
 
     _onUserChange: function _onUserChange() {
@@ -49219,7 +49205,7 @@ exports['default'] = _react2['default'].createClass({
     },
 
     render: function render() {
-        var _this2 = this;
+        var _this3 = this;
 
         return _react2['default'].createElement(
             'div',
@@ -49247,6 +49233,11 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'div',
                 { className: 'full height pusher' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'icon item mobile-menu' },
+                    _react2['default'].createElement('i', { className: 'content icon' })
+                ),
                 _react2['default'].createElement(
                     'div',
                     { id: 'profile-container' },
@@ -49282,7 +49273,7 @@ exports['default'] = _react2['default'].createClass({
                             occupancy: channel.occupancy,
                             users: channel.users,
                             messages: channel.messages,
-                            is_active: _this2.state.active_channel.id == channel.id });
+                            is_active: _this3.state.active_channel.id == channel.id });
                     }),
                     this.state.prompt_to_join ? _react2['default'].createElement(
                         'div',
@@ -49309,7 +49300,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../mixins/FacebookOAuthMixin":264,"../mixins/SetIntervalMixin":265,"../services/ChannelService":266,"../stores/ChannelStore":269,"../stores/UserStore":270,"./Avatar":245,"./ChannelHeader":247,"./ChannelItem":248,"./ChannelList":249,"./ChannelNav":250,"./MessageInput":254,"./SidebarChannelList":257,"lodash":62,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../mixins/FacebookOAuthMixin":264,"../mixins/SetIntervalMixin":265,"../services/ChannelService":266,"../stores/ChannelStore":270,"../stores/UserStore":271,"./Avatar":245,"./ChannelHeader":247,"./ChannelItem":248,"./ChannelList":249,"./ChannelNav":250,"./MessageInput":254,"./SidebarChannelList":257,"lodash":62,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49411,15 +49402,10 @@ exports['default'] = _react2['default'].createClass({
             ),
             _react2['default'].createElement(
                 'div',
-                { className: 'ui top fixed menu' },
-                _react2['default'].createElement(
-                    'a',
-                    { className: 'icon item mobile-menu', onClick: this.props.onClickMobileMenu },
-                    _react2['default'].createElement('i', { className: 'content icon' })
-                ),
+                { className: 'ui top fixed menu channel-header' },
                 _react2['default'].createElement(
                     'div',
-                    { className: 'item' },
+                    { className: 'item channel-name' },
                     _react2['default'].createElement(
                         'h2',
                         { className: 'ui header' },
@@ -49448,7 +49434,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../stores/ChannelStore":269,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],248:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../stores/ChannelStore":270,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49519,7 +49505,7 @@ exports['default'] = _react2['default'].createClass({
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
-        this.setInterval(this._getStock, 5000, true);
+        //this.setInterval(this._getStock, 5000, true);
     },
 
     componentWillUnmount: function componentWillUnmount() {
@@ -49544,44 +49530,6 @@ exports['default'] = _react2['default'].createClass({
         height = height + 20; // 20 is the padding for footer
         node.style.bottom = height.toString() + 'px';
         node.scrollTop = node.scrollHeight;
-    },
-
-    _getStock: function _getStock() {
-        var _this = this;
-
-        _superagent2['default'].get('http://www.google.com/finance/info?q=NASDAQ:AAPL').end(function (err, res) {
-            var response = res.text.trim().replace('/', '').replace('/', '');
-            response = JSON.parse(response)[0];
-            _this.setState({
-                price: response.l
-            });
-        });
-        /* YAHOO finance api delay about 20 mins
-        .get('https://query.yahooapis.com/v1/public/yql')
-        .query('q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20%3D%20%22AAPL%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=')
-        .end((err, res) => {
-            var response = JSON.parse(res.text);
-            console.log(response);
-            this.setState({
-                price: response['query']['results']['quote']['Ask']
-            });
-        })
-         */
-        /*
-        request.get('http://mis.twse.com.tw/stock/index.jsp')
-        .type('application/json')
-        .withCredentials()
-        .set({'X-DevTools-Emulate-Network-Conditions-Client-Id': '308DBF43-EDDA-425B-AC7D-5969B1A15BA1'})
-        .end((err, res) => {
-        request.get('http://mis.twse.com.tw/stock/api/getStockInfo.jsp')
-            .query('ex_ch=otc_2233.tw&json=1&delay=0')
-            .end((err, res) => {
-                console.log(res.text);
-                var response = JSON.parse(res.text);
-                console.log(response);
-            });
-        })
-        */
     },
 
     handleHereNow: function handleHereNow() {
@@ -49619,7 +49567,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../mixins/SetIntervalMixin":265,"../stores/ChannelStore":269,"./MessageInput":254,"./MessageItem":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],249:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../mixins/SetIntervalMixin":265,"../stores/ChannelStore":270,"./MessageInput":254,"./MessageItem":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49689,7 +49637,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":269,"./ChannelNav":250,"lodash":62,"react":219}],250:[function(require,module,exports){
+},{"../stores/ChannelStore":270,"./ChannelNav":250,"lodash":62,"react":219}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49850,7 +49798,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/UserStore":270,"react":219}],253:[function(require,module,exports){
+},{"../stores/UserStore":271,"react":219}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49889,6 +49837,10 @@ var _servicesUserService = require('../services/UserService');
 
 var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
 
+var _servicesValidationService = require('../services/ValidationService');
+
+var _servicesValidationService2 = _interopRequireDefault(_servicesValidationService);
+
 var _SemanticInput = require('./SemanticInput');
 
 var _SemanticInput2 = _interopRequireDefault(_SemanticInput);
@@ -49920,7 +49872,8 @@ exports['default'] = _react2['default'].createClass({
             username: '',
             email: '',
             is_authenticated: _storesUserStore2['default'].is_authenticated,
-            invalid_messages: []
+            login_invalid_messages: [],
+            new_invalid_messages: []
         };
     },
 
@@ -49943,25 +49896,26 @@ exports['default'] = _react2['default'].createClass({
     },
 
     handleChange: function handleChange(e) {
+        console.log('in handleChange');
         this.setState(_defineProperty({}, e.target.name, e.target.value));
     },
 
     handleChangePassword: function handleChangePassword(e) {
         if (e.target.value) {
-            var ret = _servicesUserService2['default'].validate_password(e.target.value);
+            var ret = _servicesValidationService2['default'].validate_password(e.target.value);
             if (ret) {
                 var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
                 this.setState({
                     password: e.target.value,
                     pw_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             } else {
                 var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
                 invalid_messages.push({ key: 'password', value: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8' });
                 this.setState({
                     pw_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }
         } else {
@@ -49969,7 +49923,7 @@ exports['default'] = _react2['default'].createClass({
             invalid_messages.push({ key: 'password', value: 'Password is required' });
             this.setState({
                 pw_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             });
         }
     },
@@ -49978,26 +49932,26 @@ exports['default'] = _react2['default'].createClass({
         var _this = this;
 
         if (e.target.value) {
-            _servicesUserService2['default'].validate_username(e.target.value, function () {
+            _servicesValidationService2['default'].validate_username(e.target.value, function () {
                 var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 _this.setState({
                     username: e.target.value,
                     username_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }, function () {
                 var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 invalid_messages.push({ key: 'username', value: 'This username is already taken!' });
                 _this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }, function () {
                 var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 invalid_messages.push({ key: 'username', value: 'Username must be either number or characters, length must be 4-30' });
                 _this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             });
         } else {
@@ -50005,7 +49959,7 @@ exports['default'] = _react2['default'].createClass({
             invalid_messages.push({ key: 'username', value: 'Username is required' });
             this.setState({
                 username_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             });
         }
     },
@@ -50014,26 +49968,26 @@ exports['default'] = _react2['default'].createClass({
         var _this2 = this;
 
         if (e.target.value) {
-            _servicesUserService2['default'].validate_email(e.target.value, function () {
+            _servicesValidationService2['default'].validate_email(e.target.value, function () {
                 var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 _this2.setState({
                     email: e.target.value,
                     email_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }, function () {
                 var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 invalid_messages.push({ key: 'email', value: 'This emails is already taken!' });
                 _this2.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }, function () {
                 var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 invalid_messages.push({ key: 'email', value: 'Email is invalid' });
                 _this2.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             });
         } else {
@@ -50041,7 +49995,7 @@ exports['default'] = _react2['default'].createClass({
             invalid_messages.push({ key: 'email', value: 'Email is required' });
             this.setState({
                 email_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             });
         }
     },
@@ -50050,13 +50004,14 @@ exports['default'] = _react2['default'].createClass({
         var _this3 = this;
 
         e.preventDefault();
-        _servicesUserService2['default'].login(_extends({}, this.state)).then(function () {
-            console.log('login successful');
-        })['catch'](function () {
+        _servicesUserService2['default'].login(_extends({}, this.state)).then(function (res) {
+            _actionsUserActions2['default'].login(res.body.token);
+            // history.replaceState(null, 'channels')
+        })['catch'](function (err) {
             var invalid_messages = [];
             invalid_messages.push({ key: 'login', value: 'Incorrect username and password, please check it again' });
             _this3.setState({
-                invalid_messages: invalid_messages
+                login_invalid_messages: invalid_messages
             });
         });
     },
@@ -50065,7 +50020,7 @@ exports['default'] = _react2['default'].createClass({
         e.preventDefault();
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
             _servicesUserService2['default'].register(_extends({}, this.state)).then(_servicesUserService2['default'].login_with_social(_extends({}, this.state))).then(function (res) {
-                _actionsUserActions2['default'].login(res.body.jwt);
+                _actionsUserActions2['default'].login(res.body.token);
             })['catch'](function (err) {
                 alert('An error occured, please try again!');
             });
@@ -50153,7 +50108,7 @@ exports['default'] = _react2['default'].createClass({
                         )
                     )
                 ),
-                this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
+                this.state.login_invalid_messages.length > 0 ? _react2['default'].createElement(
                     'div',
                     { className: 'ui error message' },
                     _react2['default'].createElement(
@@ -50222,7 +50177,7 @@ exports['default'] = _react2['default'].createClass({
                                     'Cancel'
                                 )
                             ),
-                            this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
+                            this.state.new_invalid_messages.length > 0 ? _react2['default'].createElement(
                                 'div',
                                 { className: 'ui error message' },
                                 _react2['default'].createElement(
@@ -50247,7 +50202,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],254:[function(require,module,exports){
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../services/ValidationService":268,"../stores/UserStore":271,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50341,7 +50296,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":242,"../stores/ChannelStore":269,"../stores/UserStore":270,"react":219,"react-dom":65,"react-textarea-autosize":90}],255:[function(require,module,exports){
+},{"../actions/ChannelActions":242,"../stores/ChannelStore":270,"../stores/UserStore":271,"react":219,"react-dom":65,"react-textarea-autosize":90}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50561,7 +50516,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":269,"./ChannelList":249,"./ChannelNav":250,"classnames":4,"lodash":62,"react":219,"react-router":85}],258:[function(require,module,exports){
+},{"../stores/ChannelStore":270,"./ChannelList":249,"./ChannelNav":250,"classnames":4,"lodash":62,"react":219,"react-router":85}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50597,6 +50552,10 @@ var _actionsUserActions2 = _interopRequireDefault(_actionsUserActions);
 var _servicesUserService = require('../services/UserService');
 
 var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
+
+var _servicesValidationService = require('../services/ValidationService');
+
+var _servicesValidationService2 = _interopRequireDefault(_servicesValidationService);
 
 var _SemanticInput = require('./SemanticInput');
 
@@ -50653,7 +50612,7 @@ exports['default'] = _react2['default'].createClass({
 
     handleChangePassword: function handleChangePassword(e) {
         if (e.target.value) {
-            var ret = _servicesUserService2['default'].validate_password(e.target.value);
+            var ret = _servicesValidationService2['default'].validate_password(e.target.value);
             if (ret) {
                 var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
                 this.setState({
@@ -50683,7 +50642,7 @@ exports['default'] = _react2['default'].createClass({
         var _this = this;
 
         if (e.target.value) {
-            _servicesUserService2['default'].validate_username(e.target.value, function () {
+            _servicesValidationService2['default'].validate_username(e.target.value, function () {
                 var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 _this.setState({
                     username: e.target.value,
@@ -50719,7 +50678,7 @@ exports['default'] = _react2['default'].createClass({
         var _this2 = this;
 
         if (e.target.value) {
-            _servicesUserService2['default'].validate_email(e.target.value, function () {
+            _servicesValidationService2['default'].validate_email(e.target.value, function () {
                 var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 _this2.setState({
                     email: e.target.value,
@@ -50755,7 +50714,7 @@ exports['default'] = _react2['default'].createClass({
         e.preventDefault();
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
             _servicesUserService2['default'].register(_extends({}, this.state)).then(function (res) {
-                _actionsUserActions2['default'].login(res.body.jwt);
+                _actionsUserActions2['default'].login(res.body.token);
             })['catch'](function (err) {
                 alert('An error occured, please try again!');
             });
@@ -50766,7 +50725,7 @@ exports['default'] = _react2['default'].createClass({
         e.preventDefault();
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
             _servicesUserService2['default'].register(_extends({}, this.state)).then(_servicesUserService2['default'].login_with_social(_extends({}, this.state))).then(function (res) {
-                _actionsUserActions2['default'].login(res.body.jwt);
+                _actionsUserActions2['default'].login(res.body.token);
             })['catch'](function (err) {
                 alert('An error occured, please try again!');
             });
@@ -50956,7 +50915,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../stores/UserStore":270,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],259:[function(require,module,exports){
+},{"../actions/UserActions":243,"../mixins/FacebookOAuthMixin":264,"../services/UserService":267,"../services/ValidationService":268,"../stores/UserStore":271,"./FacebookLoginButton":251,"./SemanticInput":256,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],259:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50975,6 +50934,7 @@ exports['default'] = (0, _keymirror2['default'])({
     CHANNEL_ACTIVE: null,
     CREATE_NEW_MESSAGE: null,
     RECV_NEW_MESSAGE: null,
+    RECV_PRESENCE: null,
     GOT_HERE_NOW: null,
     GOT_HISTORY: null,
 
@@ -51087,29 +51047,25 @@ var _actionsChannelActions = require('./actions/ChannelActions');
 var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
 
 var jwt = localStorage.getItem('jwt');
-if (jwt) _actionsUserActions2['default'].login(jwt);
+if (jwt) _actionsUserActions2['default'].login(jwt);else _actionsUserActions2['default'].create_guest();
 
-var render_react = function render_react() {
-    _reactDom2['default'].render(_react2['default'].createElement(
-        _reactRouter.Router,
-        { history: _history2['default'] },
+_reactDom2['default'].render(_react2['default'].createElement(
+    _reactRouter.Router,
+    { history: _history2['default'] },
+    _react2['default'].createElement(
+        _reactRouter.Route,
+        { path: '/', component: _componentsApp2['default'] },
+        _react2['default'].createElement(_reactRouter.IndexRoute, { component: _componentsIndex2['default'] }),
         _react2['default'].createElement(
             _reactRouter.Route,
-            { path: '/', component: _componentsApp2['default'] },
-            _react2['default'].createElement(_reactRouter.IndexRoute, { component: _componentsIndex2['default'] }),
-            _react2['default'].createElement(
-                _reactRouter.Route,
-                { name: 'channels', path: 'channels/', component: _componentsChannel2['default'] },
-                _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: ':channelId/', component: _componentsChannel2['default'] })
-            ),
-            _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
-            _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
-        )
-    ), document.getElementById('app'));
-};
-
-// Get user session before rendering.
-_servicesUserService2['default'].get_session(render_react);
+            { name: 'channels', path: 'channels/', component: _componentsChannel2['default'] },
+            _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: ':channelId/', component: _componentsChannel2['default'] })
+        ),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'join-channel', path: 'join-channel/', component: _componentsChannel2['default'] }),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
+    )
+), document.getElementById('app'));
 
 
 },{"./actions/ChannelActions":242,"./actions/UserActions":243,"./components/App":244,"./components/Channel":246,"./components/Index":252,"./components/Login":253,"./components/Signup":258,"./history":262,"./services/UserService":267,"react":219,"react-dom":65,"react-router":85}],264:[function(require,module,exports){
@@ -51186,11 +51142,7 @@ Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var _lodash = require('lodash');
 
@@ -51212,88 +51164,66 @@ var _constantsChannelConstants = require('../constants/ChannelConstants');
 
 var _constantsChannelConstants2 = _interopRequireDefault(_constantsChannelConstants);
 
-var ChannelService = (function () {
-    function ChannelService() {
-        _classCallCheck(this, ChannelService);
+exports['default'] = {
+    get_subscribed_channels: function get_subscribed_channels(user_id) {
+        return _superagentBluebirdPromise2['default'].get(Urls['channels-list']()).query({ subscribers__user__id: user_id }).promise();
+    },
+
+    async_get_channel_info: function async_get_channel_info(channel_id) {
+        return _superagentBluebirdPromise2['default'].get(Urls['channels-detail'](channel_id)).promise();
+    },
+
+    create_message: function create_message(channel_id, username, text, cb) {
+        pubnub.publish({
+            channel: channel_id,
+            message: {
+                text: text,
+                username: username,
+                timestamp: Date.now()
+            },
+            callback: function callback(message) {
+                cb(channel_id, message);
+            }
+        });
+    },
+
+    join_channels: function join_channels(channels) {
+        pubnub.subscribe({
+            channel: _lodash2['default'].pluck(channels, 'id'),
+            message: function message(msg, ev, ch) {
+                _actionsChannelActions2['default'].recv_new_message(msg, ev, ch);
+            },
+            error: function error(_error) {
+                alert('error join channel, please try again!');
+            },
+            presence: function presence(p, ev, ch) {
+                _actionsChannelActions2['default'].recv_presence(p, ev, ch);
+            },
+            restore: true,
+            heartbeat: 10,
+            connect: _actionsChannelActions2['default'].joined_channels(channels)
+        });
+    },
+
+    get_history: function get_history(channel_id, cb, count, timetoken) {
+        pubnub.history({
+            channel: channel_id,
+            start: timetoken,
+            count: count || 100,
+            callback: function callback(history) {
+                _actionsChannelActions2['default'].got_history(channel_id, history, timetoken);
+            }
+        });
+    },
+
+    get_here_now: function get_here_now() {
+        pubnub.here_now({
+            callback: function callback(Obj) {
+                _actionsChannelActions2['default'].got_here_now(Obj);
+            }
+        });
     }
-
-    _createClass(ChannelService, [{
-        key: 'all',
-        value: function all() {
-            /*
-            request
-                .get(ChannelConstants.API_URL)
-                .end(function(err, res) {
-                    console.log(res);
-                });
-            */
-
-        }
-    }, {
-        key: 'async_get_channel_info',
-        value: function async_get_channel_info(channel_id) {
-            return _superagentBluebirdPromise2['default'].get(Urls['channels-detail'](channel_id)).promise();
-        }
-    }, {
-        key: 'create_message',
-        value: function create_message(channel_id, username, text, cb) {
-            pubnub.publish({
-                channel: channel_id,
-                message: {
-                    text: text,
-                    username: username,
-                    timestamp: Date.now(),
-                    channel: channel_id
-                },
-                callback: function callback(message) {
-                    cb(channel_id, message);
-                }
-            });
-        }
-    }, {
-        key: 'join_channels',
-        value: function join_channels(channels) {
-            pubnub.subscribe({
-                channel: _lodash2['default'].pluck(channels, 'id'),
-                message: function message(msgObj) {
-                    _actionsChannelActions2['default'].recv_new_message(msgObj);
-                },
-                error: function error(_error) {
-                    alert('error join channel, please try again!');
-                    console.log(JSON.stringify(_error));
-                },
-                restore: true,
-                heartbeat: 10,
-                connect: _actionsChannelActions2['default'].joined_channels(channels)
-            });
-        }
-    }, {
-        key: 'get_history',
-        value: function get_history(channel_id, cb, count, timetoken) {
-            pubnub.history({
-                channel: channel_id,
-                start: timetoken,
-                count: count || 100,
-                callback: function callback(history) {
-                    _actionsChannelActions2['default'].got_history(channel_id, history, timetoken);
-                }
-            });
-        }
-    }, {
-        key: 'get_here_now',
-        value: function get_here_now() {
-            pubnub.here_now({
-                callback: function callback(Obj) {
-                    _actionsChannelActions2['default'].got_here_now(Obj);
-                }
-            });
-        }
-    }]);
-
-    return ChannelService;
-})();
-
-exports['default'] = new ChannelService();
+};
 module.exports = exports['default'];
 
 
@@ -51323,37 +51253,17 @@ var _constantsUserConstants = require('../constants/UserConstants');
 var _constantsUserConstants2 = _interopRequireDefault(_constantsUserConstants);
 
 exports['default'] = {
-    validate_password: function validate_password(password) {
-        // at least one number, one lowercase and one uppercase letter
-        // at least eight characters
-        var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-        return re.test(password);
-    },
-
-    validate_username: function validate_username(username, okCb, errCb, invalidCb) {
-        var re = /^[\w]{4,30}$/;
-        if (re.test(username)) return _superagentBluebirdPromise2['default'].get(Urls['api-check-username']()).query({ username: username }).end(function (err, res) {
-            res.ok ? okCb() : errCb();
-        });else invalidCb();
-    },
-
-    validate_email: function validate_email(email, okCb, errCb, invalidCb) {
-        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-        if (re.test(email)) return _superagentBluebirdPromise2['default'].get(Urls['api-check-email']()).query({ email: email }).end(function (err, res) {
-            res.ok ? okCb() : errCb();
-        });else invalidCb();
-    },
 
     register: function register(credentials) {
-        return _superagentBluebirdPromise2['default'].post(Urls['api-register']()).send(credentials).set('X-CSRFTOKEN', csrf_token).promise();
+        return _superagentBluebirdPromise2['default'].post(Urls['api-register']()).send(credentials).promise();
     },
 
     login: function login(credentials) {
-        return _superagentBluebirdPromise2['default'].post(Urls['api-login']()).send(credentials).set('X-CSRFTOKEN', csrf_token).promise();
+        return _superagentBluebirdPromise2['default'].post(Urls['api-login']()).send(credentials).promise();
     },
 
     login_with_social: function login_with_social(credentials, cb) {
-        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).send(credentials).set('X-CSRFTOKEN', csrf_token).promise();
+        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).send(credentials).promise();
     },
 
     get_session: function get_session(fn) {
@@ -51386,6 +51296,48 @@ module.exports = exports['default'];
 
 
 },{"../actions/UserActions":243,"../constants/UserConstants":260,"lodash":62,"superagent-bluebird-promise":221}],268:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _superagentBluebirdPromise = require('superagent-bluebird-promise');
+
+var _superagentBluebirdPromise2 = _interopRequireDefault(_superagentBluebirdPromise);
+
+exports['default'] = {
+    validate_password: function validate_password(password) {
+        // at least one number, one lowercase and one uppercase letter
+        // at least eight characters
+        var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+        return re.test(password);
+    },
+
+    validate_username: function validate_username(username, okCb, errCb, invalidCb) {
+        var re = /^[\w]{4,30}$/;
+        if (re.test(username)) return _superagentBluebirdPromise2['default'].get(Urls['api-check-username']()).query({ username: username }).end(function (err, res) {
+            res.ok ? okCb() : errCb();
+        });else invalidCb();
+    },
+
+    validate_email: function validate_email(email, okCb, errCb, invalidCb) {
+        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        if (re.test(email)) return _superagentBluebirdPromise2['default'].get(Urls['api-check-email']()).query({ email: email }).end(function (err, res) {
+            res.ok ? okCb() : errCb();
+        });else invalidCb();
+    }
+};
+module.exports = exports['default'];
+
+
+},{"lodash":62,"superagent-bluebird-promise":221}],269:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51451,7 +51403,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":261,"events":3}],269:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":261,"events":3}],270:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51588,7 +51540,7 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":259,"./BaseStore":268,"lodash":62}],270:[function(require,module,exports){
+},{"../constants/ChannelConstants":259,"./BaseStore":269,"lodash":62}],271:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -51705,4 +51657,4 @@ exports['default'] = new UserStore();
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":260,"./BaseStore":268,"jwt-decode":59,"lodash":62}]},{},[263]);
+},{"../constants/UserConstants":260,"./BaseStore":269,"jwt-decode":59,"lodash":62}]},{},[263]);

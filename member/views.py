@@ -124,7 +124,7 @@ class SocialAuth(APIView):
             return Response(data, status=status.HTTP_403_FORBIDDEN)
 
         payload = jwt_payload_handler(user)
-        return Response({'jwt': jwt_encode_handler(payload), 'username': user.username}) # 回傳JWT token及使用者帳號
+        return Response({'token': jwt_encode_handler(payload), 'username': user.username}) # 回傳JWT token及使用者帳號
 
 social_auth = SocialAuth.as_view() # 方便由urls.py來import
 create_user = CreateUserView.as_view()

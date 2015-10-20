@@ -51,10 +51,9 @@ class PrivateUserSerializer(PublicUserSerializer):
         return data
 
     def to_representation(self, obj):
-        print(type(obj))
         data = super().to_representation(obj)
         payload = jwt_payload_handler(obj)
-        data['jwt'] = jwt_encode_handler(payload)
+        data['token'] = jwt_encode_handler(payload)
         return data
 
 

@@ -5,6 +5,7 @@ import { Link, History } from 'react-router'
 import UserStore from '../stores/UserStore'
 import UserActions from '../actions/UserActions'
 import UserService from '../services/UserService'
+import ValidationService from '../services/ValidationService'
 import SemanticInput from './SemanticInput'
 import classnames from 'classnames'
 import FacebookOAuthMixin from '../mixins/FacebookOAuthMixin'
@@ -48,7 +49,7 @@ export default React.createClass({
 
     handleChangePassword(e) {
         if(e.target.value) {
-            let ret = UserService.validate_password(e.target.value)
+            let ret = ValidationService.validate_password(e.target.value)
             if(ret) {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
                 this.setState({
@@ -77,7 +78,7 @@ export default React.createClass({
 
     handleChangeUsername(e) {
         if (e.target.value) {
-            UserService.validate_username(e.target.value, () => {
+            ValidationService.validate_username(e.target.value, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
                 this.setState({
                     username: e.target.value,
@@ -111,7 +112,7 @@ export default React.createClass({
 
     handleChangeEmail(e) {
         if(e.target.value) {
-            UserService.validate_email(e.target.value, () => {
+            ValidationService.validate_email(e.target.value, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
                 this.setState({
                     email: e.target.value,
@@ -148,7 +149,7 @@ export default React.createClass({
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
             UserService.register({...this.state})
             .then((res) => {
-                UserActions.login(res.body.jwt)
+                UserActions.login(res.body.token)
             })
             .catch((err) => {
                 alert('An error occured, please try again!')
@@ -162,7 +163,7 @@ export default React.createClass({
             UserService.register({...this.state})
             .then(UserService.login_with_social({...this.state}))
             .then((res) => {
-                UserActions.login(res.body.jwt)
+                UserActions.login(res.body.token)
             })
             .catch((err) => {
                 alert('An error occured, please try again!')

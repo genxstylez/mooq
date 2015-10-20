@@ -54,11 +54,8 @@ export default React.createClass({
                         </div>
                     </div>
                 </div>
-                <div className="ui top fixed menu">
-                    <a className="icon item mobile-menu" onClick={this.props.onClickMobileMenu}>
-                        <i className="content icon"></i>
-                    </a>
-                    <div className="item">
+                <div className="ui top fixed menu channel-header">
+                    <div className="item channel-name">
                         <h2 className="ui header">{this.state.active_channel.name}</h2>
                     </div>
                     <div className="item">{this.state.price}</div>

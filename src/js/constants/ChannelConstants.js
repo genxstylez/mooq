@@ -6,6 +6,7 @@ export default KeyMirror({
     CHANNEL_ACTIVE: null,
     CREATE_NEW_MESSAGE: null,
     RECV_NEW_MESSAGE: null,
+    RECV_PRESENCE: null,
     GOT_HERE_NOW: null,
     GOT_HISTORY: null,
 

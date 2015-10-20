@@ -36,94 +36,64 @@ export default React.createClass({
         }).sidebar('attach events', '.mobile-menu');
 
         ChannelStore.addChangeListener(this._onChange);
-        UserStore.addChangeListener(this._onUserChange);
-        this.setInterval(ChannelService.get_here_now, 10000, true);
+        //this.setInterval(ChannelService.get_here_now, 10000, true);
     },
 
     componentWillUnmount() {
-
-
         ChannelStore.removeChangeListener(this._onChange);
-        UserStore.removeChangeListener(this._onUserChange);
     },
 
     componentWillMount() {
-        this.handleSession();
+        if (this.state.is_authenticated) {
+            // Get channel list and join them
+            ChannelService.get_subscribed_channels(this.state.user.user_id)
+            .then((res) => {
+                console.log(res)
+                if (res.body.length > 0) {
+                    ChannelService.join_channels(res.body)
+                    if (!this.props.params.channelId) {
+                        // if no channel Id is provided, go to the first channel of the list
+                        this.history.replaceState(null, '/channels/' + res.body[0].id + '/')
+                    } else {
+                        ChannelActions.mark_as_active(this.props.params.channelId)
+                    }
+                } else {
+                    history.replaceState(null, 'join-channel')
+                }
+            })
+        } else {
+            if (this.props.params.channelId)
+                this.handleGuestSession(this.props.params.channelId)
+            else
+                history.pushState(null, 'join-channel')
+        }
+
     },
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.params.channelId != this.props.params.channelId) {
-            console.log('in if recv props');
-            this.join_channel(nextProps.params.channelId);
+            let id = nextProps.params.channelId
+            if (this.state.is_authenticated)
+                ChannelActions.mark_as_active(id)
+            else
+                this.handleGuestSession(id)
         }
         $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide');
     },
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log('didupdate');
-        if(prevState.is_authenticated != this.state.is_authenticated) {
-            // handle user login or logout, refresh session again
-            this.handleSession()
-        }
-    },
-
-    handleSession() {
-        var first_channel;
-        if(this.state.is_authenticated) {
-               if(this.state.user.channels.length > 0) {
-                // handles user with channels
-                ChannelService.join_channels(this.state.user.channels)
-                first_channel = this.state.user.channels[0];
-                //Select first channel for further use.
-            }
-        }
-
-        if(!this.props.params.channelId) {
-            // if channelId is not provided on url, go to first channel
-            if(first_channel)  {
-                this.history.pushState(first_channel.name, `/channels/${first_channel.id}/`)
-            } else {
+    handleGuestSession(id) {
+        ChannelService.async_get_channel_info(id)
+            .then((res) => {
+                // res.body is a channel object
+                let channel = res.body;
+                ChannelService.join_channels([channel]);
+                ChannelActions.mark_as_active(channel.id);
                 this.setState({
-                    prompt_to_join: true
+                    prompt_to_join: false
                 });
-            }
-        } else {
-            this.join_channel(this.props.params.channelId);
-        }
-    },
-
-    join_channel(id) {
-        var channel = ChannelStore.get_channel(id);
-        if(!channel) {
-            // If channel not found, get complete channel info from server
-            var promise = ChannelService.async_get_channel_info(id);
-            promise
-                .then((res) => {
-                    // res.body is a channel object
-                    channel = res.body;
-                    ChannelService.join_channels([channel]);
-                    ChannelActions.mark_as_active(channel.id);
-                    this.setState({
-                        prompt_to_join: false
-                    });
-                }, (err) => {
-                    alert('Something went wrong');
-                })
-        } else {
-            // if channel exists in store, means we already joined, just mark it as active
-            ChannelActions.mark_as_active(channel.id);
-            this.setState({
-                prompt_to_join: false
-            });
-        }
-
-    },
-
-    _onUserChange() {
-        this.setState({
-            user: UserStore.user,
-            is_authenticated: UserStore.is_authenticated
-        });
+            }, (err) => {
+                alert('Something went wrong');
+            })
     },
 
     _onChange() {
@@ -136,6 +106,7 @@ export default React.createClass({
     render() {
         return (
             <div id="main">
+
                 <div className="ui sidebar vertical left inline grid menu profile-menu" ref="sidebar">
                     <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     <div className="ui list">
@@ -149,6 +120,9 @@ export default React.createClass({
                     <ChannelList  />
                 </div>
                 <div className="full height pusher">
+                    <div className="icon item mobile-menu">
+                        <i className="content icon"></i>
+                    </div>
                     <div id="profile-container">
                         <div id="profile-menu" className="ui vertical menu grid profile-menu">
                             <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />

@@ -5,6 +5,7 @@ import { Link, History } from 'react-router'
 import UserStore from '../stores/UserStore'
 import UserActions from '../actions/UserActions'
 import UserService from '../services/UserService'
+import ValidationService from '../services/ValidationService'
 import SemanticInput from './SemanticInput'
 import classnames from 'classnames'
 import FacebookOAuthMixin from '../mixins/FacebookOAuthMixin'
@@ -23,7 +24,8 @@ export default React.createClass({
             username: '',
             email: '',
             is_authenticated: UserStore.is_authenticated,
-            invalid_messages: []
+            login_invalid_messages: [],
+            new_invalid_messages: []
         })
     },
 
@@ -47,6 +49,7 @@ export default React.createClass({
     },
 
     handleChange(e) {
+        console.log('in handleChange')
         this.setState({
             [e.target.name]: e.target.value
         });
@@ -54,20 +57,20 @@ export default React.createClass({
 
     handleChangePassword(e) {
         if(e.target.value) {
-            let ret = UserService.validate_password(e.target.value)
+            let ret = ValidationService.validate_password(e.target.value)
             if(ret) {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
                 this.setState({
                     password: e.target.value,
                     pw_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             } else {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
                 invalid_messages.push({key: 'password', value: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'})
                 this.setState({
                     pw_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 });
             }
         } else {
@@ -75,7 +78,7 @@ export default React.createClass({
             invalid_messages.push({key: 'password', value: 'Password is required'})
             this.setState({
                 pw_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             });
         }
 
@@ -83,26 +86,26 @@ export default React.createClass({
 
     handleChangeUsername(e) {
         if (e.target.value) {
-            UserService.validate_username(e.target.value, () => {
+            ValidationService.validate_username(e.target.value, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
                 this.setState({
                     username: e.target.value,
                     username_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             }, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
                 invalid_messages.push({key: 'username', value: 'This username is already taken!'})
                 this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             }, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
                 invalid_messages.push({key: 'username', value: 'Username must be either number or characters, length must be 4-30'})
                  this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             })
         } else {
@@ -110,33 +113,33 @@ export default React.createClass({
             invalid_messages.push({key: 'username', value: 'Username is required'})
              this.setState({
                 username_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             })
         }
     },
 
     handleChangeEmail(e) {
         if(e.target.value) {
-            UserService.validate_email(e.target.value, () => {
+            ValidationService.validate_email(e.target.value, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
                 this.setState({
                     email: e.target.value,
                     email_is_valid: true,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             }, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
                 invalid_messages.push({key: 'email', value: 'This emails is already taken!'})
                 this.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             }, () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
                 invalid_messages.push({key: 'email', value: 'Email is invalid'})
                 this.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    new_invalid_messages: invalid_messages
                 })
             })
         } else {
@@ -144,7 +147,7 @@ export default React.createClass({
             invalid_messages.push({key: 'email', value: 'Email is required'})
             this.setState({
                 email_is_valid: false,
-                invalid_messages: invalid_messages
+                new_invalid_messages: invalid_messages
             })
         }
     },
@@ -152,14 +155,15 @@ export default React.createClass({
     handleSubmit(e) {
         e.preventDefault();
         UserService.login({...this.state})
-        .then(() => {
-            console.log('login successful')
+        .then((res) => {
+            UserActions.login(res.body.token)
+            // history.replaceState(null, 'channels')
         })
-        .catch(() => {
+        .catch((err) => {
             let invalid_messages = [];
             invalid_messages.push({key: 'login', value: 'Incorrect username and password, please check it again'})
             this.setState({
-                invalid_messages: invalid_messages
+                login_invalid_messages: invalid_messages
             });
         })
     },
@@ -170,7 +174,7 @@ export default React.createClass({
             UserService.register({...this.state})
             .then(UserService.login_with_social({...this.state}))
             .then((res) => {
-                UserActions.login(res.body.jwt)
+                UserActions.login(res.body.token)
             })
             .catch((err) => {
                 alert('An error occured, please try again!')
@@ -242,7 +246,7 @@ export default React.createClass({
                         </div>
                     </form>
                     {
-                        this.state.invalid_messages.length > 0 ?
+                        this.state.login_invalid_messages.length > 0 ?
                         <div className="ui error message">
                             <ul className="list">
                                 {
@@ -278,7 +282,7 @@ export default React.createClass({
                                     <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>Cancel</button>
                                 </form>
                                 {
-                                    this.state.invalid_messages.length > 0 ?
+                                    this.state.new_invalid_messages.length > 0 ?
                                     <div className="ui error message">
                                         <ul className="list">
                                             {
