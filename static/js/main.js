@@ -46456,7 +46456,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":241,"../dispatchers/AppDispatcher":243,"../services/ChannelService":248,"lodash":62}],225:[function(require,module,exports){
+},{"../constants/ChannelConstants":242,"../dispatchers/AppDispatcher":244,"../services/ChannelService":249,"lodash":62}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46533,7 +46533,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":242,"../dispatchers/AppDispatcher":243,"../history":244,"lodash":62}],226:[function(require,module,exports){
+},{"../constants/UserConstants":243,"../dispatchers/AppDispatcher":244,"../history":245,"lodash":62}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46650,7 +46650,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":246,"../mixins/SetIntervalMixin":247,"../services/UserService":249,"../stores/UserStore":253,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65}],227:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/UserService":250,"../stores/UserStore":254,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46714,7 +46714,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":249,"react":219,"react-dom":65}],228:[function(require,module,exports){
+},{"../services/UserService":250,"react":219,"react-dom":65}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46842,11 +46842,11 @@ exports['default'] = _react2['default'].createClass({
                         }
                     });
                 } else {
-                    history.replaceState(null, 'join-channel');
+                    _this.history.replaceState(null, '/join-channel/');
                 }
             });
         } else {
-            if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else history.pushState(null, 'join-channel');
+            if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else this.history.pushState(null, 'join-channel');
         }
     },
 
@@ -46984,7 +46984,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":246,"../mixins/SetIntervalMixin":247,"../services/ChannelService":248,"../stores/ChannelStore":252,"../stores/UserStore":253,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":236,"./SidebarChannelList":239,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":237,"./SidebarChannelList":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47118,7 +47118,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../stores/ChannelStore":252,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],230:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../stores/ChannelStore":253,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47249,7 +47249,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../services/ChannelService":248,"../stores/ChannelStore":252,"./MessageInput":236,"./MessageItem":237,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../services/ChannelService":249,"../stores/ChannelStore":253,"./MessageInput":237,"./MessageItem":238,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47319,7 +47319,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":252,"./ChannelNav":232,"lodash":62,"react":219}],232:[function(require,module,exports){
+},{"../stores/ChannelStore":253,"./ChannelNav":232,"lodash":62,"react":219}],232:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47429,7 +47429,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":249,"react":219}],234:[function(require,module,exports){
+},{"../services/UserService":250,"react":219}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47481,7 +47481,58 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/UserStore":253,"react":219}],235:[function(require,module,exports){
+},{"../stores/UserStore":254,"react":219}],235:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _storesUserStore = require('../stores/UserStore');
+
+var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'JoinChannel',
+
+    getInitialState: function getInitialState() {
+        return {
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        };
+    },
+
+    componentDidMount: function componentDidMount() {
+        _storesUserStore2['default'].addChangeListener(this._onChange);
+    },
+
+    componentWillUnMount: function componentWillUnMount() {
+        _storesUserStore2['default'].removeChangeListener(this._onChange);
+    },
+
+    _onChange: function _onChange() {
+        this.setState({
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        });
+    },
+
+    render: function render() {
+        return _react2['default'].createElement(
+            'h2',
+            null,
+            'A List of Channels'
+        );
+    }
+});
+module.exports = exports['default'];
+
+
+},{"../stores/UserStore":254,"react":219}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47885,7 +47936,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":246,"../services/UserService":249,"../services/ValidationService":250,"../stores/UserStore":253,"./FacebookLoginButton":233,"./SemanticInput":238,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],236:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47981,7 +48032,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":248,"../stores/ChannelStore":252,"../stores/UserStore":253,"react":219,"react-dom":65,"react-textarea-autosize":90}],237:[function(require,module,exports){
+},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"react":219,"react-dom":65,"react-textarea-autosize":90}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48061,7 +48112,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":63,"react":219}],238:[function(require,module,exports){
+},{"moment":63,"react":219}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48134,7 +48185,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"classnames":4,"react":219,"react-dom":65}],239:[function(require,module,exports){
+},{"classnames":4,"react":219,"react-dom":65}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48214,7 +48265,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":252,"./ChannelList":231,"./ChannelNav":232,"classnames":4,"lodash":62,"react":219,"react-router":85}],240:[function(require,module,exports){
+},{"../stores/ChannelStore":253,"./ChannelList":231,"./ChannelNav":232,"classnames":4,"lodash":62,"react":219,"react-router":85}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48613,7 +48664,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":246,"../services/UserService":249,"../services/ValidationService":250,"../stores/UserStore":253,"./FacebookLoginButton":233,"./SemanticInput":238,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],241:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48641,7 +48692,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],242:[function(require,module,exports){
+},{"keymirror":61}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48663,7 +48714,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],243:[function(require,module,exports){
+},{"keymirror":61}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48676,7 +48727,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":36}],244:[function(require,module,exports){
+},{"flux":36}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48693,7 +48744,7 @@ exports['default'] = (0, _historyLibCreateBrowserHistory2['default'])();
 module.exports = exports['default'];
 
 
-},{"history/lib/createBrowserHistory":44}],245:[function(require,module,exports){
+},{"history/lib/createBrowserHistory":44}],246:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -48732,6 +48783,10 @@ var _componentsSignup = require('./components/Signup');
 
 var _componentsSignup2 = _interopRequireDefault(_componentsSignup);
 
+var _componentsJoinChannel = require('./components/JoinChannel');
+
+var _componentsJoinChannel2 = _interopRequireDefault(_componentsJoinChannel);
+
 var _servicesUserService = require('./services/UserService');
 
 var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
@@ -48759,14 +48814,14 @@ _reactDom2['default'].render(_react2['default'].createElement(
             { name: 'channels', path: 'channels/', component: _componentsChannel2['default'] },
             _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: ':channelId/', component: _componentsChannel2['default'] })
         ),
-        _react2['default'].createElement(_reactRouter.Route, { name: 'join-channel', path: 'join-channel/', component: _componentsChannel2['default'] }),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'join-channel', path: 'join-channel/', component: _componentsJoinChannel2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
     )
 ), document.getElementById('app'));
 
 
-},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/Login":235,"./components/Signup":240,"./history":244,"./services/UserService":249,"react":219,"react-dom":65,"react-router":85}],246:[function(require,module,exports){
+},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/JoinChannel":235,"./components/Login":236,"./components/Signup":241,"./history":245,"./services/UserService":250,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48802,7 +48857,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{}],247:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48833,7 +48888,7 @@ exports["default"] = {
 module.exports = exports["default"];
 
 
-},{}],248:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48942,7 +48997,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../constants/ChannelConstants":241,"../stores/ChannelStore":252,"lodash":62,"superagent-bluebird-promise":221}],249:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../constants/ChannelConstants":242,"../stores/ChannelStore":253,"lodash":62,"superagent-bluebird-promise":221}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49016,7 +49071,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../constants/UserConstants":242,"../services/ChannelService":248,"../stores/ChannelStore":252,"lodash":62,"superagent-bluebird-promise":221}],250:[function(require,module,exports){
+},{"../actions/UserActions":225,"../constants/UserConstants":243,"../services/ChannelService":249,"../stores/ChannelStore":253,"lodash":62,"superagent-bluebird-promise":221}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49058,7 +49113,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"lodash":62,"superagent-bluebird-promise":221}],251:[function(require,module,exports){
+},{"lodash":62,"superagent-bluebird-promise":221}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49124,7 +49179,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":243,"events":3}],252:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":244,"events":3}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49274,7 +49329,7 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":241,"./BaseStore":251,"lodash":62}],253:[function(require,module,exports){
+},{"../constants/ChannelConstants":242,"./BaseStore":252,"lodash":62}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49396,4 +49451,4 @@ exports['default'] = new UserStore();
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":242,"./BaseStore":251,"jwt-decode":59,"lodash":62}]},{},[245]);
+},{"../constants/UserConstants":243,"./BaseStore":252,"jwt-decode":59,"lodash":62}]},{},[246]);

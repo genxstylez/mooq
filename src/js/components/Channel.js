@@ -70,14 +70,14 @@ export default React.createClass({
                     })
 
                 } else {
-                    history.replaceState(null, 'join-channel')
+                    this.history.replaceState(null, '/join-channel/')
                 }
             })
         } else {
             if (this.props.params.channelId)
                 this.handleGuestSession(this.props.params.channelId)
             else
-                history.pushState(null, 'join-channel')
+                this.history.pushState(null, 'join-channel')
         }
 
     },
