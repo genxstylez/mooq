@@ -18,13 +18,12 @@ export default {
     /*
     @param {string} id The ID of the channel
     */
-    leave(id) {
+    leave(channels) {
         AppDispatcher.dispatch({
-            actionType: ChannelConstants.CHANNEL_DELETE,
-            id: id
+            actionType: ChannelConstants.CHANNEL_LEAVE,
+            channels: channels
         });
     },
-
 
     /*
     @param {object} msgObj new message object that is published to the channel

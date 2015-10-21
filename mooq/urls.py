@@ -24,6 +24,9 @@ from rest_framework.routers import DefaultRouter
 from chat import views as ChatView
 from member import views as MemberView
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 router = DefaultRouter()
 router.register(r'channels', ChatView.ChannelViewSet, base_name='channels')
 router.register(r'users', MemberView.UserViewSet, base_name='users')
@@ -31,6 +34,7 @@ router.register(r'me', MemberView.MeViewSet, base_name='me')
 
 urlpatterns = [
     #url('', include('social.apps.django_app.urls', namespace='social')),
+
     url(r'^api/', include(router.urls)),
     url(r'^api-register/', 'member.views.create_user', name='api-register'),
     url(r'^api-login/', 'rest_framework_jwt.views.obtain_jwt_token', name='api-login'), # jwt login
@@ -47,5 +51,8 @@ urlpatterns = [
         {'next_page': 'index'}, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^jsreverse/$', cache_page(3600)(urls_js), name='js_reverse'),
-    url(r'^', TemplateView.as_view(template_name='index.html'), name='index'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [url(r'^', TemplateView.as_view(template_name='index.html'), name='index')]

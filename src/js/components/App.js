@@ -62,7 +62,7 @@ export default React.createClass({
                     backend: 'facebook'
                 })
                 .then((res) => {
-                    UserActions.login(res.body.jwt)
+                    UserActions.login(res.body.token)
                 })
                 .catch((err) => {
                     console.log(err);

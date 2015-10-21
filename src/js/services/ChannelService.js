@@ -45,7 +45,6 @@ export default {
         channels = _.reject(channels, (channel) => {
             return ChannelStore.get_channel(channel.id) != undefined
         })
-        console.log(channels)
         if(channels.length > 0) {
             pubnub.subscribe({
                 channel: _.pluck(channels, 'id'),
@@ -82,5 +81,12 @@ export default {
                 ChannelActions.got_here_now(Obj);
             }
         })
+    },
+
+    unsubscribe(channels) {
+        pubnub.unsubscribe({
+            channel: channels
+        })
+        ChannelActions.leave(channels)
     },
 }

@@ -14,7 +14,7 @@ export default {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
-            history.replaceState(null, '/')
+            history.replaceState(null, '/channels/')
             localStorage.setItem('jwt', jwt)
         }
     },
@@ -27,12 +27,6 @@ export default {
         localStorage.setItem('jwt', jwt)
     },
 
-
-    unsubscribe() {
-        pubnub.unsubscribe({
-            channel: UserStore.user.channels
-        });
-    },
 
     logout() {
         history.replaceState(null, '/')

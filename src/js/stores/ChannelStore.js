@@ -26,7 +26,7 @@ class ChannelStore extends BaseStore {
                 })
                 if (changed)
                     this.emitChange()
-                break;
+                break
 
             case ChannelConstants.RECV_HISTORY:
                 var historyList = action.history[0]
@@ -61,7 +61,14 @@ class ChannelStore extends BaseStore {
                 this._active_channel = this.get_channel(action.channel_id)
                 this._active_channel.unread = false
                 this.emitChange()
-                break;
+                break
+
+            case ChannelConstants.CHANNEL_LEAVE:
+                this._channels = _.filter(this._channels, (channel) => {
+                    return !_.findWhere(action.channels, {id: channel.id})
+                })
+                this.emitChange()
+                break
 
             case ChannelConstants.GOT_HERE_NOW:
                 var changed = false
@@ -89,7 +96,7 @@ class ChannelStore extends BaseStore {
     }
 
     get_channel(id) {
-        return _.filter(this._channels, {'id': id})[0]
+        return _.findWhere(this._channels, {'id': id})
     }
 
     get channels() {

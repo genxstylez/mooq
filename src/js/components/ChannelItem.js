@@ -12,9 +12,9 @@ import classnames from 'classnames'
 export default React.createClass({
     getInitialState() {
         return {
-            messages: ChannelStore.get_channel(this.props.channel_id).messages,
-            occupancy: ChannelStore.get_channel(this.props.channel_id).occupancy,
-            users: ChannelStore.get_channel(this.props.channel_id).users
+            messages: this.props.messages,
+            occupancy: this.props.occupancy,
+            users: this.props.users
         }
     },
 
@@ -25,17 +25,17 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        ChannelStore.addChangeListener(this._onChange);
         /* HACK for render callback
         var node = ReactDOM.findDOMNode(this);
         setTimeout(() => {
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
+        return
     },
 
     componentWillUnmount() {
-        ChannelStore.removeChangeListener(this._onChange);
+        return
     },
 
     componentDidUpdate() {
@@ -43,11 +43,11 @@ export default React.createClass({
         $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
     },
 
-    _onChange() {
+    componentWillReceiveProps(nextProps) {
         this.setState({
-            messages: ChannelStore.get_channel(this.props.channel_id).messages,
-            occupancy: ChannelStore.get_channel(this.props.channel_id).occupancy,
-            users: ChannelStore.get_channel(this.props.channel_id).users
+            messages: nextProps.messages,
+            occupancy: nextProps.occupancy,
+            users: nextProps.users
         });
     },
 

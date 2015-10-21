@@ -96,6 +96,7 @@ class SocialAuth(APIView):
         try:
             kwargs = dict({(k, i) for k, i in serializer.data.items() if k != 'backend'})
             user = request.user # 如果註冊過的使用者已登入, 則連結此使用者
+            print(user)
             kwargs['user'] = user.is_authenticated() and user or None
 
 

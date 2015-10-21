@@ -162,6 +162,9 @@ export default React.createClass({
                         return (<ChannelItem key={channel.id}
                             channel_id={channel.id}
                             name={channel.name}
+                            messages={channel.messages}
+                            occupancy={chyannel.occupancy}
+                            users={channel.users}
                             is_active={this.state.active_channel.id == channel.id} />);
                         })}
                         {this.state.prompt_to_join ?

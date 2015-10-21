@@ -12,6 +12,9 @@
         <script type="text/javascript" src="//cdn.pubnub.com/pubnub-dev.js"></script>
         <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+        <script type="text/javascript">
+            var csrf_token = '{{ csrf_token }}'
+        </script>
         {% block styles %}{% endblock %}
         {% block pre_scripts %}{% endblock %}
     </head>

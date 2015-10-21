@@ -1,7 +1,9 @@
-import _ from 'lodash';
-import request from 'superagent-bluebird-promise';
-import UserActions from '../actions/UserActions';
-import UserConstants from '../constants/UserConstants';
+import _ from 'lodash'
+import request from 'superagent-bluebird-promise'
+import UserActions from '../actions/UserActions'
+import UserConstants from '../constants/UserConstants'
+import ChannelStore from '../stores/ChannelStore'
+import ChannelService from '../services/ChannelService'
 
 export default {
 
@@ -10,7 +12,6 @@ export default {
             .post(Urls['api-register']())
             .send(credentials)
             .promise()
-
     },
 
     login(credentials) {
@@ -23,6 +24,7 @@ export default {
     login_with_social(credentials, cb) {
         return request
             .post(Urls['api-social-auth']())
+            .set('X-CSRFToken', csrf_token)
             .send(credentials)
             .promise()
     },
@@ -46,7 +48,10 @@ export default {
     },
 
     logout() {
+        ChannelService.unsubscribe(ChannelStore.channels)
+        console.log(ChannelStore.channels)
         UserActions.logout()
+        window.aa = ChannelStore
     },
 
     create_guest() {

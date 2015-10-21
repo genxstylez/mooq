@@ -1,12 +1,12 @@
 from requests import request, HTTPError
 
 from django.core.files.base import ContentFile
+from member.models import Profile
 
 
-def save_profile_picture(strategy, user, response, details,
-                         is_new=False,*args,**kwargs):
-
-    if is_new and strategy.backend.name == 'facebook':
+def save_profile_picture(backend, user, social, response, details,
+                         is_new=False, *args,**kwargs):
+    if is_new and backend.name == 'facebook' and user:
         url = 'http://graph.facebook.com/{0}/picture'.format(response['id'])
 
         try:
@@ -15,7 +15,7 @@ def save_profile_picture(strategy, user, response, details,
         except HTTPError:
             pass
         else:
-            profile = user.get_profile()
+            profile = Profile.objects.create(user=user, is_verified=True)
             profile.avatar.save('{0}_social.jpg'.format(user.username),
                                    ContentFile(response.content))
             profile.save()

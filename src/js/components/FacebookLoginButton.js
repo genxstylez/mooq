@@ -22,7 +22,7 @@ export default React.createClass({
                 backend: 'facebook'
             })
             .then((res) => {
-                UserActions.loginUser(res.jwt)
+                UserActions.login(res.body.token)
             })
             .catch((err) => {
                 if(err.body.error_code == 'social_no_user') {

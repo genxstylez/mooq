@@ -46403,10 +46403,10 @@ exports['default'] = {
     /*
     @param {string} id The ID of the channel
     */
-    leave: function leave(id) {
+    leave: function leave(channels) {
         _dispatchersAppDispatcher2['default'].dispatch({
-            actionType: _constantsChannelConstants2['default'].CHANNEL_DELETE,
-            id: id
+            actionType: _constantsChannelConstants2['default'].CHANNEL_LEAVE,
+            channels: channels
         });
     },
 
@@ -46492,7 +46492,7 @@ exports['default'] = {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
-            _history2['default'].replaceState(null, '/');
+            _history2['default'].replaceState(null, '/channels/');
             localStorage.setItem('jwt', jwt);
         }
     },
@@ -46503,12 +46503,6 @@ exports['default'] = {
             jwt: jwt
         });
         localStorage.setItem('jwt', jwt);
-    },
-
-    unsubscribe: function unsubscribe() {
-        pubnub.unsubscribe({
-            channel: UserStore.user.channels
-        });
     },
 
     logout: function logout() {
@@ -46636,7 +46630,7 @@ exports['default'] = _react2['default'].createClass({
                     access_token: access_token,
                     backend: 'facebook'
                 }).then(function (res) {
-                    _actionsUserActions2['default'].login(res.body.jwt);
+                    _actionsUserActions2['default'].login(res.body.token);
                 })['catch'](function (err) {
                     console.log(err);
                 });
@@ -46960,6 +46954,9 @@ exports['default'] = _react2['default'].createClass({
                         return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
                             channel_id: channel.id,
                             name: channel.name,
+                            messages: channel.messages,
+                            occupancy: chyannel.occupancy,
+                            users: channel.users,
                             is_active: _this3.state.active_channel.id == channel.id });
                     }),
                     this.state.prompt_to_join ? _react2['default'].createElement(
@@ -47171,9 +47168,9 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            messages: _storesChannelStore2['default'].get_channel(this.props.channel_id).messages,
-            occupancy: _storesChannelStore2['default'].get_channel(this.props.channel_id).occupancy,
-            users: _storesChannelStore2['default'].get_channel(this.props.channel_id).users
+            messages: this.props.messages,
+            occupancy: this.props.occupancy,
+            users: this.props.users
         };
     },
 
@@ -47184,17 +47181,17 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        _storesChannelStore2['default'].addChangeListener(this._onChange);
         /* HACK for render callback
         var node = ReactDOM.findDOMNode(this);
         setTimeout(() => {
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
+        return;
     },
 
     componentWillUnmount: function componentWillUnmount() {
-        _storesChannelStore2['default'].removeChangeListener(this._onChange);
+        return;
     },
 
     componentDidUpdate: function componentDidUpdate() {
@@ -47202,11 +47199,11 @@ exports['default'] = _react2['default'].createClass({
         $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
     },
 
-    _onChange: function _onChange() {
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         this.setState({
-            messages: _storesChannelStore2['default'].get_channel(this.props.channel_id).messages,
-            occupancy: _storesChannelStore2['default'].get_channel(this.props.channel_id).occupancy,
-            users: _storesChannelStore2['default'].get_channel(this.props.channel_id).users
+            messages: nextProps.messages,
+            occupancy: nextProps.occupancy,
+            users: nextProps.users
         });
     },
 
@@ -47407,7 +47404,7 @@ exports['default'] = _react2['default'].createClass({
                 access_token: access_token,
                 backend: 'facebook'
             }).then(function (res) {
-                UserActions.loginUser(res.jwt);
+                UserActions.login(res.body.token);
             })['catch'](function (err) {
                 if (err.body.error_code == 'social_no_user') {
                     // prompt for a username and password
@@ -48897,7 +48894,6 @@ exports['default'] = {
         channels = _lodash2['default'].reject(channels, function (channel) {
             return _storesChannelStore2['default'].get_channel(channel.id) != undefined;
         });
-        console.log(channels);
         if (channels.length > 0) {
             pubnub.subscribe({
                 channel: _lodash2['default'].pluck(channels, 'id'),
@@ -48934,6 +48930,13 @@ exports['default'] = {
                 _actionsChannelActions2['default'].got_here_now(Obj);
             }
         });
+    },
+
+    unsubscribe: function unsubscribe(channels) {
+        pubnub.unsubscribe({
+            channel: channels
+        });
+        _actionsChannelActions2['default'].leave(channels);
     }
 };
 module.exports = exports['default'];
@@ -48964,6 +48967,14 @@ var _constantsUserConstants = require('../constants/UserConstants');
 
 var _constantsUserConstants2 = _interopRequireDefault(_constantsUserConstants);
 
+var _storesChannelStore = require('../stores/ChannelStore');
+
+var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
+
+var _servicesChannelService = require('../services/ChannelService');
+
+var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+
 exports['default'] = {
 
     register: function register(credentials) {
@@ -48975,7 +48986,7 @@ exports['default'] = {
     },
 
     login_with_social: function login_with_social(credentials, cb) {
-        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).send(credentials).promise();
+        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).set('X-CSRFToken', csrf_token).send(credentials).promise();
     },
 
     refresh_token: function refresh_token(jwt) {
@@ -48991,7 +49002,10 @@ exports['default'] = {
     },
 
     logout: function logout() {
+        _servicesChannelService2['default'].unsubscribe(_storesChannelStore2['default'].channels);
+        console.log(_storesChannelStore2['default'].channels);
         _actionsUserActions2['default'].logout();
+        window.aa = _storesChannelStore2['default'];
     },
 
     create_guest: function create_guest() {
@@ -49002,7 +49016,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../constants/UserConstants":242,"lodash":62,"superagent-bluebird-promise":221}],250:[function(require,module,exports){
+},{"../actions/UserActions":225,"../constants/UserConstants":242,"../services/ChannelService":248,"../stores/ChannelStore":252,"lodash":62,"superagent-bluebird-promise":221}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49207,6 +49221,13 @@ var ChannelStore = (function (_BaseStore) {
                     this.emitChange();
                     break;
 
+                case _constantsChannelConstants2['default'].CHANNEL_LEAVE:
+                    this._channels = _lodash2['default'].filter(this._channels, function (channel) {
+                        return !_lodash2['default'].findWhere(action.channels, { id: channel.id });
+                    });
+                    this.emitChange();
+                    break;
+
                 case _constantsChannelConstants2['default'].GOT_HERE_NOW:
                     var changed = false;
                     _lodash2['default'].forEach(action.Obj.channels, function (value, key) {
@@ -49232,7 +49253,7 @@ var ChannelStore = (function (_BaseStore) {
     }, {
         key: 'get_channel',
         value: function get_channel(id) {
-            return _lodash2['default'].filter(this._channels, { 'id': id })[0];
+            return _lodash2['default'].findWhere(this._channels, { 'id': id });
         }
     }, {
         key: 'channels',
