@@ -34,10 +34,13 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-register/', 'member.views.create_user', name='api-register'),
     url(r'^api-login/', 'rest_framework_jwt.views.obtain_jwt_token', name='api-login'), # jwt login
+    url(r'^api-token-refresh/', 'rest_framework_jwt.views.refresh_jwt_token', name='api-token-refresh'),
     url(r'^api-social-auth/$', 'member.views.social_auth', name='api-social-auth'),
 
     url(r'^api-check-username/', 'member.views.check_username', name='api-check-username'),
     url(r'^api-check-email/', 'member.views.check_email', name='api-check-email'),
+
+    url(r'^api-grant/$', 'chat.views.grant', name='api-grant'),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')), # login/logout view for browsable api
     url(r'^logout/$', 'django.contrib.auth.views.logout',

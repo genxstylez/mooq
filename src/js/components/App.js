@@ -1,23 +1,30 @@
-import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import jwt_decode from 'jwt-decode'
 import FacebookOAuthMixin from '../mixins/FacebookOAuthMixin'
+import SetIntervalMixin from '../mixins/SetIntervalMixin'
 import UserStore from '../stores/UserStore'
 import UserService from '../services/UserService'
 import UserActions from '../actions/UserActions'
 
 
 export default React.createClass({
-    mixins: [FacebookOAuthMixin],
+    mixins: [FacebookOAuthMixin, SetIntervalMixin],
 
     getInitialState() {
         return {
-            is_authenticated: UserStore.is_authenticated
+            is_authenticated: UserStore.is_authenticated,
+            jwt: UserStore.jwt
         }
     },
 
     componentDidMount() {
         UserStore.addChangeListener(this._onChange);
+        if(this.state.is_authenticated) {
+            // Do a refresh token here if authenticated
+            this.setInterval(this.checkToken, 36000000, true)
+        }
     },
 
     componentWillUnMount() {
@@ -26,8 +33,23 @@ export default React.createClass({
 
     _onChange() {
         this.setState({
-            is_authenticated: UserStore.is_authenticated
+            is_authenticated: UserStore.is_authenticated,
+            jwt: UserStore.jwt
         })
+    },
+
+    checkToken() {
+        let token_details = jwt_decode(this.state.jwt)
+        if(token_details.exp < Date.now()) {
+            // if token exipred
+            UserService.refresh_token(this.state.jwt)
+                .then((res) => {
+                    UserActions.refresh(res.body.token)
+                })
+                .catch((res) => {
+                    UserActions.logout()
+                })
+        }
     },
 
     statusChangeCallback(response) {

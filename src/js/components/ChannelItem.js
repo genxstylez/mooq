@@ -1,25 +1,26 @@
-import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ChannelStore from '../stores/ChannelStore';
-import ChannelActions from '../actions/ChannelActions';
-import MessageItem from './MessageItem';
-import MessageInput from './MessageInput';
-import classnames from 'classnames';
-import SetIntervalMixin from '../mixins/SetIntervalMixin';
-
-import request from 'superagent';
+import _ from 'lodash'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import ChannelStore from '../stores/ChannelStore'
+import ChannelActions from '../actions/ChannelActions'
+import ChannelService from '../services/ChannelService'
+import MessageItem from './MessageItem'
+import MessageInput from './MessageInput'
+import classnames from 'classnames'
 
 
 export default React.createClass({
-    mixins: [SetIntervalMixin],
-
     getInitialState() {
         return {
-            messages: this.props.messages,
-            occupancy: this.props.occupancy || 0,
-            users: this.props.users || [],
-            price: 0
+            messages: ChannelStore.get_channel(this.props.channel_id).messages,
+            occupancy: ChannelStore.get_channel(this.props.channel_id).occupancy,
+            users: ChannelStore.get_channel(this.props.channel_id).users
+        }
+    },
+
+    componentWillMount() {
+        if(this.state.messages.length == 0) {
+            ChannelService.get_history(this.props.channel_id)
         }
     },
 
@@ -31,7 +32,6 @@ export default React.createClass({
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
-        //this.setInterval(this._getStock, 5000, true);
     },
 
     componentWillUnmount() {
@@ -45,9 +45,9 @@ export default React.createClass({
 
     _onChange() {
         this.setState({
-            messages: ChannelStore.get_channel(this.props.id).messages,
-            occupancy: ChannelStore.get_channel(this.props.id).occupancy,
-            users: ChannelStore.get_channel(this.props.id).users
+            messages: ChannelStore.get_channel(this.props.channel_id).messages,
+            occupancy: ChannelStore.get_channel(this.props.channel_id).occupancy,
+            users: ChannelStore.get_channel(this.props.channel_id).users
         });
     },
 
@@ -56,7 +56,6 @@ export default React.createClass({
         height = height + 20 // 20 is the padding for footer
         node.style.bottom = height.toString() + 'px';
         node.scrollTop = node.scrollHeight;
-
     },
 
     handleHereNow() {
@@ -72,7 +71,7 @@ export default React.createClass({
         return (
             <div className={cls}>
                 <div className="messages" ref="messages">
-                    <div className="ui feed">
+                    <div className="ui comments">
                         {_.map(this.state.messages, (message) => {
                             return (
                                 <MessageItem key={message.timestamp} message={message}  />
@@ -81,7 +80,7 @@ export default React.createClass({
                     </div>
                 </div>
                  <div className="footer">
-                    <MessageInput id={this.props.id} onHeightChange={this.handleHeightChange} />
+                    <MessageInput channel_id={this.props.channel_id} onHeightChange={this.handleHeightChange} />
                 </div>
             </div>
 

@@ -17,6 +17,7 @@ import django_cache_url
 
 import os
 import random
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -149,6 +150,9 @@ MEDIA_ROOT = os.path.join(ROOT_PATH, '../media/')
 
 MEDIA_URL = os.environ.get('DJANGO_MEDIA_URL', '/media/')
 
+DEFAULT_FILE_STORAGE = 'mooq.storage.DefaultStorage'
+STATICFILES_STORAGE = 'mooq.storage.StaticStorage'
+
 # DRF
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -162,6 +166,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
+}
+
+# REST_FRAMEWORK_JWT
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
 
 # Social auth
@@ -193,5 +203,25 @@ SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
-    'social.pipeline.user.user_details'
+    'social.pipeline.user.user_details',
+    'member.pipelines.save_profile_picture',
 )
+
+# AWS
+# AWS
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'test')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY', 'test')
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')  # CDN address.
+AWS_MEDIA_STORAGE_BUCKET_NAME = os.environ.get('AWS_MEDIA_STORAGE_BUCKET_NAME', 'mooq-media-dev')
+AWS_STATIC_STORAGE_BUCKET_NAME = os.environ.get('AWS_STATIC_STORAGE_BUCKET_NAME', 'mooq-static-dev')
+
+AWS_S3_SECURE_URLS = False
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
+AWS_HEADERS = {
+    'Expires': 'Thu, 31 Dec 2020 23:59:59 GMT',
+    'Cache-Control': 'max-age=99999',
+}
+
+
+

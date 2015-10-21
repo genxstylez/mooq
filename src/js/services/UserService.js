@@ -27,14 +27,13 @@ export default {
             .promise()
     },
 
-    get_session(fn) {
+    refresh_token(jwt) {
         return request
-            .get(Urls['me-list']())
-            .end((err, res) => {
-                res.ok ? this.authenticated(res.body) : this.create_guest()
-                fn();
-            });
+            .post(Urls['api-token-refresh']())
+            .send({token: jwt})
+            .promise()
     },
+
 
     async_authenticate() {
         return request

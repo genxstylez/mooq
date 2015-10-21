@@ -8,16 +8,18 @@ class UserStore extends BaseStore {
     constructor() {
         super()
         this.subscribe(() => this._registerToActions.bind(this));
-        this._user = null;
-        this._jwt = null;
-        this._is_authenticated = false;
-        this._isGuest = true;
+        this._user = null
+        this._jwt = null
+        this._authKey = null
+        this._is_authenticated = false
+        this._isGuest = true
     }
 
     _registerToActions(action) {
         switch(action.actionType) {
             case UserConstants.LOGIN:
                 this._jwt = action.jwt
+                this._authKey = this._jwt
                 this._user = jwt_decode(this._jwt)
                 this._user['uuid'] = this._user.username
                 this._isGuest = false
@@ -31,14 +33,14 @@ class UserStore extends BaseStore {
                 break
 
             case UserConstants.CREATE_GUEST:
-                let username = pubnub.get_uuid()  // this is set from base.html
-                let user = {
+                let username = 'Guest' + Math.floor((Math.random() * 9999999) + 1)
+                this._user = {
                     username: username,
                     uuid: username,
                     channels: []
                 }
-                this._user = user
                 this._isGuest = true
+                this._authKey = username
                 this.emitChange()
                 break
 
@@ -55,17 +57,19 @@ class UserStore extends BaseStore {
     }
 
     get user() {
-        return this._user;
+        return this._user
     }
 
     get is_authenticated() {
-        console.log(!!this._user)
-        console.log(this._isGuest, !this.is_Guest)
         return !!this._user && !this._isGuest
     }
 
     get jwt() {
-        return this._jwt;
+        return this._jwt
+    }
+
+    get authKey() {
+        return this._authKey
     }
 }
 

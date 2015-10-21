@@ -5,23 +5,28 @@ import UserConstants from '../constants/UserConstants'
 
 export default {
     login(jwt) {
-        var savedJwt = localStorage.getItem('jwt');
+        var savedJwt = localStorage.getItem('jwt')
 
         AppDispatcher.dispatch({
             actionType: UserConstants.LOGIN,
             jwt: jwt
-        });
+        })
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
             history.replaceState(null, '/')
-            localStorage.setItem('jwt', jwt);
+            localStorage.setItem('jwt', jwt)
         }
     },
 
-    subscribe() {
-        return
+    refresh(jwt) {
+        AppDispatcher.dispatch({
+            actionType: UserConstants.LOGIN,
+            jwt: jwt
+        })
+        localStorage.setItem('jwt', jwt)
     },
+
 
     unsubscribe() {
         pubnub.unsubscribe({

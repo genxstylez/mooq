@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Link } from 'react-router'
 import UserService from '../services/UserService'
 
 export default React.createClass({
@@ -26,11 +25,12 @@ export default React.createClass({
         return (
                 <div id="avatar">
                     {this.state.is_authenticated ?
-                        <span>
-                            <span className="username overflow_ellipsis">{this.props.username}</span>
+                        <div>
+                            <img className="ui avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
+                            <span>{this.props.username}</span>
                             <i className="sign out icon link" onClick={this.handleSignout}></i>
-                        </span>
-                    : <Link to='/login/'>Please Log in</Link>
+                        </div>
+                    : null
                     }
 
                 </div>

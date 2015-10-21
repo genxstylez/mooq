@@ -10,7 +10,7 @@ export default React.createClass({
         })
         return (
             <Link activeClassName="active" className={cls} to={`/channels/${this.props.id}/`}>
-                {this.props.name}
+                <i className="minus icon channel-icon" />{this.props.name}
             </Link>
         )
     }

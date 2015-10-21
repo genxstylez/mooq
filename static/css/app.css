@@ -15,7 +15,7 @@ body > #app > #main {
 }
 
 .ui.form textarea {
-    resize: none;
+    resize: none !important;
 }
 
 .login {
@@ -28,6 +28,10 @@ body > #app > #main {
 .login .column {
     max-width: 450px;
     min-width: 400px;
+}
+
+.ui.comments>.comment>.avatar img {
+    border-radius: .4rem !important;
 }
 
 #main > .full.height {
@@ -74,26 +78,34 @@ body > #app > #main {
     padding: 10px !important;
     height: 100%;
     position: absolute;
+    padding: 0px !important;
 }
 
 .profile-menu .ui.list {
     margin-bottom: 3rem !important;
+    padding: 0px;
 }
 
 .profile-menu .ui.header {
     color: #ffffff !important;
     margin-bottom: 5px !important;
+    padding: 0px 35px !important;
 }
 .profile-menu .item {
-    color: #ababab !important;
-    padding: 5px 0 !important;
+    color: #848383 !important;
+    padding: 6px 35px !important;
     font-size: 1rem !important;
 }
 
 .profile-menu .item.unread {
-    font-style: italic;
+    font-style: bold;
     font-weight: 900;
     color: white !important;
+}
+
+.profile-menu .item.active {
+    color: white !important;
+    background: #714A3C !important;
 }
 
 .link.icon {
@@ -103,6 +115,27 @@ body > #app > #main {
 .link.icon:hover {
     opacity: 0.5
 }
+
+.logo {
+    height: 100px;
+    text-align: center;
+    color: white;
+    line-height: 85px;
+    font-size: 65px;
+    vertical-align: middle;
+}
+
+.channel-icon {
+    float: left !important;
+    color: #848383 !important;
+    margin: 0 10px 0 0px !important;
+    font-size: 0.75rem !important;
+}
+
+.active .channel-icon, .unread .channel-icon {
+    color: white !important;
+}
+
 
 #avatar {
     bottom: 0px;
@@ -150,7 +183,8 @@ body > #app > #main {
 }
 
 #messages-container .ui.header {
-    color: #585252;
+    color: #373738;
+    font-weight: 100;
 }
 
 #messages-container > .channel {
@@ -192,6 +226,14 @@ body > #app > #main {
     padding: 10px 15px 10px 32px;
     background-color: #eaeaea;
     z-index: 2;
+}
+
+.here_now {
+    cursor: pointer;
+}
+
+.here_now:hover {
+    opacity: .8;
 }
 
 .mobile-menu {
