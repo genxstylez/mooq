@@ -46611,8 +46611,8 @@ exports['default'] = _react2['default'].createClass({
 
     checkToken: function checkToken() {
         var token_details = (0, _jwtDecode2['default'])(this.state.jwt);
-        if (token_details.exp < Date.now()) {
-            // if token exipred
+        if (token_details.exp * 1000 < Date.now()) {
+            // if token expired
             _servicesUserService2['default'].refresh_token(this.state.jwt).then(function (res) {
                 _actionsUserActions2['default'].refresh(res.body.token);
             })['catch'](function (res) {
@@ -46684,7 +46684,6 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        console.log(_reactDom2['default'].findDOMNode(this.refs.dropdown));
         $(_reactDom2['default'].findDOMNode(this.refs.dropdown)).dropdown();
     },
 
@@ -46891,6 +46890,7 @@ exports['default'] = _react2['default'].createClass({
             is_authenticated: _storesUserStore2['default'].is_authenticated
         });
         this.initialise_PubNub();
+        _servicesChannelService2['default'].grant(this.state.authKey, this.state.channels).done();
     },
 
     _onChange: function _onChange() {
@@ -46898,6 +46898,7 @@ exports['default'] = _react2['default'].createClass({
             active_channel: _storesChannelStore2['default'].active_channel,
             channels: _storesChannelStore2['default'].channels
         });
+        _servicesChannelService2['default'].grant(this.state.authKey, this.state.channels).done();
     },
 
     initialise_PubNub: function initialise_PubNub() {

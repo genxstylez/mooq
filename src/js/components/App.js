@@ -40,8 +40,8 @@ export default React.createClass({
 
     checkToken() {
         let token_details = jwt_decode(this.state.jwt)
-        if(token_details.exp < Date.now()) {
-            // if token exipred
+        if(token_details.exp*1000 < Date.now()) {
+            // if token expired
             UserService.refresh_token(this.state.jwt)
                 .then((res) => {
                     UserActions.refresh(res.body.token)

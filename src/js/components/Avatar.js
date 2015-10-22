@@ -11,7 +11,6 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        console.log(ReactDOM.findDOMNode(this.refs.dropdown))
         $(ReactDOM.findDOMNode(this.refs.dropdown)).dropdown()
     },
 

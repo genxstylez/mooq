@@ -63,7 +63,6 @@ export default React.createClass({
                             ChannelActions.mark_as_active(this.props.params.channelId)
                         }
                     })
-
                 } else {
                     this.history.replaceState(null, '/search/')
                 }
@@ -98,7 +97,6 @@ export default React.createClass({
                     ChannelService.join_channels([channel])
                     ChannelActions.mark_as_active(channel.id)
                 })
-
             }, (err) => {
                 alert('Something went wrong');
             })
@@ -111,6 +109,7 @@ export default React.createClass({
             is_authenticated: UserStore.is_authenticated
         })
         this.initialise_PubNub()
+        ChannelService.grant(this.state.authKey, this.state.channels).done()
     },
 
     _onChange() {
@@ -118,7 +117,7 @@ export default React.createClass({
             active_channel: ChannelStore.active_channel,
             channels: ChannelStore.channels
         })
-
+        ChannelService.grant(this.state.authKey, this.state.channels).done()
     },
 
     initialise_PubNub() {
