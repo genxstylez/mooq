@@ -63,3 +63,4 @@ class SocialAuthSerializer(serializers.Serializer):
     """
     backend = serializers.CharField()
     access_token = serializers.CharField()
+    jwt_token = serializers.CharField(required=False)

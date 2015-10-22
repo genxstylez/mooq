@@ -13,6 +13,7 @@ from rest_framework_jwt.settings import api_settings
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 
 try:
     from social.apps.django_app.utils import load_strategy, load_backend
@@ -23,6 +24,7 @@ except ImportError:
 from .serializers import SocialAuthSerializer
 
 from member.serializers import PublicUserSerializer, PrivateUserSerializer
+from mooq.authentication import CsrfExemptAuthentication
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -42,7 +44,8 @@ def check_username(request):
 
 class CreateUserView(CreateAPIView):
     model = User
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, ]
+    authentication_classes = [CsrfExemptAuthentication, ]
     serializer_class = PrivateUserSerializer
 
 
@@ -77,6 +80,7 @@ class SocialAuth(APIView):
     permission_classes = ()
     parser_classes = (parsers.FormParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
+    authentication_classes = (CsrfExemptAuthentication, )
     serializer_class = SocialAuthSerializer
 
     def post(self, request):
@@ -85,6 +89,7 @@ class SocialAuth(APIView):
         if serializer.is_valid():
             backend = serializer.data['backend']
             access_token = serializer.data['access_token']
+            jwt = serializer.data.get('jwt_token', None)
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -95,12 +100,19 @@ class SocialAuth(APIView):
 
         try:
             kwargs = dict({(k, i) for k, i in serializer.data.items() if k != 'backend'})
-            user = request.user # 如果註冊過的使用者已登入, 則連結此使用者
-            print(user)
-            kwargs['user'] = user.is_authenticated() and user or None
+            if jwt:
+                # Get user from provided jwt
+                try:
+                    payload = jwt_decode_handler(jwt)
+                    user = User.objects.get(id=payload['user_id'])
+                    if user.is_authenticated():
+                        kwargs['user'] = user
+                    else:
+                        raise Exception('not authenticated')
+                except:
+                    kwargs['user'] = None
+                    pass
 
-
-            # 使用者驗證
             user = backend.do_auth(**kwargs)
 
         except AuthAlreadyAssociated:

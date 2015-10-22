@@ -24,7 +24,6 @@ export default {
     login_with_social(credentials, cb) {
         return request
             .post(Urls['api-social-auth']())
-            .set('X-CSRFToken', csrf_token)
             .send(credentials)
             .promise()
     },
@@ -49,9 +48,7 @@ export default {
 
     logout() {
         ChannelService.unsubscribe(ChannelStore.channels)
-        console.log(ChannelStore.channels)
         UserActions.logout()
-        window.aa = ChannelStore
     },
 
     create_guest() {

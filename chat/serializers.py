@@ -13,7 +13,7 @@ class ChannelSubscribersField(serializers.RelatedField):
             username=value.user.username,
             avatar=value.user.profile.avatar.url if value.user.profile.avatar else None,
             is_moderator=value.is_moderator,
-            url = reverse('users-detail', args=[value.user.pk], request=request)
+            url = reverse('user-detail', args=[value.user.pk], request=request)
         )
         return subscriber
 

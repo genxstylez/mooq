@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_jwt.utils import jwt_decode_handler
-from rest_framework.authentication import SessionAuthentication as OriginalSessionAuthentication
+
+from mooq.authentication import CsrfExemptAuthentication
 
 from mooq.fields import DynamicFields
 
@@ -28,13 +29,10 @@ class ChannelViewSet(DynamicFields, viewsets.ModelViewSet):
     search_fields = ('name', )
 
 
-class SessionAuthentication(OriginalSessionAuthentication):
-    def enforce_csrf(self, request):
-        return
 
 @api_view(['POST', 'GET'])
 @permission_classes((permissions.AllowAny, ))
-@authentication_classes((SessionAuthentication,))
+@authentication_classes((CsrfExemptAuthentication,))
 def grant(request):
     authKey = request.data.get('authKey')
     try:

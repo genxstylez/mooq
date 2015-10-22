@@ -46820,22 +46820,19 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        window.pubnub = PUBNUB.init({
-            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
-            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
-            uuid: this.state.user.username,
-            auth_key: this.state.authKey
-        });
+        this.initialise_PubNub();
 
         $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
 
         _storesChannelStore2['default'].addChangeListener(this._onChange);
+        _storesUserStore2['default'].addChangeListener(this._onUserChange);
     },
 
     componentWillUnmount: function componentWillUnmount() {
         _storesChannelStore2['default'].removeChangeListener(this._onChange);
+        _storesUserStore2['default'].removeChangeListener(this._onUserChange);
     },
 
     componentWillMount: function componentWillMount() {
@@ -46887,10 +46884,28 @@ exports['default'] = _react2['default'].createClass({
         });
     },
 
+    _onUserChange: function _onUserChange() {
+        this.setState({
+            user: _storesUserStore2['default'].user,
+            authKey: _storesUserStore2['default'].authKey,
+            is_authenticated: _storesUserStore2['default'].is_authenticated
+        });
+        this.initialise_PubNub();
+    },
+
     _onChange: function _onChange() {
         this.setState({
             active_channel: _storesChannelStore2['default'].active_channel,
             channels: _storesChannelStore2['default'].channels
+        });
+    },
+
+    initialise_PubNub: function initialise_PubNub() {
+        window.pubnub = PUBNUB.init({
+            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
+            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
+            uuid: this.state.user.username,
+            auth_key: this.state.authKey
         });
     },
 
@@ -49119,7 +49134,7 @@ exports['default'] = {
     },
 
     login_with_social: function login_with_social(credentials, cb) {
-        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).set('X-CSRFToken', csrf_token).send(credentials).promise();
+        return _superagentBluebirdPromise2['default'].post(Urls['api-social-auth']()).send(credentials).promise();
     },
 
     refresh_token: function refresh_token(jwt) {
@@ -49136,9 +49151,7 @@ exports['default'] = {
 
     logout: function logout() {
         _servicesChannelService2['default'].unsubscribe(_storesChannelStore2['default'].channels);
-        console.log(_storesChannelStore2['default'].channels);
         _actionsUserActions2['default'].logout();
-        window.aa = _storesChannelStore2['default'];
     },
 
     create_guest: function create_guest() {

@@ -31,23 +31,19 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        window.pubnub = PUBNUB.init({
-            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
-            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
-            uuid: this.state.user.username,
-            auth_key: this.state.authKey
-        })
-
+        this.initialise_PubNub()
 
         $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
 
-        ChannelStore.addChangeListener(this._onChange);
+        ChannelStore.addChangeListener(this._onChange)
+        UserStore.addChangeListener(this._onUserChange)
     },
 
     componentWillUnmount() {
-        ChannelStore.removeChangeListener(this._onChange);
+        ChannelStore.removeChangeListener(this._onChange)
+        UserStore.removeChangeListener(this._onUserChange)
     },
 
     componentWillMount() {
@@ -108,10 +104,29 @@ export default React.createClass({
             })
     },
 
+    _onUserChange() {
+        this.setState({
+            user: UserStore.user,
+            authKey: UserStore.authKey,
+            is_authenticated: UserStore.is_authenticated
+        })
+        this.initialise_PubNub()
+    },
+
     _onChange() {
         this.setState({
             active_channel: ChannelStore.active_channel,
             channels: ChannelStore.channels
+        })
+
+    },
+
+    initialise_PubNub() {
+        window.pubnub = PUBNUB.init({
+            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
+            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
+            uuid: this.state.user.username,
+            auth_key: this.state.authKey
         })
     },
 
