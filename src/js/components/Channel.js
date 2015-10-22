@@ -144,7 +144,7 @@ export default React.createClass({
                             <div className="logo">
                                 APPSE
                             </div>
-                            <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
+
                             <div className="ui list">
                                 <h5 className="ui header">Top 5 Stocks</h5>
                                 <ChannelNav name="top 1" />
@@ -155,6 +155,7 @@ export default React.createClass({
                             </div>
                             <ChannelList />
                         </div>
+                         <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     </div>
                     <div id="messages-container">
                         <ChannelHeader />

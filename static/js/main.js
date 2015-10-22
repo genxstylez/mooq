@@ -46683,6 +46683,11 @@ exports['default'] = _react2['default'].createClass({
         };
     },
 
+    componentDidMount: function componentDidMount() {
+        console.log(_reactDom2['default'].findDOMNode(this.refs.dropdown));
+        $(_reactDom2['default'].findDOMNode(this.refs.dropdown)).dropdown();
+    },
+
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps != this.state) {
             this.setState(_extends({}, nextProps));
@@ -46698,15 +46703,25 @@ exports['default'] = _react2['default'].createClass({
             'div',
             { id: 'avatar' },
             this.state.is_authenticated ? _react2['default'].createElement(
-                'div',
-                null,
+                'span',
+                { className: 'ui item dropdown', ref: 'dropdown' },
                 _react2['default'].createElement('img', { className: 'ui avatar image', src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' }),
                 _react2['default'].createElement(
                     'span',
-                    null,
+                    { className: 'username' },
                     this.props.username
                 ),
-                _react2['default'].createElement('i', { className: 'sign out icon link', onClick: this.handleSignout })
+                _react2['default'].createElement('i', { className: 'chevron up icon' }),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'menu transition hidden' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'item', onClick: this.handleSignout },
+                        _react2['default'].createElement('i', { className: 'sign out icon link' }),
+                        'Sign out'
+                    )
+                )
             ) : null
         );
     }
@@ -46928,7 +46943,6 @@ exports['default'] = _react2['default'].createClass({
                             { className: 'logo' },
                             'APPSE'
                         ),
-                        _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username }),
                         _react2['default'].createElement(
                             'div',
                             { className: 'ui list' },
@@ -46944,7 +46958,8 @@ exports['default'] = _react2['default'].createClass({
                             _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 5' })
                         ),
                         _react2['default'].createElement(_ChannelList2['default'], null)
-                    )
+                    ),
+                    _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username })
                 ),
                 _react2['default'].createElement(
                     'div',

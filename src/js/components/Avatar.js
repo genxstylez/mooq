@@ -10,6 +10,11 @@ export default React.createClass({
         }
     },
 
+    componentDidMount() {
+        console.log(ReactDOM.findDOMNode(this.refs.dropdown))
+        $(ReactDOM.findDOMNode(this.refs.dropdown)).dropdown()
+    },
+
     componentWillReceiveProps(nextProps) {
         if (nextProps != this.state) {
             this.setState({...nextProps})
@@ -23,17 +28,21 @@ export default React.createClass({
 
     render() {
         return (
-                <div id="avatar">
-                    {this.state.is_authenticated ?
-                        <div>
-                            <img className="ui avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                            <span>{this.props.username}</span>
-                            <i className="sign out icon link" onClick={this.handleSignout}></i>
+            <div id="avatar">
+                {this.state.is_authenticated ?
+                    <span className="ui item dropdown" ref="dropdown">
+                        <img className="ui avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
+                        <span className="username">{this.props.username}</span>
+                        <i className="chevron up icon" />
+                        <div className="menu transition hidden">
+                            <div className="item" onClick={this.handleSignout}>
+                                <i className="sign out icon link" />Sign out
+                            </div>
                         </div>
+                    </span>
                     : null
-                    }
-
-                </div>
-            )
+                }
+            </div>
+        )
     }
 })
