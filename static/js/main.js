@@ -46940,11 +46940,6 @@ exports['default'] = _react2['default'].createClass({
                 { className: 'full height pusher' },
                 _react2['default'].createElement(
                     'div',
-                    { className: 'icon item mobile-menu' },
-                    _react2['default'].createElement('i', { className: 'content icon' })
-                ),
-                _react2['default'].createElement(
-                    'div',
                     { id: 'profile-container' },
                     _react2['default'].createElement(
                         'div',
@@ -46975,7 +46970,7 @@ exports['default'] = _react2['default'].createClass({
                 _react2['default'].createElement(
                     'div',
                     { id: 'messages-container' },
-                    _react2['default'].createElement(_ChannelHeader2['default'], null),
+                    _react2['default'].createElement(_ChannelHeader2['default'], { channel: this.state.active_channel }),
                     _lodash2['default'].map(this.state.channels, function (channel) {
                         return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
                             channel_id: channel.id,
@@ -47035,21 +47030,13 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            active_channel: _storesChannelStore2['default'].active_channel || ''
+            active_channel: this.props.channel
         };
     },
 
-    componentDidMount: function componentDidMount() {
-        _storesChannelStore2['default'].addChangeListener(this._onChange);
-    },
-
-    componentWillUnmount: function componentWillUnmount() {
-        _storesChannelStore2['default'].removeChangeListener(this._onChange);
-    },
-
-    _onChange: function _onChange() {
-        this.setState({
-            active_channel: _storesChannelStore2['default'].active_channel
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        if (nextProps.channel != this.state.channel) this.setState({
+            active_channel: nextProps.channel
         });
     },
 
@@ -47098,17 +47085,17 @@ exports['default'] = _react2['default'].createClass({
                 { className: 'ui top fixed menu channel-header' },
                 _react2['default'].createElement(
                     'div',
+                    { className: 'icon item mobile-menu' },
+                    _react2['default'].createElement('i', { className: 'content icon' })
+                ),
+                _react2['default'].createElement(
+                    'div',
                     { className: 'item channel-name' },
                     _react2['default'].createElement(
                         'h2',
                         { className: 'ui header' },
                         this.state.active_channel.name
                     )
-                ),
-                _react2['default'].createElement(
-                    'div',
-                    { className: 'item' },
-                    this.state.price
                 ),
                 this.state.active_channel != '' ? _react2['default'].createElement(
                     'div',

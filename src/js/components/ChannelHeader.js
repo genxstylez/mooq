@@ -11,22 +11,15 @@ import request from 'superagent';
 export default React.createClass({
     getInitialState() {
         return {
-            active_channel: ChannelStore.active_channel || '',
+            active_channel: this.props.channel
         }
     },
 
-    componentDidMount() {
-        ChannelStore.addChangeListener(this._onChange);
-    },
-
-    componentWillUnmount() {
-        ChannelStore.removeChangeListener(this._onChange);
-    },
-
-    _onChange() {
-        this.setState({
-            active_channel: ChannelStore.active_channel,
-        });
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.channel != this.state.channel)
+            this.setState({
+                active_channel: nextProps.channel
+            })
     },
 
     handleHereNow() {
@@ -55,10 +48,12 @@ export default React.createClass({
                     </div>
                 </div>
                 <div className="ui top fixed menu channel-header">
+                    <div className="icon item mobile-menu">
+                        <i className="content icon"></i>
+                    </div>
                     <div className="item channel-name">
                         <h2 className="ui header">{this.state.active_channel.name}</h2>
                     </div>
-                    <div className="item">{this.state.price}</div>
                     {this.state.active_channel != '' ?
                     <div className="right menu">
                         <div className="item here_now" onClick={this.handleHereNow}>

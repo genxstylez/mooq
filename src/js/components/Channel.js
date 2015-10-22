@@ -147,9 +147,8 @@ export default React.createClass({
                     <ChannelList />
                 </div>
                 <div className="full height pusher">
-                    <div className="icon item mobile-menu">
-                        <i className="content icon"></i>
-                    </div>
+
+
                     <div id="profile-container">
                         <div id="profile-menu" className="ui vertical menu grid profile-menu">
                             <div className="logo">
@@ -169,7 +168,7 @@ export default React.createClass({
                          <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     </div>
                     <div id="messages-container">
-                        <ChannelHeader />
+                        <ChannelHeader channel={this.state.active_channel} />
                         {_.map(this.state.channels, (channel) => {
                         return (<ChannelItem key={channel.id}
                             channel_id={channel.id}

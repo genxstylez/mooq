@@ -307,12 +307,6 @@ body > #app > #main {
     #messages-container > #footer {
         left: 0px;
     }
-    .mobile-menu {
-        z-index: 102;
-    }
-    .channel-header > .channel-name {
-        margin-left: 88px;
-    }
 }
 
 @media only screen and (min-width: 1144px) {
