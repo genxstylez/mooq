@@ -24,7 +24,6 @@ export default React.createClass({
         return {
             channels: ChannelStore.channels,
             active_channel: ChannelStore.active_channel,
-            prompt_to_join: false,
             user: UserStore.user,
             authKey: UserStore.authKey,
             is_authenticated: UserStore.is_authenticated,
@@ -70,14 +69,14 @@ export default React.createClass({
                     })
 
                 } else {
-                    this.history.replaceState(null, '/join-channel/')
+                    this.history.replaceState(null, '/search/')
                 }
             })
         } else {
             if (this.props.params.channelId)
                 this.handleGuestSession(this.props.params.channelId)
             else
-                this.history.pushState(null, 'join-channel')
+                this.history.pushState(null, '/search/')
         }
 
     },
@@ -102,9 +101,6 @@ export default React.createClass({
                 .then(() => {
                     ChannelService.join_channels([channel])
                     ChannelActions.mark_as_active(channel.id)
-                    this.setState({
-                        prompt_to_join: false
-                    });
                 })
 
             }, (err) => {
@@ -168,16 +164,6 @@ export default React.createClass({
                             users={channel.users}
                             is_active={this.state.active_channel.id == channel.id} />);
                         })}
-                        {this.state.prompt_to_join ?
-                            <div className="ui active dimmer">
-                                <div className="content">
-                                    <div className="center">
-                                        <h2>Join a channel!</h2>
-                                    </div>
-                                </div>
-                            </div>
-                            : null
-                        }
                     </div>
                 </div>
             </div>

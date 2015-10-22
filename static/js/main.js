@@ -46813,7 +46813,6 @@ exports['default'] = _react2['default'].createClass({
         return {
             channels: _storesChannelStore2['default'].channels,
             active_channel: _storesChannelStore2['default'].active_channel,
-            prompt_to_join: false,
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
             is_authenticated: _storesUserStore2['default'].is_authenticated
@@ -46857,11 +46856,11 @@ exports['default'] = _react2['default'].createClass({
                         }
                     });
                 } else {
-                    _this.history.replaceState(null, '/join-channel/');
+                    _this.history.replaceState(null, '/search/');
                 }
             });
         } else {
-            if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else this.history.pushState(null, 'join-channel');
+            if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else this.history.pushState(null, '/search/');
         }
     },
 
@@ -46882,9 +46881,6 @@ exports['default'] = _react2['default'].createClass({
             _servicesChannelService2['default'].grant(_this2.state.authKey, [channel]).then(function () {
                 _servicesChannelService2['default'].join_channels([channel]);
                 _actionsChannelActions2['default'].mark_as_active(channel.id);
-                _this2.setState({
-                    prompt_to_join: false
-                });
             });
         }, function (err) {
             alert('Something went wrong');
@@ -46973,24 +46969,7 @@ exports['default'] = _react2['default'].createClass({
                             occupancy: channel.occupancy,
                             users: channel.users,
                             is_active: _this3.state.active_channel.id == channel.id });
-                    }),
-                    this.state.prompt_to_join ? _react2['default'].createElement(
-                        'div',
-                        { className: 'ui active dimmer' },
-                        _react2['default'].createElement(
-                            'div',
-                            { className: 'content' },
-                            _react2['default'].createElement(
-                                'div',
-                                { className: 'center' },
-                                _react2['default'].createElement(
-                                    'h2',
-                                    null,
-                                    'Join a channel!'
-                                )
-                            )
-                        )
-                    ) : null
+                    })
                 )
             )
         );
