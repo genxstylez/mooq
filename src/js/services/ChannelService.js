@@ -5,16 +5,29 @@ import ChannelConstants from '../constants/ChannelConstants'
 import ChannelStore from '../stores/ChannelStore'
 
 export default {
+    get_channels(limit, offset, search_kw, asc) {
+        return request
+            .get(Urls['channel-list']())
+            .query({limit: limit || 50})
+            .query({offset: offset || 0})
+            .query({fields: 'id,name,subscribers_count'})
+            .query({search: search_kw})
+            .query({ordering: asc ? 'subscribers_count' : '-subscribers_count'})
+            .promise()
+    },
+
     get_subscribed_channels(user_id) {
         return request
-            .get(Urls['channels-list']())
+            .get(Urls['channel-list']())
             .query({subscribers__user__id: user_id})
+            .query({fields: 'id,name,subscribers_count'})
+            .query({ordering: 'subscribers_count'})
             .promise()
     },
 
     async_get_channel_info(channel_id) {
         return request
-            .get(Urls['channels-detail'](channel_id))
+            .get(Urls['channel-detail'](channel_id))
             .promise()
     },
 

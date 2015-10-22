@@ -163,7 +163,7 @@ export default React.createClass({
                             channel_id={channel.id}
                             name={channel.name}
                             messages={channel.messages}
-                            occupancy={chyannel.occupancy}
+                            occupancy={channel.occupancy}
                             users={channel.users}
                             is_active={this.state.active_channel.id == channel.id} />);
                         })}

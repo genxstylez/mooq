@@ -1,5 +1,6 @@
 from chat.models import Channel, ChannelSubscribers
 from rest_framework import serializers
+from mooq.serializers import DynamicFieldsHyperlinkedModelSerializer
 from stock.serializers import StockSerializer
 from rest_framework.reverse import reverse
 
@@ -10,7 +11,7 @@ class ChannelSubscribersField(serializers.RelatedField):
         subscriber = dict(
             id=value.user.id,
             username=value.user.username,
-            avatar=value.user.profile.avatar or None,
+            avatar=value.user.profile.avatar.url if value.user.profile.avatar else None,
             is_moderator=value.is_moderator,
             url = reverse('users-detail', args=[value.user.pk], request=request)
         )
@@ -31,12 +32,13 @@ class UserChannelField(serializers.RelatedField):
         return channel
 
 
-class ChannelSerializer(serializers.HyperlinkedModelSerializer):
+class ChannelSerializer(DynamicFieldsHyperlinkedModelSerializer):
     stock = StockSerializer(read_only=True)
     subscribers = ChannelSubscribersField(many=True, read_only=True)
+    subscribers_count = serializers.IntegerField(source='subscribers.count', read_only=True)
     class Meta:
         model = Channel
-        fields = ('id', 'name', 'is_system', 'stock', 'subscribers')
+        fields = ('id', 'name', 'is_system', 'stock', 'subscribers', 'subscribers_count')
 
 
 class ChannelSubscribersSerializer(serializers.HyperlinkedModelSerializer):

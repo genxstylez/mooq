@@ -1,5 +1,6 @@
 import os
 from django.conf import settings
+from django.db.models import Count
 from chat.models import Channel
 from chat.serializers import ChannelSerializer
 
@@ -9,6 +10,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework.authentication import SessionAuthentication as OriginalSessionAuthentication
 
+from mooq.fields import DynamicFields
+
 from pubnub import Pubnub
 
 PUB_KEY = os.environ.get('PUBNUB_PUB_KEY')
@@ -16,12 +19,13 @@ SUB_KEY = os.environ.get('PUBNUB_SUB_KEY')
 SECRET_KEY = os.environ.get('PUBNUB_SECRET_KEY')
 pubnub = Pubnub(publish_key=PUB_KEY, subscribe_key=SUB_KEY, secret_key=SECRET_KEY, ssl_on=not settings.DEBUG)
 
-class ChannelViewSet(viewsets.ModelViewSet):
-    queryset = Channel.objects.all()
+class ChannelViewSet(DynamicFields, viewsets.ModelViewSet):
+    queryset = Channel.objects.annotate(subscribers_count=Count('subscribers'))
     serializer_class = ChannelSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('subscribers__user__id',)
-
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filter_fields = ('subscribers__user__id', )
+    ordering_fields = ('subscribers_count', )
+    search_fields = ('name', )
 
 
 class SessionAuthentication(OriginalSessionAuthentication):

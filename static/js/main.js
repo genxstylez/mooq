@@ -46955,7 +46955,7 @@ exports['default'] = _react2['default'].createClass({
                             channel_id: channel.id,
                             name: channel.name,
                             messages: channel.messages,
-                            occupancy: chyannel.occupancy,
+                            occupancy: channel.occupancy,
                             users: channel.users,
                             is_active: _this3.state.active_channel.id == channel.id });
                     }),
@@ -46984,7 +46984,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":237,"./SidebarChannelList":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":236,"./SidebarChannelList":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47249,7 +47249,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../services/ChannelService":249,"../stores/ChannelStore":253,"./MessageInput":237,"./MessageItem":238,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../services/ChannelService":249,"../stores/ChannelStore":253,"./MessageInput":236,"./MessageItem":237,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47482,57 +47482,6 @@ module.exports = exports['default'];
 
 
 },{"../stores/UserStore":254,"react":219}],235:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _storesUserStore = require('../stores/UserStore');
-
-var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
-
-exports['default'] = _react2['default'].createClass({
-    displayName: 'JoinChannel',
-
-    getInitialState: function getInitialState() {
-        return {
-            is_authenticated: _storesUserStore2['default'].is_authenticated
-        };
-    },
-
-    componentDidMount: function componentDidMount() {
-        _storesUserStore2['default'].addChangeListener(this._onChange);
-    },
-
-    componentWillUnMount: function componentWillUnMount() {
-        _storesUserStore2['default'].removeChangeListener(this._onChange);
-    },
-
-    _onChange: function _onChange() {
-        this.setState({
-            is_authenticated: _storesUserStore2['default'].is_authenticated
-        });
-    },
-
-    render: function render() {
-        return _react2['default'].createElement(
-            'h2',
-            null,
-            'A List of Channels'
-        );
-    }
-});
-module.exports = exports['default'];
-
-
-},{"../stores/UserStore":254,"react":219}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47936,7 +47885,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],237:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48032,7 +47981,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"react":219,"react-dom":65,"react-textarea-autosize":90}],238:[function(require,module,exports){
+},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"react":219,"react-dom":65,"react-textarea-autosize":90}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48112,7 +48061,138 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":63,"react":219}],239:[function(require,module,exports){
+},{"moment":63,"react":219}],238:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _SemanticInput = require('./SemanticInput');
+
+var _SemanticInput2 = _interopRequireDefault(_SemanticInput);
+
+var _servicesChannelService = require('../services/ChannelService');
+
+var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+
+exports['default'] = _react2['default'].createClass({
+    displayName: 'Search',
+
+    mixins: [],
+
+    limit: 10,
+    offset: 0,
+
+    getInitialState: function getInitialState() {
+        return {
+            channels: [],
+            limit: 10,
+            offset: 0,
+            next: null,
+            previous: null
+        };
+    },
+
+    componentWillMount: function componentWillMount() {
+        var _this = this;
+
+        // Get top 10 channels
+        _servicesChannelService2['default'].get_channels(this.limit, this.offset).then(function (res) {
+            _this.setState({
+                channels: res.body.results,
+                next: res.body.next,
+                previous: res.body.previous
+            });
+        })['catch'](function (err) {
+            alert('Something went wrong');
+        });
+    },
+
+    componentWillUnMount: function componentWillUnMount() {
+        return;
+    },
+
+    _getChannels: function _getChannels(limit, offset, kw, asc) {
+        var _this2 = this;
+
+        _servicesChannelService2['default'].get_channels(limit, offset, kw, asc).then(function (res) {
+            _this2.setState({
+                channels: res.body.results,
+                next: res.body.next,
+                previous: res.body.previous
+            });
+        })['catch'](function (err) {
+            alert('Something went wrong');
+        });
+    },
+
+    getTopChannels: function getTopChannels() {
+        // Get top 10 channels
+        this._getChannels(this.limit, this.offset);
+    },
+
+    getSearchResults: function getSearchResults(kw) {
+        this._getChannels(this.limit, this.offset, kw);
+    },
+
+    handleChange: function handleChange(e) {
+        if (e.currentTarget.value) {
+            this.getSearchResults(e.currentTarget.value);
+        } else {
+            this.getTopChannels();
+        }
+    },
+
+    render: function render() {
+        return _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
+                'h2',
+                null,
+                'Search something'
+            ),
+            _react2['default'].createElement(
+                'div',
+                null,
+                _react2['default'].createElement(
+                    _SemanticInput2['default'],
+                    { required: true, icon: true, name: 'search', placeholder: 'Enter Stock symbol e.g. APPL',
+                        type: 'text', onChange: this.handleChange, validation: false },
+                    _react2['default'].createElement('i', { className: 'search icon' })
+                )
+            ),
+            _react2['default'].createElement(
+                'ul',
+                null,
+                _lodash2['default'].map(this.state.channels, function (channel) {
+                    return _react2['default'].createElement(
+                        'li',
+                        { key: channel.id },
+                        channel.name,
+                        ' - ',
+                        channel.subscribers_count
+                    );
+                })
+            )
+        );
+    }
+});
+module.exports = exports['default'];
+
+
+},{"../services/ChannelService":249,"./SemanticInput":239,"lodash":62,"react":219}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48783,9 +48863,9 @@ var _componentsSignup = require('./components/Signup');
 
 var _componentsSignup2 = _interopRequireDefault(_componentsSignup);
 
-var _componentsJoinChannel = require('./components/JoinChannel');
+var _componentsSearch = require('./components/Search');
 
-var _componentsJoinChannel2 = _interopRequireDefault(_componentsJoinChannel);
+var _componentsSearch2 = _interopRequireDefault(_componentsSearch);
 
 var _servicesUserService = require('./services/UserService');
 
@@ -48814,14 +48894,14 @@ _reactDom2['default'].render(_react2['default'].createElement(
             { name: 'channels', path: 'channels/', component: _componentsChannel2['default'] },
             _react2['default'].createElement(_reactRouter.Route, { name: 'channels', path: ':channelId/', component: _componentsChannel2['default'] })
         ),
-        _react2['default'].createElement(_reactRouter.Route, { name: 'join-channel', path: 'join-channel/', component: _componentsJoinChannel2['default'] }),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'search', path: 'search/', component: _componentsSearch2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
     )
 ), document.getElementById('app'));
 
 
-},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/JoinChannel":235,"./components/Login":236,"./components/Signup":241,"./history":245,"./services/UserService":250,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
+},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/Login":235,"./components/Search":238,"./components/Signup":241,"./history":245,"./services/UserService":250,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48918,12 +48998,16 @@ var _storesChannelStore = require('../stores/ChannelStore');
 var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
 
 exports['default'] = {
+    get_channels: function get_channels(limit, offset, search_kw, asc) {
+        return _superagentBluebirdPromise2['default'].get(Urls['channel-list']()).query({ limit: limit || 50 }).query({ offset: offset || 0 }).query({ fields: 'id,name,subscribers_count' }).query({ search: search_kw }).query({ ordering: asc ? 'subscribers_count' : '-subscribers_count' }).promise();
+    },
+
     get_subscribed_channels: function get_subscribed_channels(user_id) {
-        return _superagentBluebirdPromise2['default'].get(Urls['channels-list']()).query({ subscribers__user__id: user_id }).promise();
+        return _superagentBluebirdPromise2['default'].get(Urls['channel-list']()).query({ subscribers__user__id: user_id }).query({ fields: 'id,name,subscribers_count' }).query({ ordering: 'subscribers_count' }).promise();
     },
 
     async_get_channel_info: function async_get_channel_info(channel_id) {
-        return _superagentBluebirdPromise2['default'].get(Urls['channels-detail'](channel_id)).promise();
+        return _superagentBluebirdPromise2['default'].get(Urls['channel-detail'](channel_id)).promise();
     },
 
     grant: function grant(token, channels) {

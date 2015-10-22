@@ -28,8 +28,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 router = DefaultRouter()
-router.register(r'channels', ChatView.ChannelViewSet, base_name='channels')
-router.register(r'users', MemberView.UserViewSet, base_name='users')
+router.register(r'channels', ChatView.ChannelViewSet, base_name='channel')
+router.register(r'users', MemberView.UserViewSet, base_name='user')
 router.register(r'me', MemberView.MeViewSet, base_name='me')
 
 urlpatterns = [
