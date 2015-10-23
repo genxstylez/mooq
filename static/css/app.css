@@ -1,5 +1,10 @@
 body {
     height: 100%;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+}
+
+.ui.header {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
 }
 
 body > #app{
@@ -12,6 +17,11 @@ body > #app{
 
 body > #app > #main {
     height: 100%
+}
+
+button.ui.button.borderless {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .ui.form textarea {
@@ -30,9 +40,74 @@ body > #app > #main {
     min-width: 400px;
 }
 
+.login .header {
+    color: white !important;
+}
+
+.login .piled.segment {
+    margin-top: 0em !important;
+}
+
 .ui.comments>.comment>.avatar img {
     border-radius: .4rem !important;
 }
+.background {
+    background: rgba(39, 56, 72, 1);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#index > .container {
+    text-align: center;
+}
+
+#index > .container > .logo{
+    height: 20rem;
+    text-align: center;
+    color: white;
+    margin: 10rem 0 2.5rem 0;
+}
+
+#index > .container > .description {
+    color: #fff;
+    font-size: 2.5rem;
+}
+
+#index > .container > .search-segment {
+    width: 60%;
+    margin: 7rem auto 0 auto;
+    padding: 30px 50px;
+}
+
+#index > .top.menu {
+    background: transparent;
+    box-shadow: none;
+    border: 0px;
+    height: 80px;
+}
+
+#index > .top.menu > .item {
+    border: 0px;
+    box-shadow: none;
+}
+
+#index > .top.menu > .item:before {
+    width: 0px;
+}
+
+#index > .top.menu > .item > button {
+    margin-right: 1.5rem;
+}
+
+#index > .top.menu > .item > button:last-child {
+    margin-right: 1rem;
+}
+
+
 
 #main > .full.height {
     display: -webkit-box;
@@ -82,7 +157,7 @@ body > #app > #main {
 }
 
 .profile-menu .ui.list {
-    margin-bottom: 3rem !important;
+    margin-bottom: 1rem !important;
     padding: 0px;
 }
 
@@ -103,9 +178,30 @@ body > #app > #main {
     color: white !important;
 }
 
+.profile-menu .item:hover {
+    background: #17252D !important;
+}
+
 .profile-menu .item.active {
     color: white !important;
     background: #714A3C !important;
+}
+
+.profile-menu .top-list .item.active {
+    color: #848383 !important;
+    padding: 6px 35px !important;
+    font-size: 1rem !important;
+    background: transparent !important;
+}
+
+.profile-menu .top-list .item.active .icon {
+    color: #848383 !important;
+}
+
+.profile-menu .top-list .item.unread {
+    color: #848383 !important;
+    padding: 6px 35px !important;
+    font-size: 1rem !important;
 }
 
 .link.icon {
@@ -120,9 +216,11 @@ body > #app > #main {
     height: 100px;
     text-align: center;
     color: white;
-    line-height: 85px;
-    font-size: 65px;
-    vertical-align: middle;
+    margin: .3em 0 .3em 0;
+}
+
+.logo > img {
+    height: 84%;
 }
 
 .channel-icon {
@@ -307,6 +405,24 @@ body > #app > #main {
     #messages-container > #footer {
         left: 0px;
     }
+
+    #index > .container > .logo{
+        height: 10rem;
+        text-align: center;
+        color: white;
+        margin: 10rem 0 2.5rem 0;
+    }
+
+    #index > .container > .description {
+        color: #fff;
+        font-size: 1.5rem;
+    }
+
+    #index > .container > .search-segment {
+    width: 100%;
+    margin: 7rem auto 0 auto;
+    padding: 30px 50px;
+}
 }
 
 @media only screen and (min-width: 1144px) {

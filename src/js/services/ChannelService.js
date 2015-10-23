@@ -25,7 +25,7 @@ export default {
             .promise()
     },
 
-    async_get_channel_info(channel_id) {
+    get_channel_info(channel_id) {
         return request
             .get(Urls['channel-detail'](channel_id))
             .promise()
@@ -38,6 +38,17 @@ export default {
             .send({'channels': _.pluck(channels, 'id')})
             .promise()
     },
+
+    subscribe_to_channel(token, channel_id, user_id) {
+        return request
+            .post(Urls['subscribers-list']())
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'JWT ' + token)
+            .send({channel: channel_id})
+            .send({user: user_id})
+            .promise()
+    },
+
 
     create_message(channel_id, username, text, cb) {
         pubnub.publish({

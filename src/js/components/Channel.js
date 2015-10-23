@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { History } from 'react-router';
+import { Link, History } from 'react-router';
 import ChannelNav from './ChannelNav';
 import ChannelList from './ChannelList';
 import ChannelHeader from './ChannelHeader';
@@ -27,12 +27,11 @@ export default React.createClass({
             user: UserStore.user,
             authKey: UserStore.authKey,
             is_authenticated: UserStore.is_authenticated,
+            top_5_channels: [],
         }
     },
 
     componentDidMount() {
-        this.initialise_PubNub()
-
         $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
@@ -47,48 +46,65 @@ export default React.createClass({
     },
 
     componentWillMount() {
-        if (this.state.is_authenticated) {
-            // Get channel list and join them
-            ChannelService.get_subscribed_channels(this.state.user.user_id)
-            .then((res) => {
-                let channels = res.body
-                if (channels.length > 0) {
-                    ChannelService.grant(this.state.authKey, channels)
-                    .then(() => {
-                        ChannelService.join_channels(channels)
-                        if (!this.props.params.channelId) {
-                            // if no channel Id is provided, go to the first channel of the list
-                            this.history.replaceState(null, '/channels/' + channels[0].id + '/')
-                        } else {
-                            ChannelActions.mark_as_active(this.props.params.channelId)
-                        }
-                    })
-                } else {
-                    this.history.replaceState(null, '/search/')
-                }
-            })
-        } else {
+        if (!this.state.is_authenticated) {
             if (this.props.params.channelId)
                 this.handleGuestSession(this.props.params.channelId)
             else
                 this.history.pushState(null, '/search/')
         }
+        ChannelService.get_channels(5, 0)
+            .then((res) => {
+                this.setState({
+                    top_5_channels: res.body.results
+                })
+            })
 
     },
 
     componentWillReceiveProps(nextProps) {
+        console.log('in recv props')
         if(nextProps.params.channelId != this.props.params.channelId) {
             let id = nextProps.params.channelId
             if (this.state.is_authenticated)
-                ChannelActions.mark_as_active(id)
+                setTimeout(() => {
+                    ChannelActions.mark_as_active(id)
+                }, 1)
             else
                 this.handleGuestSession(id)
         }
         $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide')
     },
 
+    componentDidUpdate(nextProps, nextState) {
+        if(nextState.channels.length != this.state.channels.length ||
+            nextState.authKey != this.state.authKey) {
+            ChannelService.grant(nextState.authKey, nextState.channels).done()
+
+            if(nextState.channels.length != this.state.channels.length) {
+                this.handleChannelChanged()
+            }
+        }
+    },
+
+    handleChannelChanged() {
+        if(this.state.is_authenticated) {
+            if(this.state.channels.length > 0) {
+                if (!this.props.params.channelId) {
+                    // if no channel Id is provided, go to the first channel of the list
+                    this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/')
+                } else {
+                    setTimeout(() => {
+                        ChannelActions.mark_as_active(this.props.params.channelId)
+                    }, 1)
+                }
+            } else {
+                this.history.pushState(null, '/search/')
+            }
+        }
+    },
+
     handleGuestSession(id) {
-        ChannelService.async_get_channel_info(id)
+        ChannelService.get_channel_info(id)
             .then((res) => {
                 // res.body is a channel object
                 let channel = res.body
@@ -108,24 +124,12 @@ export default React.createClass({
             authKey: UserStore.authKey,
             is_authenticated: UserStore.is_authenticated
         })
-        this.initialise_PubNub()
-        ChannelService.grant(this.state.authKey, this.state.channels).done()
     },
 
     _onChange() {
         this.setState({
             active_channel: ChannelStore.active_channel,
             channels: ChannelStore.channels
-        })
-        ChannelService.grant(this.state.authKey, this.state.channels).done()
-    },
-
-    initialise_PubNub() {
-        window.pubnub = PUBNUB.init({
-            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
-            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
-            uuid: this.state.user.username,
-            auth_key: this.state.authKey
         })
     },
 
@@ -137,31 +141,27 @@ export default React.createClass({
                     <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     <div className="ui list">
                         <h5 className="ui header">Top 5 Stocks</h5>
-                        <ChannelNav name="top 1" />
-                        <ChannelNav name="top 2" />
-                        <ChannelNav name="top 3" />
-                        <ChannelNav name="top 4" />
-                        <ChannelNav name="top 5" />
+                        {_.map(this.state.top_5_channels, (channel) => {
+                            return (<ChannelNav key={channel.id} id={channel.id} name={channel.name} />)
+                        })}
                     </div>
+                    <Link to="/search/">Search</Link>
                     <ChannelList />
                 </div>
                 <div className="full height pusher">
-
-
                     <div id="profile-container">
                         <div id="profile-menu" className="ui vertical menu grid profile-menu">
                             <div className="logo">
-                                APPSE
+                                <img src={STATIC_URL + 'img/logo.png'} />
                             </div>
 
-                            <div className="ui list">
+                            <div className="ui list top-list">
                                 <h5 className="ui header">Top 5 Stocks</h5>
-                                <ChannelNav name="top 1" />
-                                <ChannelNav name="top 2" />
-                                <ChannelNav name="top 3" />
-                                <ChannelNav name="top 4" />
-                                <ChannelNav name="top 5" />
+                                {_.map(this.state.top_5_channels, (channel) => {
+                                    return (<ChannelNav key={channel.id} id={channel.id} name={channel.name} />)
+                                })}
                             </div>
+                            <Link to="/search/">Search</Link>
                             <ChannelList />
                         </div>
                          <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />

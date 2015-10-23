@@ -13,7 +13,7 @@
         <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         <script type="text/javascript">
-            var csrf_token = '{{ csrf_token }}'
+            var STATIC_URL = '{{ STATIC_URL }}'
         </script>
         {% block styles %}{% endblock %}
         {% block pre_scripts %}{% endblock %}

@@ -46578,6 +46578,10 @@ var _actionsUserActions = require('../actions/UserActions');
 
 var _actionsUserActions2 = _interopRequireDefault(_actionsUserActions);
 
+var _servicesChannelService = require('../services/ChannelService');
+
+var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+
 exports['default'] = _react2['default'].createClass({
     displayName: 'App',
 
@@ -46586,8 +46590,14 @@ exports['default'] = _react2['default'].createClass({
     getInitialState: function getInitialState() {
         return {
             is_authenticated: _storesUserStore2['default'].is_authenticated,
+            user: _storesUserStore2['default'].user,
+            authKey: _storesUserStore2['default'].authKey,
             jwt: _storesUserStore2['default'].jwt
         };
+    },
+    componentWillMount: function componentWillMount() {
+        this.initialise_PubNub();
+        this.handleAuthenticatedChange();
     },
 
     componentDidMount: function componentDidMount() {
@@ -46602,10 +46612,47 @@ exports['default'] = _react2['default'].createClass({
         _storesUserStore2['default'].removeChangeListener(this._onChange);
     },
 
+    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+        if (prevState.is_authenticated != this.state.is_authenticated) {
+            if (this.state.is_authenticated) this.handleAuthenticatedChange();
+        }
+
+        if (prevState.authKey != this.state.authKey) {
+            this.initialise_PubNub();
+        }
+    },
+
+    initialise_PubNub: function initialise_PubNub() {
+        window.pubnub = PUBNUB.init({
+            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
+            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
+            uuid: this.state.user.username,
+            auth_key: this.state.authKey
+        });
+    },
+
+    handleAuthenticatedChange: function handleAuthenticatedChange() {
+        var _this = this;
+
+        // Get channel list and join them
+        _servicesChannelService2['default'].get_subscribed_channels(this.state.user.user_id).then(function (res) {
+            var channels = res.body;
+            if (channels.length > 0) {
+                _servicesChannelService2['default'].grant(_this.state.authKey, channels).then(function () {
+                    _servicesChannelService2['default'].join_channels(channels);
+                });
+            } else {
+                _this.history.replaceState(null, '/search/');
+            }
+        });
+    },
+
     _onChange: function _onChange() {
         this.setState({
             is_authenticated: _storesUserStore2['default'].is_authenticated,
-            jwt: _storesUserStore2['default'].jwt
+            jwt: _storesUserStore2['default'].jwt,
+            authKey: _storesUserStore2['default'].authKey,
+            user: _storesUserStore2['default'].user
         });
     },
 
@@ -46650,7 +46697,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/UserService":250,"../stores/UserStore":254,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65}],227:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../services/UserService":250,"../stores/UserStore":254,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46814,13 +46861,12 @@ exports['default'] = _react2['default'].createClass({
             active_channel: _storesChannelStore2['default'].active_channel,
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
-            is_authenticated: _storesUserStore2['default'].is_authenticated
+            is_authenticated: _storesUserStore2['default'].is_authenticated,
+            top_5_channels: []
         };
     },
 
     componentDidMount: function componentDidMount() {
-        this.initialise_PubNub();
-
         $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar({
             context: $('#main')
         }).sidebar('attach events', '.mobile-menu');
@@ -46837,44 +46883,67 @@ exports['default'] = _react2['default'].createClass({
     componentWillMount: function componentWillMount() {
         var _this = this;
 
-        if (this.state.is_authenticated) {
-            // Get channel list and join them
-            _servicesChannelService2['default'].get_subscribed_channels(this.state.user.user_id).then(function (res) {
-                var channels = res.body;
-                if (channels.length > 0) {
-                    _servicesChannelService2['default'].grant(_this.state.authKey, channels).then(function () {
-                        _servicesChannelService2['default'].join_channels(channels);
-                        if (!_this.props.params.channelId) {
-                            // if no channel Id is provided, go to the first channel of the list
-                            _this.history.replaceState(null, '/channels/' + channels[0].id + '/');
-                        } else {
-                            _actionsChannelActions2['default'].mark_as_active(_this.props.params.channelId);
-                        }
-                    });
-                } else {
-                    _this.history.replaceState(null, '/search/');
-                }
-            });
-        } else {
+        if (!this.state.is_authenticated) {
             if (this.props.params.channelId) this.handleGuestSession(this.props.params.channelId);else this.history.pushState(null, '/search/');
         }
+        _servicesChannelService2['default'].get_channels(5, 0).then(function (res) {
+            _this.setState({
+                top_5_channels: res.body.results
+            });
+        });
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var _this2 = this;
+
+        console.log('in recv props');
         if (nextProps.params.channelId != this.props.params.channelId) {
-            var id = nextProps.params.channelId;
-            if (this.state.is_authenticated) _actionsChannelActions2['default'].mark_as_active(id);else this.handleGuestSession(id);
+            (function () {
+                var id = nextProps.params.channelId;
+                if (_this2.state.is_authenticated) setTimeout(function () {
+                    _actionsChannelActions2['default'].mark_as_active(id);
+                }, 1);else _this2.handleGuestSession(id);
+            })();
         }
         $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar('hide');
     },
 
-    handleGuestSession: function handleGuestSession(id) {
-        var _this2 = this;
+    componentDidUpdate: function componentDidUpdate(nextProps, nextState) {
+        if (nextState.channels.length != this.state.channels.length || nextState.authKey != this.state.authKey) {
+            _servicesChannelService2['default'].grant(nextState.authKey, nextState.channels).done();
 
-        _servicesChannelService2['default'].async_get_channel_info(id).then(function (res) {
+            if (nextState.channels.length != this.state.channels.length) {
+                this.handleChannelChanged();
+            }
+        }
+    },
+
+    handleChannelChanged: function handleChannelChanged() {
+        var _this3 = this;
+
+        if (this.state.is_authenticated) {
+            if (this.state.channels.length > 0) {
+                if (!this.props.params.channelId) {
+                    // if no channel Id is provided, go to the first channel of the list
+                    this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/');
+                } else {
+                    setTimeout(function () {
+                        _actionsChannelActions2['default'].mark_as_active(_this3.props.params.channelId);
+                    }, 1);
+                }
+            } else {
+                this.history.pushState(null, '/search/');
+            }
+        }
+    },
+
+    handleGuestSession: function handleGuestSession(id) {
+        var _this4 = this;
+
+        _servicesChannelService2['default'].get_channel_info(id).then(function (res) {
             // res.body is a channel object
             var channel = res.body;
-            _servicesChannelService2['default'].grant(_this2.state.authKey, [channel]).then(function () {
+            _servicesChannelService2['default'].grant(_this4.state.authKey, [channel]).then(function () {
                 _servicesChannelService2['default'].join_channels([channel]);
                 _actionsChannelActions2['default'].mark_as_active(channel.id);
             });
@@ -46889,8 +46958,6 @@ exports['default'] = _react2['default'].createClass({
             authKey: _storesUserStore2['default'].authKey,
             is_authenticated: _storesUserStore2['default'].is_authenticated
         });
-        this.initialise_PubNub();
-        _servicesChannelService2['default'].grant(this.state.authKey, this.state.channels).done();
     },
 
     _onChange: function _onChange() {
@@ -46898,20 +46965,10 @@ exports['default'] = _react2['default'].createClass({
             active_channel: _storesChannelStore2['default'].active_channel,
             channels: _storesChannelStore2['default'].channels
         });
-        _servicesChannelService2['default'].grant(this.state.authKey, this.state.channels).done();
-    },
-
-    initialise_PubNub: function initialise_PubNub() {
-        window.pubnub = PUBNUB.init({
-            publish_key: 'pub-c-b0729086-9a78-4ebc-b04f-f87bd208d0fe',
-            subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
-            uuid: this.state.user.username,
-            auth_key: this.state.authKey
-        });
     },
 
     render: function render() {
-        var _this3 = this;
+        var _this5 = this;
 
         return _react2['default'].createElement(
             'div',
@@ -46928,11 +46985,14 @@ exports['default'] = _react2['default'].createClass({
                         { className: 'ui header' },
                         'Top 5 Stocks'
                     ),
-                    _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 1' }),
-                    _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 2' }),
-                    _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 3' }),
-                    _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 4' }),
-                    _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 5' })
+                    _lodash2['default'].map(this.state.top_5_channels, function (channel) {
+                        return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, id: channel.id, name: channel.name });
+                    })
+                ),
+                _react2['default'].createElement(
+                    _reactRouter.Link,
+                    { to: '/search/' },
+                    'Search'
                 ),
                 _react2['default'].createElement(_ChannelList2['default'], null)
             ),
@@ -46948,21 +47008,24 @@ exports['default'] = _react2['default'].createClass({
                         _react2['default'].createElement(
                             'div',
                             { className: 'logo' },
-                            'APPSE'
+                            _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
                         ),
                         _react2['default'].createElement(
                             'div',
-                            { className: 'ui list' },
+                            { className: 'ui list top-list' },
                             _react2['default'].createElement(
                                 'h5',
                                 { className: 'ui header' },
                                 'Top 5 Stocks'
                             ),
-                            _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 1' }),
-                            _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 2' }),
-                            _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 3' }),
-                            _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 4' }),
-                            _react2['default'].createElement(_ChannelNav2['default'], { name: 'top 5' })
+                            _lodash2['default'].map(this.state.top_5_channels, function (channel) {
+                                return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, id: channel.id, name: channel.name });
+                            })
+                        ),
+                        _react2['default'].createElement(
+                            _reactRouter.Link,
+                            { to: '/search/' },
+                            'Search'
                         ),
                         _react2['default'].createElement(_ChannelList2['default'], null)
                     ),
@@ -46979,7 +47042,7 @@ exports['default'] = _react2['default'].createClass({
                             messages: channel.messages,
                             occupancy: channel.occupancy,
                             users: channel.users,
-                            is_active: _this3.state.active_channel.id == channel.id });
+                            is_active: _this5.state.active_channel.id == channel.id });
                     })
                 )
             )
@@ -47439,12 +47502,20 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRouter = require('react-router');
+
 var _storesUserStore = require('../stores/UserStore');
 
 var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
 
+var _componentsSemanticInput = require('../components/SemanticInput');
+
+var _componentsSemanticInput2 = _interopRequireDefault(_componentsSemanticInput);
+
 exports['default'] = _react2['default'].createClass({
     displayName: 'Index',
+
+    mixins: [_reactRouter.History],
 
     getInitialState: function getInitialState() {
         return {
@@ -47466,19 +47537,72 @@ exports['default'] = _react2['default'].createClass({
         });
     },
 
+    handleLogin: function handleLogin() {
+        this.history.pushState(null, '/login/');
+    },
+
+    handleSignUp: function handleSignUp() {
+        this.history.pushState(null, '/signup/');
+    },
+
+    handleSearch: function handleSearch() {
+        this.history.pushState(null, '/search/');
+    },
+
     render: function render() {
         return _react2['default'].createElement(
-            'h2',
-            null,
-            'A beautiful index page ',
-            this.state.is_authenticated ? 'Logged in' : 'Guest'
+            'div',
+            { id: 'index', className: 'background' },
+            _react2['default'].createElement(
+                'div',
+                { className: 'ui top fixed menu' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'right item' },
+                    _react2['default'].createElement(
+                        'button',
+                        { className: 'ui button inverted borderless', onClick: this.handleLogin },
+                        'Sign in'
+                    ),
+                    _react2['default'].createElement(
+                        'button',
+                        { className: 'ui button inverted basic', onClick: this.handleSignUp },
+                        'Sign Up for free'
+                    )
+                )
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: 'ui container' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'logo' },
+                    _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'description' },
+                    'A messaging app where millionaires are born EVERYDAY!'
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'ui inverted segment search-segment' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui inverted large form' },
+                        _react2['default'].createElement('input', { placeholder: 'Enter Stock Symbol e.g. AAPL', onClick: this.handleSearch })
+                    )
+                )
+            )
         );
     }
 });
+
+//<h2>A beautiful index page {this.state.is_authenticated ? 'Logged in' : 'Guest' }</h2>
 module.exports = exports['default'];
 
 
-},{"../stores/UserStore":254,"react":219}],235:[function(require,module,exports){
+},{"../components/SemanticInput":239,"../stores/UserStore":254,"react":219,"react-router":85}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47559,7 +47683,7 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillMount: function componentWillMount() {
         // redirect if it's an authenticated session
-        if (this.state.is_authenticated) this.history.pushState(null, '/');
+        if (this.state.is_authenticated) this.history.pushState(null, '/channels/');
     },
 
     componentDidMount: function componentDidMount() {
@@ -47576,8 +47700,9 @@ exports['default'] = _react2['default'].createClass({
     },
 
     handleChange: function handleChange(e) {
-        console.log('in handleChange');
-        this.setState(_defineProperty({}, e.target.name, e.target.value));
+        var value = e.currentTarget.value;
+        if (e.currentTarget.name == 'username') value = value.toLowerCase();
+        this.setState(_defineProperty({}, e.currentTarget.name, value));
     },
 
     handleChangePassword: function handleChangePassword(e) {
@@ -47746,132 +47871,137 @@ exports['default'] = _react2['default'].createClass({
         });
         return _react2['default'].createElement(
             'div',
-            { className: 'login ui middle aligned center aligned grid ' },
+            { className: 'background' },
             _react2['default'].createElement(
                 'div',
-                { className: dimmable_cls, ref: 'dimmable' },
+                { className: 'login ui middle aligned center aligned grid ' },
                 _react2['default'].createElement(
-                    'h2',
-                    { className: 'ui header teal' },
+                    'div',
+                    { className: dimmable_cls, ref: 'dimmable' },
+                    _react2['default'].createElement(
+                        'h2',
+                        { className: 'ui image bottom aligned header white' },
+                        _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' }),
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'content' },
+                            'Log In'
+                        )
+                    ),
+                    _react2['default'].createElement(
+                        'form',
+                        { className: 'ui large form', onSubmit: this.handleSubmit },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'ui piled segment' },
+                            _react2['default'].createElement(
+                                _SemanticInput2['default'],
+                                { required: true, icon: true, name: 'username', placeholder: 'Username', type: 'text', onChange: this.handleChange, validation: false },
+                                _react2['default'].createElement('i', { className: 'user icon' })
+                            ),
+                            _react2['default'].createElement(
+                                _SemanticInput2['default'],
+                                { required: true, icon: true, name: 'password', placeholder: 'Password', type: 'password', onChange: this.handleChange, validation: false },
+                                _react2['default'].createElement('i', { className: 'lock icon' })
+                            ),
+                            _react2['default'].createElement(
+                                'button',
+                                { type: 'submit', className: 'field ui fluid large basic teal button' },
+                                'Login'
+                            ),
+                            _react2['default'].createElement(
+                                _FacebookLoginButton2['default'],
+                                { className: 'field ui fluid large facebook button', new_social: this.handleNewSocial },
+                                _react2['default'].createElement('i', { className: 'facebook icon' }),
+                                'Login in with Facebook'
+                            )
+                        )
+                    ),
+                    this.state.login_invalid_messages.length > 0 ? _react2['default'].createElement(
+                        'div',
+                        { className: 'ui error message' },
+                        _react2['default'].createElement(
+                            'ul',
+                            { className: 'list' },
+                            _lodash2['default'].map(this.state.login_invalid_messages, function (message) {
+                                return _react2['default'].createElement(
+                                    'li',
+                                    { key: message.key },
+                                    message.value
+                                );
+                            })
+                        )
+                    ) : null,
                     _react2['default'].createElement(
                         'div',
-                        { className: 'content' },
-                        'Log In'
-                    )
-                ),
-                _react2['default'].createElement(
-                    'form',
-                    { className: 'ui large form', onSubmit: this.handleSubmit },
-                    _react2['default'].createElement(
-                        'div',
-                        { className: 'ui piled segment' },
+                        { className: 'ui message' },
+                        'New to us? ',
                         _react2['default'].createElement(
-                            _SemanticInput2['default'],
-                            { required: true, icon: true, name: 'username', placeholder: 'Username', type: 'text', onChange: this.handleChange, validation: false },
-                            _react2['default'].createElement('i', { className: 'user icon' })
-                        ),
-                        _react2['default'].createElement(
-                            _SemanticInput2['default'],
-                            { required: true, icon: true, name: 'password', placeholder: 'Password', type: 'password', onChange: this.handleChange, validation: false },
-                            _react2['default'].createElement('i', { className: 'lock icon' })
-                        ),
-                        _react2['default'].createElement(
-                            'button',
-                            { type: 'submit', className: 'field ui fluid large basic teal button' },
-                            'Login'
-                        ),
-                        _react2['default'].createElement(
-                            _FacebookLoginButton2['default'],
-                            { className: 'field ui fluid large facebook button', new_social: this.handleNewSocial },
-                            _react2['default'].createElement('i', { className: 'facebook icon' }),
-                            'Login in with Facebook'
+                            _reactRouter.Link,
+                            { to: '/signup/' },
+                            'Sign Up'
                         )
                     )
                 ),
-                this.state.login_invalid_messages.length > 0 ? _react2['default'].createElement(
-                    'div',
-                    { className: 'ui error message' },
-                    _react2['default'].createElement(
-                        'ul',
-                        { className: 'list' },
-                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                            return _react2['default'].createElement(
-                                'li',
-                                { key: message.key },
-                                message.value
-                            );
-                        })
-                    )
-                ) : null,
                 _react2['default'].createElement(
                     'div',
-                    { className: 'ui message' },
-                    'New to us? ',
-                    _react2['default'].createElement(
-                        _reactRouter.Link,
-                        { to: '/signup/' },
-                        'Sign Up'
-                    )
-                )
-            ),
-            _react2['default'].createElement(
-                'div',
-                { className: dimmer_class, ref: 'dimmer' },
-                _react2['default'].createElement(
-                    'div',
-                    { className: 'content' },
+                    { className: dimmer_class, ref: 'dimmer' },
                     _react2['default'].createElement(
                         'div',
-                        { className: 'center' },
+                        { className: 'content' },
                         _react2['default'].createElement(
                             'div',
-                            { style: { maxWidth: '450px', minWidth: '400px', margin: '0 auto' } },
+                            { className: 'center' },
                             _react2['default'].createElement(
-                                'h2',
-                                null,
-                                'Please enter username and password'
-                            ),
-                            _react2['default'].createElement(
-                                'form',
-                                { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                        type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
-                                    _react2['default'].createElement('i', { className: 'user icon' })
-                                ),
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                        type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
-                                    _react2['default'].createElement('i', { className: 'lock icon' })
-                                ),
-                                _react2['default'].createElement(
-                                    'button',
-                                    { type: 'submit', className: 'field ui fluid large teal button' },
-                                    'Sign Up'
-                                ),
-                                _react2['default'].createElement(
-                                    'button',
-                                    { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
-                                    'Cancel'
-                                )
-                            ),
-                            this.state.new_invalid_messages.length > 0 ? _react2['default'].createElement(
                                 'div',
-                                { className: 'ui error message' },
+                                { style: { maxWidth: '450px', minWidth: '400px', margin: '0 auto' } },
                                 _react2['default'].createElement(
-                                    'ul',
-                                    { className: 'list' },
-                                    _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                                        return _react2['default'].createElement(
-                                            'li',
-                                            { key: message.key },
-                                            message.value
-                                        );
-                                    })
-                                )
-                            ) : null
+                                    'h2',
+                                    null,
+                                    'Please enter username and password'
+                                ),
+                                _react2['default'].createElement(
+                                    'form',
+                                    { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
+                                    _react2['default'].createElement(
+                                        _SemanticInput2['default'],
+                                        { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
+                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                        _react2['default'].createElement('i', { className: 'user icon' })
+                                    ),
+                                    _react2['default'].createElement(
+                                        _SemanticInput2['default'],
+                                        { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
+                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                        _react2['default'].createElement('i', { className: 'lock icon' })
+                                    ),
+                                    _react2['default'].createElement(
+                                        'button',
+                                        { type: 'submit', className: 'field ui fluid large teal button' },
+                                        'Sign Up'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'button',
+                                        { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
+                                        'Cancel'
+                                    )
+                                ),
+                                this.state.new_invalid_messages.length > 0 ? _react2['default'].createElement(
+                                    'div',
+                                    { className: 'ui error message' },
+                                    _react2['default'].createElement(
+                                        'ul',
+                                        { className: 'list' },
+                                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
+                                            return _react2['default'].createElement(
+                                                'li',
+                                                { key: message.key },
+                                                message.value
+                                            );
+                                        })
+                                    )
+                                ) : null
+                            )
                         )
                     )
                 )
@@ -48083,6 +48213,14 @@ var _servicesChannelService = require('../services/ChannelService');
 
 var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
 
+var _storesChannelStore = require('../stores/ChannelStore');
+
+var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
+
+var _storesUserStore = require('../stores/UserStore');
+
+var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
+
 exports['default'] = _react2['default'].createClass({
     displayName: 'Search',
 
@@ -48097,7 +48235,10 @@ exports['default'] = _react2['default'].createClass({
             limit: 10,
             offset: 0,
             next: null,
-            previous: null
+            previous: null,
+            stored_channels: _storesChannelStore2['default'].channels,
+            user: _storesUserStore2['default'].user,
+            jwt: _storesUserStore2['default'].jwt
         };
     },
 
@@ -48116,8 +48257,18 @@ exports['default'] = _react2['default'].createClass({
         });
     },
 
+    componentDidMount: function componentDidMount() {
+        _storesChannelStore2['default'].addChangeListener(this._onChange);
+        _storesUserStore2['default'].addChangeListener(this._onUserChange);
+    },
+
     componentWillUnMount: function componentWillUnMount() {
-        return;
+        _storesChannelStore2['default'].removeChangeListener(this._onChange);
+        _storesUserStore2['default'].removeChangeListener(this._onUserChange);
+    },
+
+    componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
+        if (nextState.stored_channels != this.state.stored_channels) this.forceUpdate();
     },
 
     _getChannels: function _getChannels(limit, offset, kw, asc) {
@@ -48143,6 +48294,15 @@ exports['default'] = _react2['default'].createClass({
         this._getChannels(this.limit, this.offset, kw);
     },
 
+    handleJoin: function handleJoin(channel) {
+        _servicesChannelService2['default'].subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id).then(function (res) {
+            channel.subscribers_count += 1;
+            _servicesChannelService2['default'].join_channels([channel]);
+        })['catch'](function (err) {
+            alert('Please try again!');
+        });
+    },
+
     handleChange: function handleChange(e) {
         if (e.currentTarget.value) {
             this.getSearchResults(e.currentTarget.value);
@@ -48151,10 +48311,25 @@ exports['default'] = _react2['default'].createClass({
         }
     },
 
+    _onUserChange: function _onUserChange() {
+        this.setState({
+            user: _storesUserStore2['default'].user,
+            jwt: _storesUserStore2['default'].jwt
+        });
+    },
+
+    _onChange: function _onChange() {
+        this.setState({
+            stored_channel: _storesChannelStore2['default'].channels
+        });
+    },
+
     render: function render() {
+        var _this3 = this;
+
         return _react2['default'].createElement(
             'div',
-            null,
+            { className: 'ui segment' },
             _react2['default'].createElement(
                 'h2',
                 null,
@@ -48162,7 +48337,7 @@ exports['default'] = _react2['default'].createClass({
             ),
             _react2['default'].createElement(
                 'div',
-                null,
+                { className: 'ui form' },
                 _react2['default'].createElement(
                     _SemanticInput2['default'],
                     { required: true, icon: true, name: 'search', placeholder: 'Enter Stock symbol e.g. APPL',
@@ -48179,7 +48354,16 @@ exports['default'] = _react2['default'].createClass({
                         { key: channel.id },
                         channel.name,
                         ' - ',
-                        channel.subscribers_count
+                        channel.subscribers_count,
+                        _storesChannelStore2['default'].get_channel(channel.id) ? _react2['default'].createElement(
+                            'button',
+                            { className: 'ui disabled button' },
+                            'Joined'
+                        ) : _react2['default'].createElement(
+                            'button',
+                            { className: 'ui basic teal button', onClick: _this3.handleJoin.bind(_this3, channel) },
+                            'Join'
+                        )
                     );
                 })
             )
@@ -48189,7 +48373,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"./SemanticInput":239,"lodash":62,"react":219}],239:[function(require,module,exports){
+},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./SemanticInput":239,"lodash":62,"react":219}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48420,7 +48604,7 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillMount: function componentWillMount() {
         // redirect if it's an authenticated session
-        if (this.state.is_authenticated) this.history.pushState(null, '/');
+        if (this.state.is_authenticated) this.history.pushState(null, '/channels/');
     },
 
     componentDidMount: function componentDidMount() {
@@ -48597,140 +48781,145 @@ exports['default'] = _react2['default'].createClass({
         });
         return _react2['default'].createElement(
             'div',
-            { className: 'login ui middle aligned center aligned grid ' },
+            { className: 'background' },
             _react2['default'].createElement(
                 'div',
-                { className: dimmable_cls, ref: 'dimmable' },
-                _react2['default'].createElement(
-                    'h2',
-                    { className: 'ui header teal' },
-                    _react2['default'].createElement(
-                        'div',
-                        { className: 'content' },
-                        'Join us'
-                    )
-                ),
+                { className: 'login ui middle aligned center aligned grid ' },
                 _react2['default'].createElement(
                     'div',
-                    { className: 'ui piled segment' },
+                    { className: dimmable_cls, ref: 'dimmable' },
                     _react2['default'].createElement(
-                        'form',
-                        { className: 'ui large form', method: 'post', onSubmit: this.handleSubmit },
+                        'h2',
+                        { className: 'ui image bottom aligned header white' },
+                        _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' }),
                         _react2['default'].createElement(
-                            _SemanticInput2['default'],
-                            { required: true, icon: true, name: 'email', placeholder: 'Email', validation: true,
-                                type: 'email', onChange: this.handleChangeEmail, autoComplete: 'off', is_valid: this.state.email_is_valid },
-                            _react2['default'].createElement('i', { className: 'mail icon' })
-                        ),
+                            'div',
+                            { className: 'content' },
+                            'Join us'
+                        )
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui piled segment' },
                         _react2['default'].createElement(
-                            _SemanticInput2['default'],
-                            { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
-                            _react2['default'].createElement('i', { className: 'user icon' })
-                        ),
+                            'form',
+                            { className: 'ui large form', method: 'post', onSubmit: this.handleSubmit },
+                            _react2['default'].createElement(
+                                _SemanticInput2['default'],
+                                { required: true, icon: true, name: 'email', placeholder: 'Email', validation: true,
+                                    type: 'email', onChange: this.handleChangeEmail, autoComplete: 'off', is_valid: this.state.email_is_valid },
+                                _react2['default'].createElement('i', { className: 'mail icon' })
+                            ),
+                            _react2['default'].createElement(
+                                _SemanticInput2['default'],
+                                { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
+                                    type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                _react2['default'].createElement('i', { className: 'user icon' })
+                            ),
+                            _react2['default'].createElement(
+                                _SemanticInput2['default'],
+                                { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
+                                    type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                _react2['default'].createElement('i', { className: 'lock icon' })
+                            ),
+                            _react2['default'].createElement(
+                                'button',
+                                { type: 'submit', className: 'field ui fluid large basic teal button' },
+                                'Sign Up'
+                            ),
+                            _react2['default'].createElement(
+                                _FacebookLoginButton2['default'],
+                                { className: 'field ui fluid large facebook button', new_social: this.handleNewSocial },
+                                _react2['default'].createElement('i', { className: 'facebook icon' }),
+                                'Sign up with Facebook'
+                            )
+                        )
+                    ),
+                    this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
+                        'div',
+                        { className: 'ui error message' },
                         _react2['default'].createElement(
-                            _SemanticInput2['default'],
-                            { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
-                            _react2['default'].createElement('i', { className: 'lock icon' })
-                        ),
+                            'ul',
+                            { className: 'list' },
+                            _lodash2['default'].map(this.state.invalid_messages, function (message) {
+                                return _react2['default'].createElement(
+                                    'li',
+                                    { key: message.key },
+                                    message.value
+                                );
+                            })
+                        )
+                    ) : null,
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'ui bottom message' },
+                        'Have an account? ',
                         _react2['default'].createElement(
-                            'button',
-                            { type: 'submit', className: 'field ui fluid large basic teal button' },
-                            'Sign Up'
-                        ),
-                        _react2['default'].createElement(
-                            _FacebookLoginButton2['default'],
-                            { className: 'field ui fluid large facebook button', new_social: this.handleNewSocial },
-                            _react2['default'].createElement('i', { className: 'facebook icon' }),
-                            'Sign up with Facebook'
+                            _reactRouter.Link,
+                            { to: '/login/' },
+                            'Log In'
                         )
                     )
                 ),
-                this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
-                    'div',
-                    { className: 'ui error message' },
-                    _react2['default'].createElement(
-                        'ul',
-                        { className: 'list' },
-                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                            return _react2['default'].createElement(
-                                'li',
-                                { key: message.key },
-                                message.value
-                            );
-                        })
-                    )
-                ) : null,
                 _react2['default'].createElement(
                     'div',
-                    { className: 'ui bottom message' },
-                    'Have an account? ',
-                    _react2['default'].createElement(
-                        _reactRouter.Link,
-                        { to: '/login/' },
-                        'Log In'
-                    )
-                )
-            ),
-            _react2['default'].createElement(
-                'div',
-                { className: dimmer_class, ref: 'dimmer' },
-                _react2['default'].createElement(
-                    'div',
-                    { className: 'content' },
+                    { className: dimmer_class, ref: 'dimmer' },
                     _react2['default'].createElement(
                         'div',
-                        { className: 'center' },
+                        { className: 'content' },
                         _react2['default'].createElement(
                             'div',
-                            { style: { maxWidth: '450px', minWidth: '400px', margin: '0 auto' } },
+                            { className: 'center' },
                             _react2['default'].createElement(
-                                'h2',
-                                null,
-                                'Please enter username and password'
-                            ),
-                            _react2['default'].createElement(
-                                'form',
-                                { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                        type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
-                                    _react2['default'].createElement('i', { className: 'user icon' })
-                                ),
-                                _react2['default'].createElement(
-                                    _SemanticInput2['default'],
-                                    { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                        type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
-                                    _react2['default'].createElement('i', { className: 'lock icon' })
-                                ),
-                                _react2['default'].createElement(
-                                    'button',
-                                    { type: 'submit', className: 'field ui fluid large teal button' },
-                                    'Sign Up'
-                                ),
-                                _react2['default'].createElement(
-                                    'button',
-                                    { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
-                                    'Cancel'
-                                )
-                            ),
-                            this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
                                 'div',
-                                { className: 'ui error message' },
+                                { style: { maxWidth: '450px', minWidth: '400px', margin: '0 auto' } },
                                 _react2['default'].createElement(
-                                    'ul',
-                                    { className: 'list' },
-                                    _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                                        return _react2['default'].createElement(
-                                            'li',
-                                            { key: message.key },
-                                            message.value
-                                        );
-                                    })
-                                )
-                            ) : null
+                                    'h2',
+                                    null,
+                                    'Please enter username and password'
+                                ),
+                                _react2['default'].createElement(
+                                    'form',
+                                    { className: 'ui large form', method: 'post', onSubmit: this.handleNewSocialSubmit },
+                                    _react2['default'].createElement(
+                                        _SemanticInput2['default'],
+                                        { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
+                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                        _react2['default'].createElement('i', { className: 'user icon' })
+                                    ),
+                                    _react2['default'].createElement(
+                                        _SemanticInput2['default'],
+                                        { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
+                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                        _react2['default'].createElement('i', { className: 'lock icon' })
+                                    ),
+                                    _react2['default'].createElement(
+                                        'button',
+                                        { type: 'submit', className: 'field ui fluid large teal button' },
+                                        'Sign Up'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'button',
+                                        { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
+                                        'Cancel'
+                                    )
+                                ),
+                                this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
+                                    'div',
+                                    { className: 'ui error message' },
+                                    _react2['default'].createElement(
+                                        'ul',
+                                        { className: 'list' },
+                                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
+                                            return _react2['default'].createElement(
+                                                'li',
+                                                { key: message.key },
+                                                message.value
+                                            );
+                                        })
+                                    )
+                                ) : null
+                            )
                         )
                     )
                 )
@@ -49003,12 +49192,16 @@ exports['default'] = {
         return _superagentBluebirdPromise2['default'].get(Urls['channel-list']()).query({ subscribers__user__id: user_id }).query({ fields: 'id,name,subscribers_count' }).query({ ordering: 'subscribers_count' }).promise();
     },
 
-    async_get_channel_info: function async_get_channel_info(channel_id) {
+    get_channel_info: function get_channel_info(channel_id) {
         return _superagentBluebirdPromise2['default'].get(Urls['channel-detail'](channel_id)).promise();
     },
 
     grant: function grant(token, channels) {
         return _superagentBluebirdPromise2['default'].post(Urls['api-grant']()).send({ 'authKey': token }).send({ 'channels': _lodash2['default'].pluck(channels, 'id') }).promise();
+    },
+
+    subscribe_to_channel: function subscribe_to_channel(token, channel_id, user_id) {
+        return _superagentBluebirdPromise2['default'].post(Urls['subscribers-list']()).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).send({ channel: channel_id }).send({ user: user_id }).promise();
     },
 
     create_message: function create_message(channel_id, username, text, cb) {

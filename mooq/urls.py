@@ -29,6 +29,7 @@ from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'channels', ChatView.ChannelViewSet, base_name='channel')
+router.register(r'subscribers', ChatView.ChannelSubscribersViewSet, base_name='subscribers')
 router.register(r'users', MemberView.UserViewSet, base_name='user')
 router.register(r'me', MemberView.MeViewSet, base_name='me')
 

@@ -14,7 +14,6 @@ export default {
         });
     },
 
-
     /*
     @param {string} id The ID of the channel
     */

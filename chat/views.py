@@ -1,8 +1,8 @@
 import os
 from django.conf import settings
 from django.db.models import Count
-from chat.models import Channel
-from chat.serializers import ChannelSerializer
+from chat.models import Channel, ChannelSubscribers
+from chat.serializers import ChannelSerializer, ChannelSubscribersSerializer
 
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, permissions, status
@@ -28,9 +28,13 @@ class ChannelViewSet(DynamicFields, viewsets.ModelViewSet):
     ordering_fields = ('subscribers_count', )
     search_fields = ('name', )
 
+class ChannelSubscribersViewSet(DynamicFields, viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = ChannelSubscribers.objects.all()
+    serializer_class = ChannelSubscribersSerializer
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 @permission_classes((permissions.AllowAny, ))
 @authentication_classes((CsrfExemptAuthentication,))
 def grant(request):

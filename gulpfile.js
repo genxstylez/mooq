@@ -28,12 +28,17 @@ gulp.task('browserify', function() {
         .pipe(livereload())
     });
 
-gulp.task('copy', function() {
+gulp.task('css', function() {
     gulp.src('./src/css/**/*.*')
         .pipe(gulp.dest('static/css'))
     });
 
-gulp.task('default', ['browserify', 'copy'], function() {
+gulp.task('img', function() {
+    gulp.src('./src/img/**/*.*')
+        .pipe(gulp.dest('static/img'))
+    });
+
+gulp.task('default', ['browserify', 'img', 'css'], function() {
     livereload.listen();
-    return gulp.watch('./src/**/*.*', ['browserify', 'copy'])
+    return gulp.watch('./src/**/*.*', ['browserify', 'img', 'css'])
     });

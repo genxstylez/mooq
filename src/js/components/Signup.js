@@ -31,7 +31,7 @@ export default React.createClass({
     componentWillMount() {
         // redirect if it's an authenticated session
         if(this.state.is_authenticated)
-            this.history.pushState(null, '/');
+            this.history.pushState(null, '/channels/');
     },
 
     componentDidMount() {
@@ -209,89 +209,92 @@ export default React.createClass({
             dimmer: true,
         })
         return(
-            <div className="login ui middle aligned center aligned grid ">
-                <div className={dimmable_cls} ref="dimmable">
-                    <h2 className="ui header teal">
-                        <div className="content">Join us</div>
-                    </h2>
+            <div className="background">
+                <div className="login ui middle aligned center aligned grid ">
+                    <div className={dimmable_cls} ref="dimmable">
+                        <h2 className="ui image bottom aligned header white">
+                            <img src={STATIC_URL + 'img/logo.png'} />
+                            <div className="content">Join us</div>
+                        </h2>
 
-                    <div className="ui piled segment">
-                        <form className="ui large form" method="post" onSubmit={this.handleSubmit}>
-                            <SemanticInput required={true} icon={true} name="email" placeholder="Email" validation={true}
-                                type="email" onChange={this.handleChangeEmail} autoComplete="off" is_valid={this.state.email_is_valid}>
-                                <i className="mail icon" />
-                            </SemanticInput>
+                        <div className="ui piled segment">
+                            <form className="ui large form" method="post" onSubmit={this.handleSubmit}>
+                                <SemanticInput required={true} icon={true} name="email" placeholder="Email" validation={true}
+                                    type="email" onChange={this.handleChangeEmail} autoComplete="off" is_valid={this.state.email_is_valid}>
+                                    <i className="mail icon" />
+                                </SemanticInput>
 
-                            <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
-                                type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>
-                                <i className="user icon" />
-                            </SemanticInput>
+                                <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
+                                    type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>
+                                    <i className="user icon" />
+                                </SemanticInput>
 
-                            <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
-                                type="password" onChange={this.handleChangePassword} autoComplete="off" is_valid={this.state.pw_is_valid}>
-                                <i className="lock icon" />
-                            </SemanticInput>
-                            <button type="submit" className="field ui fluid large basic teal button">Sign Up</button>
+                                <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
+                                    type="password" onChange={this.handleChangePassword} autoComplete="off" is_valid={this.state.pw_is_valid}>
+                                    <i className="lock icon" />
+                                </SemanticInput>
+                                <button type="submit" className="field ui fluid large basic teal button">Sign Up</button>
 
-                            <FacebookLoginButton className="field ui fluid large facebook button" new_social={this.handleNewSocial}>
-                                <i className="facebook icon"></i>
-                                Sign up with Facebook
-                            </FacebookLoginButton>
-                        </form>
+                                <FacebookLoginButton className="field ui fluid large facebook button" new_social={this.handleNewSocial}>
+                                    <i className="facebook icon"></i>
+                                    Sign up with Facebook
+                                </FacebookLoginButton>
+                            </form>
 
-                    </div>
-
-                    {
-                        this.state.invalid_messages.length > 0 ?
-                        <div className="ui error message">
-                            <ul className="list">
-                                {
-                                    _.map(this.state.invalid_messages, (message) => {
-                                        return (<li key={message.key}>{message.value}</li>)
-                                    })
-                                }
-                            </ul>
                         </div>
-                        : null
-                    }
 
-                    <div className="ui bottom message">
-                        Have an account? <Link to="/login/">Log In</Link>
+                        {
+                            this.state.invalid_messages.length > 0 ?
+                            <div className="ui error message">
+                                <ul className="list">
+                                    {
+                                        _.map(this.state.invalid_messages, (message) => {
+                                            return (<li key={message.key}>{message.value}</li>)
+                                        })
+                                    }
+                                </ul>
+                            </div>
+                            : null
+                        }
+
+                        <div className="ui bottom message">
+                            Have an account? <Link to="/login/">Log In</Link>
+                        </div>
+
                     </div>
+                    <div className={dimmer_class} ref="dimmer">
+                        <div className="content">
+                            <div className="center">
+                                <div style={{maxWidth: '450px', minWidth: '400px', margin: '0 auto'}}>
+                                    <h2>Please enter username and password</h2>
+                                    <form className="ui large form" method="post" onSubmit={this.handleNewSocialSubmit}>
 
-                </div>
-                <div className={dimmer_class} ref="dimmer">
-                    <div className="content">
-                        <div className="center">
-                            <div style={{maxWidth: '450px', minWidth: '400px', margin: '0 auto'}}>
-                                <h2>Please enter username and password</h2>
-                                <form className="ui large form" method="post" onSubmit={this.handleNewSocialSubmit}>
+                                        <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
+                                            type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>
+                                            <i className="user icon" />
+                                        </SemanticInput>
 
-                                    <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
-                                        type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>
-                                        <i className="user icon" />
-                                    </SemanticInput>
-
-                                    <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
-                                        type="password" onChange={this.handleChangePassword} autoComplete="off" is_valid={this.state.pw_is_valid}>
-                                        <i className="lock icon" />
-                                    </SemanticInput>
-                                    <button type="submit" className="field ui fluid large teal button">Sign Up</button>
-                                    <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>Cancel</button>
-                                </form>
-                                {
-                                    this.state.invalid_messages.length > 0 ?
-                                    <div className="ui error message">
-                                        <ul className="list">
-                                            {
-                                                _.map(this.state.invalid_messages, (message) => {
-                                                    return (<li key={message.key}>{message.value}</li>)
-                                                })
-                                            }
-                                        </ul>
-                                    </div>
-                                    : null
-                                }
+                                        <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
+                                            type="password" onChange={this.handleChangePassword} autoComplete="off" is_valid={this.state.pw_is_valid}>
+                                            <i className="lock icon" />
+                                        </SemanticInput>
+                                        <button type="submit" className="field ui fluid large teal button">Sign Up</button>
+                                        <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>Cancel</button>
+                                    </form>
+                                    {
+                                        this.state.invalid_messages.length > 0 ?
+                                        <div className="ui error message">
+                                            <ul className="list">
+                                                {
+                                                    _.map(this.state.invalid_messages, (message) => {
+                                                        return (<li key={message.key}>{message.value}</li>)
+                                                    })
+                                                }
+                                            </ul>
+                                        </div>
+                                        : null
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>

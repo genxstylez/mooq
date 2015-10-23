@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React from 'react'
 import SemanticInput from './SemanticInput'
 import ChannelService from '../services/ChannelService'
+import ChannelStore from '../stores/ChannelStore'
+import UserStore from '../stores/UserStore'
 
 
 export default React.createClass({
@@ -16,7 +18,10 @@ export default React.createClass({
             limit: 10,
             offset: 0,
             next: null,
-            previous: null
+            previous: null,
+            stored_channels: ChannelStore.channels,
+            user: UserStore.user,
+            jwt: UserStore.jwt
         }
     },
 
@@ -35,8 +40,19 @@ export default React.createClass({
             })
     },
 
+    componentDidMount() {
+        ChannelStore.addChangeListener(this._onChange)
+        UserStore.addChangeListener(this._onUserChange)
+    },
+
     componentWillUnMount() {
-        return
+        ChannelStore.removeChangeListener(this._onChange)
+        UserStore.removeChangeListener(this._onUserChange)
+    },
+
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.stored_channels != this.state.stored_channels)
+            this.forceUpdate()
     },
 
     _getChannels(limit, offset, kw, asc) {
@@ -62,6 +78,17 @@ export default React.createClass({
         this._getChannels(this.limit, this.offset, kw)
     },
 
+    handleJoin(channel) {
+        ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
+            .then((res) => {
+                channel.subscribers_count += 1
+                ChannelService.join_channels([channel])
+            })
+            .catch((err) => {
+                alert('Please try again!')
+            })
+    },
+
     handleChange(e) {
         if(e.currentTarget.value) {
             this.getSearchResults(e.currentTarget.value)
@@ -70,11 +97,24 @@ export default React.createClass({
         }
     },
 
+    _onUserChange() {
+        this.setState({
+           user: UserStore.user,
+           jwt: UserStore.jwt
+        })
+    },
+
+    _onChange() {
+        this.setState({
+            stored_channel: ChannelStore.channels
+        })
+    },
+
     render() {
         return (
-            <div>
+            <div className="ui segment">
                 <h2>Search something</h2>
-                <div>
+                <div className="ui form">
                     <SemanticInput required={true} icon={true} name="search" placeholder="Enter Stock symbol e.g. APPL"
                         type="text" onChange={this.handleChange} validation={false}>
                         <i className="search icon" />
@@ -82,7 +122,16 @@ export default React.createClass({
                 </div>
                 <ul>
                 {_.map(this.state.channels, (channel) => {
-                    return (<li key={channel.id}>{channel.name} - {channel.subscribers_count}</li>)
+                    return (
+                        <li key={channel.id}>
+                            {channel.name} - {channel.subscribers_count}
+                            {ChannelStore.get_channel(channel.id) ?
+                                <button className="ui disabled button">Joined</button>
+                                :
+                                <button className="ui basic teal button" onClick={this.handleJoin.bind(this, channel)}>Join</button>
+                            }
+                        </li>
+                    )
                 })}
                 </ul>
             </div>

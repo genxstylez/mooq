@@ -1,8 +1,11 @@
+from django.contrib.auth import get_user_model
 from chat.models import Channel, ChannelSubscribers
 from rest_framework import serializers
-from mooq.serializers import DynamicFieldsHyperlinkedModelSerializer
+from mooq.serializers import DynamicFieldsHyperlinkedModelSerializer, DynamicFieldsModelSerializer
 from stock.serializers import StockSerializer
 from rest_framework.reverse import reverse
+
+User = get_user_model()
 
 
 class ChannelSubscribersField(serializers.RelatedField):
@@ -41,9 +44,31 @@ class ChannelSerializer(DynamicFieldsHyperlinkedModelSerializer):
         fields = ('id', 'name', 'is_system', 'stock', 'subscribers', 'subscribers_count')
 
 
-class ChannelSubscribersSerializer(serializers.HyperlinkedModelSerializer):
+class ChannelField(serializers.RelatedField):
+    def to_representation(self, value):
+        return dict(
+            id=value.id,
+            name=value.name,
+        )
+
+    def to_internal_value(self, data):
+        return Channel.objects.get(id=data)
+
+
+class UserField(serializers.RelatedField):
+    def to_representation(self, value):
+        return dict(
+            id=value.id,
+            username=value.username
+        )
+
+    def to_internal_value(self, data):
+        return User.objects.get(id=data)
+
+class ChannelSubscribersSerializer(DynamicFieldsModelSerializer):
+    channel = ChannelField(queryset=Channel.objects.all())
+    user = UserField(queryset=User.objects.all())
+    is_moderator = serializers.BooleanField(default=False)
     class Meta:
         model = ChannelSubscribers
         fields = ('channel', 'user', 'is_moderator')
-
-
