@@ -11,7 +11,7 @@ export default {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.CHANNEL_JOIN,
             channels: channels
-        });
+        })
     },
 
     /*
@@ -21,7 +21,14 @@ export default {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.CHANNEL_LEAVE,
             channels: channels
-        });
+        })
+    },
+
+    got_top_channels(channels) {
+        AppDispatcher.dispatch({
+            actionType: ChannelConstants.GOT_TOP_CHANNELS,
+            channels: channels
+        })
     },
 
     /*
@@ -33,7 +40,7 @@ export default {
             msg: msg,
             event: event,
             channel_id: channel_id
-        });
+        })
     },
 
     recv_presence(presence, event, channel_id) {
@@ -50,20 +57,20 @@ export default {
             channel_id: channel_id,
             history: history,
             timetoken: timetoken
-        });
+        })
     },
 
     got_here_now(Obj) {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.GOT_HERE_NOW,
             Obj: Obj
-        });
+        })
     },
 
     mark_as_active(channel_id) {
         AppDispatcher.dispatch({
             actionType: ChannelConstants.CHANNEL_ACTIVE,
             channel_id: channel_id
-        });
+        })
     }
 }

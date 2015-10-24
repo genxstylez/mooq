@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { History } from 'react-router'
 import jwt_decode from 'jwt-decode'
 import FacebookOAuthMixin from '../mixins/FacebookOAuthMixin'
 import SetIntervalMixin from '../mixins/SetIntervalMixin'
@@ -8,10 +9,11 @@ import UserStore from '../stores/UserStore'
 import UserService from '../services/UserService'
 import UserActions from '../actions/UserActions'
 import ChannelService from '../services/ChannelService'
+import ChannelActions from '../actions/ChannelActions'
 
 
 export default React.createClass({
-    mixins: [FacebookOAuthMixin, SetIntervalMixin],
+    mixins: [FacebookOAuthMixin, SetIntervalMixin, History],
 
     getInitialState() {
         return {
@@ -23,7 +25,9 @@ export default React.createClass({
     },
     componentWillMount() {
         this.initialise_PubNub()
-        this.handleAuthenticatedChange()
+        this.get_top_channels()
+        if(this.state.is_authenticated)
+            this.handleAuthenticatedChange()
     },
 
     componentDidMount() {
@@ -34,14 +38,15 @@ export default React.createClass({
         }
     },
 
-    componentWillUnMount() {
+    componentWillUnmount() {
         UserStore.removeChangeListener(this._onChange);
     },
 
     componentDidUpdate(prevProps, prevState) {
         if(prevState.is_authenticated != this.state.is_authenticated) {
-            if(this.state.is_authenticated)
+            if(this.state.is_authenticated){
                 this.handleAuthenticatedChange()
+            }
         }
 
         if(prevState.authKey != this.state.authKey) {
@@ -56,6 +61,17 @@ export default React.createClass({
             uuid: this.state.user.username,
             auth_key: this.state.authKey
         })
+    },
+
+    get_top_channels() {
+        // Get top 10 channels
+        ChannelService.get_channels(0, 10)
+            .then((res)=> {
+                ChannelActions.got_top_channels(res.body.results)
+            })
+            .catch((err) => {
+                alert('App: get top channels: Something went wrong')
+            })
     },
 
     handleAuthenticatedChange() {

@@ -166,13 +166,21 @@ button.ui.button.borderless {
 }
 .profile-menu .item {
     color: #848383 !important;
-    padding: 6px 35px !important;
+    padding: 7px 35px !important;
     font-size: 1rem !important;
+}
+
+.profile-menu .item a {
+    color: #848383 !important;
 }
 
 .profile-menu .item.unread {
     font-style: bold;
     font-weight: 900;
+    color: white !important;
+}
+
+.profile-menu .item.unread a {
     color: white !important;
 }
 
@@ -185,21 +193,46 @@ button.ui.button.borderless {
     background: #714A3C !important;
 }
 
+.profile-menu .item.active a {
+    color: white !important;
+}
+
+.profile-menu .item:hover > .remove_icon {
+    visibility: visible;
+    transition: all 0.2s;
+}
+
+.remove_icon {
+    visibility: hidden;
+    transition: all 0.2s;
+}
+
 .profile-menu .top-list .item.active {
     color: #848383 !important;
-    padding: 6px 35px !important;
+    padding: 7px 35px !important;
     font-size: 1rem !important;
     background: transparent !important;
 }
 
-.profile-menu .top-list .item.active .icon {
+.profile-menu .top-list .item:hover {
+    background: #17252D !important;
+}
+
+.profile-menu .top-list .item.active .minus.icon {
     color: #848383 !important;
 }
 
 .profile-menu .top-list .item.unread {
     color: #848383 !important;
-    padding: 6px 35px !important;
     font-size: 1rem !important;
+}
+
+.profile-menu .top-list .item a {
+    color: #848383 !important;
+}
+
+.profile-menu .top-list .item > .remove_icon {
+    visibility: hidden;
 }
 
 .link.icon {
@@ -231,6 +264,8 @@ button.ui.button.borderless {
 .active .channel-icon, .unread .channel-icon {
     color: white !important;
 }
+
+
 
 
 #avatar {

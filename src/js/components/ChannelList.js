@@ -30,10 +30,7 @@ export default React.createClass({
                 <div className="ui list">
                     <h5 className="ui header">Your Stocks</h5>
                     {_.map(this.state.channels, (channel) => {
-                        return (<ChannelNav key={channel.id}
-                            id={channel.id}
-                            unread={channel.unread}
-                            name={channel.name} />)
+                        return (<ChannelNav key={channel.id} channel={channel} />)
                     })}
                 </div>
             )

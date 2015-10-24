@@ -27,7 +27,7 @@ export default React.createClass({
             user: UserStore.user,
             authKey: UserStore.authKey,
             is_authenticated: UserStore.is_authenticated,
-            top_5_channels: [],
+            top_5_channels: _.slice(ChannelStore.top_channels, 0, 5)
         }
     },
 
@@ -47,37 +47,33 @@ export default React.createClass({
 
     componentWillMount() {
         if (!this.state.is_authenticated) {
-            if (this.props.params.channelId)
+            if (this.props.params.channelId) {
                 this.handleGuestSession(this.props.params.channelId)
-            else
-                this.history.pushState(null, '/search/')
+            } else {
+                if(this.state.channels.length == 0) {
+                    // Happens to guest session who doesn't provide on channelId
+                    this.history.pushState(null, '/search/')
+                } else {
+                    ChannelActions.mark_as_active(this.state.channels[0].id)
+                }
+            }
         }
-        ChannelService.get_channels(5, 0)
-            .then((res) => {
-                this.setState({
-                    top_5_channels: res.body.results
-                })
-            })
-
     },
 
     componentWillReceiveProps(nextProps) {
         console.log('in recv props')
         if(nextProps.params.channelId != this.props.params.channelId) {
             let id = nextProps.params.channelId
-            if (this.state.is_authenticated)
-                setTimeout(() => {
-                    ChannelActions.mark_as_active(id)
-                }, 1)
-            else
-                this.handleGuestSession(id)
+            ChannelActions.mark_as_active(id)
+            $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide')
         }
-        $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide')
     },
 
     componentDidUpdate(nextProps, nextState) {
         if(nextState.channels.length != this.state.channels.length ||
             nextState.authKey != this.state.authKey) {
+            // if auth key changed, ask for permissions
+            // if channel changed handle it.
             ChannelService.grant(nextState.authKey, nextState.channels).done()
 
             if(nextState.channels.length != this.state.channels.length) {
@@ -87,19 +83,18 @@ export default React.createClass({
     },
 
     handleChannelChanged() {
-        if(this.state.is_authenticated) {
-            if(this.state.channels.length > 0) {
-                if (!this.props.params.channelId) {
-                    // if no channel Id is provided, go to the first channel of the list
-                    this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/')
-                } else {
-                    setTimeout(() => {
-                        ChannelActions.mark_as_active(this.props.params.channelId)
-                    }, 1)
-                }
+        if(this.state.channels.length > 0) {
+            if (this.props.params.channelId && ChannelStore.get_channel(this.props.params.channelId)) {
+                setTimeout(() => {
+                    ChannelActions.mark_as_active(this.props.params.channelId)
+                }, 1)
             } else {
-                this.history.pushState(null, '/search/')
+                // if no channel Id is provided, go to the first channel of the list
+                // or when a leave channel event occurs
+                this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/')
             }
+        } else {
+            this.history.pushState(null, '/search/')
         }
     },
 
@@ -129,7 +124,8 @@ export default React.createClass({
     _onChange() {
         this.setState({
             active_channel: ChannelStore.active_channel,
-            channels: ChannelStore.channels
+            channels: ChannelStore.channels,
+            top_5_channels: _.slice(ChannelStore.top_channels, 0, 5)
         })
     },
 
@@ -143,7 +139,7 @@ export default React.createClass({
                     <div className="ui list top-list">
                         <h5 className="ui header">Top 5 Stocks</h5>
                         {_.map(this.state.top_5_channels, (channel) => {
-                            return (<ChannelNav key={channel.id} id={channel.id} name={channel.name} />)
+                            return (<ChannelNav key={channel.id} channel={channel} />)
                         })}
                     </div>
                     <Link to="/search/">Search</Link>
@@ -160,7 +156,7 @@ export default React.createClass({
                             <div className="ui list top-list">
                                 <h5 className="ui header">Top 5 Stocks</h5>
                                 {_.map(this.state.top_5_channels, (channel) => {
-                                    return (<ChannelNav key={channel.id} id={channel.id} name={channel.name} />)
+                                    return (<ChannelNav key={channel.id} channel={channel} />)
                                 })}
                             </div>
                             <Link to="/search/">Search</Link>

@@ -8,8 +8,9 @@ class ChannelStore extends BaseStore {
     constructor() {
         super()
         this.subscribe(() => this._registerToActions.bind(this));
-        this._channels = [];
-        this._active_channel = {};
+        this._channels = []
+        this._top_channels = []
+        this._active_channel = {}
     }
 
     _registerToActions(action) {
@@ -26,6 +27,15 @@ class ChannelStore extends BaseStore {
                 })
                 if (changed)
                     this.emitChange()
+                break
+
+            case ChannelConstants.CHANNEL_LEAVE:
+                this._channels = _.filter(this._channels, (channel) => {
+                    return !_.findWhere(action.channels, {id: channel.id})
+                })
+                if(this._channels.length == 0)
+                    this._active_channel = {}
+                this.emitChange()
                 break
 
             case ChannelConstants.RECV_HISTORY:
@@ -57,16 +67,14 @@ class ChannelStore extends BaseStore {
                 this.emitChange()
                 break
 
-            case ChannelConstants.CHANNEL_ACTIVE:
-                this._active_channel = this.get_channel(action.channel_id)
-                this._active_channel.unread = false
+            case ChannelConstants.GOT_TOP_CHANNELS:
+                this._top_channels = action.channels
                 this.emitChange()
                 break
 
-            case ChannelConstants.CHANNEL_LEAVE:
-                this._channels = _.filter(this._channels, (channel) => {
-                    return !_.findWhere(action.channels, {id: channel.id})
-                })
+            case ChannelConstants.CHANNEL_ACTIVE:
+                this._active_channel = this.get_channel(action.channel_id)
+                this._active_channel.unread = false
                 this.emitChange()
                 break
 
@@ -100,11 +108,15 @@ class ChannelStore extends BaseStore {
     }
 
     get channels() {
-        return this._channels;
+        return this._channels
+    }
+
+    get top_channels() {
+        return this._top_channels
     }
 
     get active_channel()  {
-        return this._active_channel;
+        return this._active_channel
     }
 
 }

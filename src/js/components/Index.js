@@ -16,7 +16,7 @@ export default React.createClass({
         UserStore.addChangeListener(this._onChange);
     },
 
-    componentWillUnMount() {
+    componentWillUnmount() {
         UserStore.removeChangeListener(this._onChange);
     },
 

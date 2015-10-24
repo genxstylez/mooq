@@ -8,6 +8,7 @@ export default KeyMirror({
     RECV_MESSAGE: null,
     RECV_PRESENCE: null,
     RECV_HISTORY: null,
+    GOT_TOP_CHANNELS: null,
     GOT_HERE_NOW: null,
 
     API_URL: 'http://localhost:8000/api/channels',

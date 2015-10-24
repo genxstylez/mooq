@@ -5,11 +5,11 @@ import ChannelConstants from '../constants/ChannelConstants'
 import ChannelStore from '../stores/ChannelStore'
 
 export default {
-    get_channels(limit, offset, search_kw, asc) {
+    get_channels(offset, limit, search_kw, asc) {
         return request
             .get(Urls['channel-list']())
-            .query({limit: limit || 50})
             .query({offset: offset || 0})
+            .query({limit: limit || 50})
             .query({fields: 'id,name,subscribers_count'})
             .query({search: search_kw})
             .query({ordering: asc ? 'subscribers_count' : '-subscribers_count'})
@@ -88,6 +88,13 @@ export default {
         }
     },
 
+    leave_channels(channels) {
+        pubnub.unsubscribe({
+            channel: channels
+        })
+        ChannelActions.leave(channels)
+    },
+
     get_history(channel_id, count, timetoken) {
         pubnub.history({
             channel: channel_id,
@@ -107,10 +114,5 @@ export default {
         })
     },
 
-    unsubscribe(channels) {
-        pubnub.unsubscribe({
-            channel: channels
-        })
-        ChannelActions.leave(channels)
-    },
+
 }

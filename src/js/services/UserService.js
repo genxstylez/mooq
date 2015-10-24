@@ -47,7 +47,7 @@ export default {
     },
 
     logout() {
-        ChannelService.unsubscribe(ChannelStore.channels)
+        ChannelService.leave_channels(ChannelStore.channels)
         UserActions.logout()
     },
 

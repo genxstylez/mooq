@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
+import { Link } from 'react-router'
 import SemanticInput from './SemanticInput'
 import ChannelService from '../services/ChannelService'
 import ChannelStore from '../stores/ChannelStore'
@@ -14,30 +15,20 @@ export default React.createClass({
 
     getInitialState() {
         return {
-            channels: [],
-            limit: 10,
-            offset: 0,
+            channels: ChannelStore.top_channels,
             next: null,
             previous: null,
             stored_channels: ChannelStore.channels,
+            is_authenticated: UserStore.is_authenticated,
             user: UserStore.user,
-            jwt: UserStore.jwt
+            authKey: UserStore.authKey,
+            jwt: UserStore.jwt,
+            changed: false
         }
     },
 
     componentWillMount() {
-        // Get top 10 channels
-        ChannelService.get_channels(this.limit, this.offset)
-            .then((res)=> {
-                this.setState({
-                    channels: res.body.results,
-                    next: res.body.next,
-                    previous: res.body.previous
-                })
-            })
-            .catch((err) => {
-                alert('Something went wrong')
-            })
+
     },
 
     componentDidMount() {
@@ -45,7 +36,7 @@ export default React.createClass({
         UserStore.addChangeListener(this._onUserChange)
     },
 
-    componentWillUnMount() {
+    componentWillUnmount() {
         ChannelStore.removeChangeListener(this._onChange)
         UserStore.removeChangeListener(this._onUserChange)
     },
@@ -55,8 +46,8 @@ export default React.createClass({
             this.forceUpdate()
     },
 
-    _getChannels(limit, offset, kw, asc) {
-        ChannelService.get_channels(limit, offset, kw, asc)
+    _getChannels(offset, limit, kw, asc) {
+        ChannelService.get_channels(offset, limit, kw, asc)
             .then((res)=> {
                 this.setState({
                     channels: res.body.results,
@@ -65,13 +56,8 @@ export default React.createClass({
                 })
             })
             .catch((err) => {
-                alert('Something went wrong')
+                alert('Search: Something went wrong')
             })
-    },
-
-    getTopChannels() {
-        // Get top 10 channels
-        this._getChannels(this.limit, this.offset)
     },
 
     getSearchResults(kw) {
@@ -79,21 +65,39 @@ export default React.createClass({
     },
 
     handleJoin(channel) {
-        ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
-            .then((res) => {
-                channel.subscribers_count += 1
-                ChannelService.join_channels([channel])
+        if(this.state.is_authenticated) {
+             ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
+            .then(ChannelService.grant(this.state.authKey, [channel]))
+            .then(() => {
+                    channel.subscribers_count += 1
+                    ChannelService.join_channels([channel])
             })
             .catch((err) => {
                 alert('Please try again!')
             })
+        } else {
+            ChannelService.grant(this.state.authKey, [channel])
+                .then(() => {
+                        channel.subscribers_count += 1
+                        ChannelService.join_channels([channel])
+                })
+                .catch((err) => {
+                    alert('Please try again!')
+                })
+        }
     },
 
     handleChange(e) {
+        this.setState({
+            changed: true
+        })
+
         if(e.currentTarget.value) {
             this.getSearchResults(e.currentTarget.value)
         } else {
-            this.getTopChannels()
+            this.setState({
+                channels: ChannelStore.top_channels
+            })
         }
     },
 
@@ -105,6 +109,11 @@ export default React.createClass({
     },
 
     _onChange() {
+        if(!this.state.changed) {
+            this.setState({
+                channels: ChannelStore.top_channels
+            })
+        }
         this.setState({
             stored_channel: ChannelStore.channels
         })
@@ -113,6 +122,7 @@ export default React.createClass({
     render() {
         return (
             <div className="ui segment">
+                <Link to="/channels/">Go to Chat</Link>
                 <h2>Search something</h2>
                 <div className="ui form">
                     <SemanticInput required={true} icon={true} name="search" placeholder="Enter Stock symbol e.g. APPL"
