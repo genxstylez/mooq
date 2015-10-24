@@ -29,7 +29,7 @@ export default React.createClass({
         return (
             <div id="avatar">
                 {this.state.is_authenticated ?
-                    <span className="ui item dropdown" ref="dropdown">
+                    <span className="ui dropdown" ref="dropdown">
                         <img className="ui avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
                         <span className="username">{this.props.username}</span>
                         <i className="chevron up icon" />

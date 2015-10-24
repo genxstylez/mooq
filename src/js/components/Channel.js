@@ -136,10 +136,11 @@ export default React.createClass({
     render() {
         return (
             <div id="main">
-
                 <div className="ui sidebar vertical left inline grid menu profile-menu" ref="sidebar">
-                    <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
-                    <div className="ui list">
+                    <div className="logo">
+                        <img src={STATIC_URL + 'img/logo.png'} />
+                    </div>
+                    <div className="ui list top-list">
                         <h5 className="ui header">Top 5 Stocks</h5>
                         {_.map(this.state.top_5_channels, (channel) => {
                             return (<ChannelNav key={channel.id} id={channel.id} name={channel.name} />)
@@ -147,6 +148,7 @@ export default React.createClass({
                     </div>
                     <Link to="/search/">Search</Link>
                     <ChannelList />
+                    <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                 </div>
                 <div className="full height pusher">
                     <div id="profile-container">
@@ -164,7 +166,7 @@ export default React.createClass({
                             <Link to="/search/">Search</Link>
                             <ChannelList />
                         </div>
-                         <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
+                        <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                     </div>
                     <div id="messages-container">
                         <ChannelHeader channel={this.state.active_channel} />

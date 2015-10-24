@@ -46750,7 +46750,7 @@ exports['default'] = _react2['default'].createClass({
             { id: 'avatar' },
             this.state.is_authenticated ? _react2['default'].createElement(
                 'span',
-                { className: 'ui item dropdown', ref: 'dropdown' },
+                { className: 'ui dropdown', ref: 'dropdown' },
                 _react2['default'].createElement('img', { className: 'ui avatar image', src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' }),
                 _react2['default'].createElement(
                     'span',
@@ -46976,10 +46976,14 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'div',
                 { className: 'ui sidebar vertical left inline grid menu profile-menu', ref: 'sidebar' },
-                _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username }),
                 _react2['default'].createElement(
                     'div',
-                    { className: 'ui list' },
+                    { className: 'logo' },
+                    _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'ui list top-list' },
                     _react2['default'].createElement(
                         'h5',
                         { className: 'ui header' },
@@ -46994,7 +46998,8 @@ exports['default'] = _react2['default'].createClass({
                     { to: '/search/' },
                     'Search'
                 ),
-                _react2['default'].createElement(_ChannelList2['default'], null)
+                _react2['default'].createElement(_ChannelList2['default'], null),
+                _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username })
             ),
             _react2['default'].createElement(
                 'div',
