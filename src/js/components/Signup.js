@@ -78,7 +78,7 @@ export default React.createClass({
 
     handleChangeUsername(e) {
         if (e.target.value) {
-            ValidationService.validate_username(e.target.value, () => {
+            ValidationService.validate_username(e.target.value.toLowerCase(), () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
                 this.setState({
                     username: e.target.value,
@@ -112,7 +112,7 @@ export default React.createClass({
 
     handleChangeEmail(e) {
         if(e.target.value) {
-            ValidationService.validate_email(e.target.value, () => {
+            ValidationService.validate_email(e.target.value.toLowerCase(), () => {
                 let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
                 this.setState({
                     email: e.target.value,
@@ -145,9 +145,14 @@ export default React.createClass({
     },
 
     handleSubmit(e) {
-        e.preventDefault();
+        e.preventDefault()
+        let payload = {
+            email: this.state.email.toLowerCase(),
+            username: this.state.username.toLowerCase(),
+            password: this.state.password
+        }
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
-            UserService.register({...this.state})
+            UserService.register({...payload})
             .then((res) => {
                 UserActions.login(res.body.token)
             })

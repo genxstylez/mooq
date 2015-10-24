@@ -15,7 +15,8 @@ def save_profile_picture(backend, user, social, response, details,
         except HTTPError:
             pass
         else:
-            profile = Profile.objects.create(user=user, is_verified=True)
+            profile = Profile.objects.get(user=user)
+            profile.is_verified = True
             profile.avatar.save('{0}_social.jpg'.format(user.username),
                                    ContentFile(response.content))
             profile.save()

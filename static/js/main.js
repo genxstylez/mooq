@@ -48694,7 +48694,7 @@ exports['default'] = _react2['default'].createClass({
         var _this = this;
 
         if (e.target.value) {
-            _servicesValidationService2['default'].validate_username(e.target.value, function () {
+            _servicesValidationService2['default'].validate_username(e.target.value.toLowerCase(), function () {
                 var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 _this.setState({
                     username: e.target.value,
@@ -48730,7 +48730,7 @@ exports['default'] = _react2['default'].createClass({
         var _this2 = this;
 
         if (e.target.value) {
-            _servicesValidationService2['default'].validate_email(e.target.value, function () {
+            _servicesValidationService2['default'].validate_email(e.target.value.toLowerCase(), function () {
                 var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 _this2.setState({
                     email: e.target.value,
@@ -48764,8 +48764,13 @@ exports['default'] = _react2['default'].createClass({
 
     handleSubmit: function handleSubmit(e) {
         e.preventDefault();
+        var payload = {
+            email: this.state.email.toLowerCase(),
+            username: this.state.username.toLowerCase(),
+            password: this.state.password
+        };
         if (this.state.pw_is_valid && this.state.email_is_valid && this.state.username_is_valid) {
-            _servicesUserService2['default'].register(_extends({}, this.state)).then(function (res) {
+            _servicesUserService2['default'].register(_extends({}, payload)).then(function (res) {
                 _actionsUserActions2['default'].login(res.body.token);
             })['catch'](function (err) {
                 alert('An error occured, please try again!');
