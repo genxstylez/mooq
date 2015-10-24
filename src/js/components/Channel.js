@@ -173,10 +173,7 @@ export default React.createClass({
                         {_.map(this.state.channels, (channel) => {
                         return (<ChannelItem key={channel.id}
                             channel_id={channel.id}
-                            name={channel.name}
                             messages={channel.messages}
-                            occupancy={channel.occupancy}
-                            users={channel.users}
                             is_active={this.state.active_channel.id == channel.id} />);
                         })}
                     </div>

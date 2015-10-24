@@ -12,14 +12,12 @@ import classnames from 'classnames'
 export default React.createClass({
     getInitialState() {
         return {
-            messages: this.props.messages,
-            occupancy: this.props.occupancy,
-            users: this.props.users
+            messages: this.props.messages
         }
     },
 
     componentWillMount() {
-        if(this.state.messages.length == 0) {
+        if(this.props.messages.length == 0) {
             ChannelService.get_history(this.props.channel_id)
         }
     },
@@ -31,24 +29,20 @@ export default React.createClass({
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
-        return
     },
 
-    componentWillUnmount() {
-        return
-    },
-
-    componentDidUpdate() {
-        var node = ReactDOM.findDOMNode(this.refs.messages);
-        $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
+    componentDidUpdate(prevProps, prevState) {
+       if (prevState.messages.length != this.state.messages.length) {
+            var node = ReactDOM.findDOMNode(this.refs.messages)
+            $(node).animate({ scrollTop: node.scrollHeight }, 'slow')
+        }
     },
 
     componentWillReceiveProps(nextProps) {
+        let messages = _.clone(nextProps.messages) // do a shallow copy of the instance to prevent data "too-synced"
         this.setState({
-            messages: nextProps.messages,
-            occupancy: nextProps.occupancy,
-            users: nextProps.users
-        });
+            messages: messages
+        })
     },
 
     handleHeightChange(height) {
@@ -56,11 +50,6 @@ export default React.createClass({
         height = height + 20 // 20 is the padding for footer
         node.style.bottom = height.toString() + 'px';
         node.scrollTop = node.scrollHeight;
-    },
-
-    handleHereNow() {
-        let dimmer = ReactDOM.findDOMNode(this.refs.dimmer);
-        $(dimmer).dimmer('show');
     },
 
     render() {

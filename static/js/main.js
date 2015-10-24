@@ -47043,10 +47043,7 @@ exports['default'] = _react2['default'].createClass({
                     _lodash2['default'].map(this.state.channels, function (channel) {
                         return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
                             channel_id: channel.id,
-                            name: channel.name,
                             messages: channel.messages,
-                            occupancy: channel.occupancy,
-                            users: channel.users,
                             is_active: _this5.state.active_channel.id == channel.id });
                     })
                 )
@@ -47233,14 +47230,12 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            messages: this.props.messages,
-            occupancy: this.props.occupancy,
-            users: this.props.users
+            messages: this.props.messages
         };
     },
 
     componentWillMount: function componentWillMount() {
-        if (this.state.messages.length == 0) {
+        if (this.props.messages.length == 0) {
             _servicesChannelService2['default'].get_history(this.props.channel_id);
         }
     },
@@ -47252,23 +47247,19 @@ exports['default'] = _react2['default'].createClass({
             node.scrollTop = node.scrollHeight;
         }, 1000);
         */
-        return;
     },
 
-    componentWillUnmount: function componentWillUnmount() {
-        return;
-    },
-
-    componentDidUpdate: function componentDidUpdate() {
-        var node = _reactDom2['default'].findDOMNode(this.refs.messages);
-        $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
+    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+        if (prevState.messages.length != this.state.messages.length) {
+            var node = _reactDom2['default'].findDOMNode(this.refs.messages);
+            $(node).animate({ scrollTop: node.scrollHeight }, 'slow');
+        }
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var messages = _lodash2['default'].clone(nextProps.messages); // do a shallow copy of the instance to prevent data "too-synced"
         this.setState({
-            messages: nextProps.messages,
-            occupancy: nextProps.occupancy,
-            users: nextProps.users
+            messages: messages
         });
     },
 
@@ -47277,11 +47268,6 @@ exports['default'] = _react2['default'].createClass({
         height = height + 20; // 20 is the padding for footer
         node.style.bottom = height.toString() + 'px';
         node.scrollTop = node.scrollHeight;
-    },
-
-    handleHereNow: function handleHereNow() {
-        var dimmer = _reactDom2['default'].findDOMNode(this.refs.dimmer);
-        $(dimmer).dimmer('show');
     },
 
     render: function render() {
