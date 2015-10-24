@@ -21,6 +21,9 @@ class ChannelSubscribers(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'), related_name='channels')
     is_moderator = models.BooleanField(_('is_moderator'))
 
+    class Meta:
+        unique_together = (('channel', 'user'))
+
     def __str__(self):
         return '{} : {}'.format(self.channel, self.user)
 
