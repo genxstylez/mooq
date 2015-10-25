@@ -18,7 +18,6 @@ export default React.createClass({
         if (nextProps != this.state) {
             this.setState({...nextProps})
         }
-
     },
 
     handleSignout() {
@@ -30,7 +29,7 @@ export default React.createClass({
             <div id="avatar">
                 {this.state.is_authenticated ?
                     <span className="ui dropdown" ref="dropdown">
-                        <img className="ui avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
+                        <img className="ui avatar image" src={this.props.avatar} />
                         <span className="username">{this.props.username}</span>
                         <i className="chevron up icon" />
                         <div className="menu transition hidden">

@@ -34,7 +34,7 @@ export default React.createClass({
             if(this.state.is_authenticated){
                 if(this.state.value)
                     ChannelService.create_message(
-                        this.props.channel_id, this.state.user.username, this.state.value, () => {
+                        this.props.channel_id, this.state.user.username,  this.state.value, this.state.user.profile.avatar, () => {
                         this.setState({
                             value: ''
                         })

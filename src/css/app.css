@@ -19,6 +19,11 @@ body > #app > #main {
     height: 100%
 }
 
+.ui.comments .comment .avatar img {
+    width: 3em !important;
+    height: 3em !important;
+}
+
 .hidden {
     visibility: hidden;
 }
@@ -378,6 +383,7 @@ button.ui.button.borderless {
     float: left;
     margin-left: 2.2em;
     margin-right: 1em;
+    border-radius: .25rem;
 }
 
 #avatar > .dropdown > span.username{

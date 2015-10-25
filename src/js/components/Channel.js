@@ -147,7 +147,7 @@ export default React.createClass({
                         <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
                     </div>
                     <ChannelList />
-                    <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
+                    <Avatar is_authenticated={this.state.is_authenticated} avatar={this.state.user.profile.avatar} username={this.state.user.username} />
                 </div>
                 <div className="full height pusher">
                     <div id="profile-container">
@@ -167,7 +167,7 @@ export default React.createClass({
                             </div>
                             <ChannelList />
                         </div>
-                        <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
+                        <Avatar is_authenticated={this.state.is_authenticated} avatar={this.state.user.profile.avatar}  username={this.state.user.username} />
                     </div>
                     <div id="messages-container">
                         <ChannelHeader channel={this.state.active_channel} />

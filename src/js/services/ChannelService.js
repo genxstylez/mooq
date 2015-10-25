@@ -50,7 +50,6 @@ export default {
     },
 
     get_subscriber_id(channel_id, user_id) {
-        console.log(channel_id)
         return request
             .get(Urls['subscribers-list']())
             .query({channel__id: channel_id})
@@ -67,13 +66,14 @@ export default {
     },
 
 
-    create_message(channel_id, username, text, cb) {
+    create_message(channel_id, username, text, avatar, cb) {
         pubnub.publish({
             channel: channel_id,
             message: {
                 text: text,
                 uuid: username,
                 timestamp: Date.now(),
+                avatar: avatar
             },
             callback: cb(),
             error: (err) => {

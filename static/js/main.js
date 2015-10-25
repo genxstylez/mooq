@@ -46512,6 +46512,13 @@ exports['default'] = {
         localStorage.setItem('jwt', jwt);
     },
 
+    got_profile: function got_profile(profileObj) {
+        _dispatchersAppDispatcher2['default'].dispatch({
+            actionType: _constantsUserConstants2['default'].GOT_PROFILE,
+            profileObj: profileObj
+        });
+    },
+
     logout: function logout() {
         _history2['default'].replaceState(null, '/');
         localStorage.removeItem('jwt');
@@ -46611,7 +46618,10 @@ exports['default'] = _react2['default'].createClass({
     componentWillMount: function componentWillMount() {
         this.initialise_PubNub();
         this.get_top_channels();
-        if (this.state.is_authenticated) this.handleAuthenticatedChange();
+        if (this.state.is_authenticated) {
+            this.handleAuthenticatedChange();
+            this.get_profile(this.state.user.user_id);
+        }
     },
 
     componentDidMount: function componentDidMount() {
@@ -46630,6 +46640,7 @@ exports['default'] = _react2['default'].createClass({
         if (prevState.is_authenticated != this.state.is_authenticated) {
             if (this.state.is_authenticated) {
                 this.handleAuthenticatedChange();
+                this.get_profile(this.state.user.user_id);
             }
         }
 
@@ -46644,6 +46655,14 @@ exports['default'] = _react2['default'].createClass({
             subscribe_key: 'sub-c-4daa87ec-5f9d-11e5-bc11-0619f8945a4f',
             uuid: this.state.user.username,
             auth_key: this.state.authKey
+        });
+    },
+
+    get_profile: function get_profile(user_id) {
+        _servicesUserService2['default'].get_profile(this.state.user.user_id).then(function (res) {
+            _actionsUserActions2['default'].got_profile(res.body);
+        })['catch'](function (err) {
+            console.log(err);
         });
     },
 
@@ -46776,7 +46795,7 @@ exports['default'] = _react2['default'].createClass({
             this.state.is_authenticated ? _react2['default'].createElement(
                 'span',
                 { className: 'ui dropdown', ref: 'dropdown' },
-                _react2['default'].createElement('img', { className: 'ui avatar image', src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' }),
+                _react2['default'].createElement('img', { className: 'ui avatar image', src: this.props.avatar }),
                 _react2['default'].createElement(
                     'span',
                     { className: 'username' },
@@ -47028,7 +47047,7 @@ exports['default'] = _react2['default'].createClass({
                     )
                 ),
                 _react2['default'].createElement(_ChannelList2['default'], null),
-                _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username })
+                _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, avatar: this.state.user.profile.avatar, username: this.state.user.username })
             ),
             _react2['default'].createElement(
                 'div',
@@ -47068,7 +47087,7 @@ exports['default'] = _react2['default'].createClass({
                         ),
                         _react2['default'].createElement(_ChannelList2['default'], null)
                     ),
-                    _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username })
+                    _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, avatar: this.state.user.profile.avatar, username: this.state.user.username })
                 ),
                 _react2['default'].createElement(
                     'div',
@@ -48132,7 +48151,7 @@ exports['default'] = _react2['default'].createClass({
         if (e.key == 'Enter' && !e.shiftKey) {
             e.preventDefault();
             if (this.state.is_authenticated) {
-                if (this.state.value) _servicesChannelService2['default'].create_message(this.props.channel_id, this.state.user.username, this.state.value, function () {
+                if (this.state.value) _servicesChannelService2['default'].create_message(this.props.channel_id, this.state.user.username, this.state.value, this.state.user.profile.avatar, function () {
                     _this.setState({
                         value: ''
                     });
@@ -48194,7 +48213,7 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'a',
                 { className: 'avatar' },
-                _react2['default'].createElement('img', { src: 'http://semantic-ui.com/images/avatar/small/elliot.jpg' })
+                _react2['default'].createElement('img', { src: this.props.message.avatar || STATIC_URL + 'img/avatar.png' })
             ),
             _react2['default'].createElement(
                 'div',
@@ -48218,30 +48237,6 @@ exports['default'] = _react2['default'].createClass({
         );
     }
 });
-
-/*
-
-<div className="event">
-                <div className="label">
-                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                </div>
-                <div className="content">
-                    <div className="summary">
-                        <a className="user">
-                            {this.props.message.uuid}
-                        </a> {this.props.message.text}
-                        <div className="date">
-                            {moment(this.props.message.timestamp).fromNow()}
-                        </div>
-                    </div>
-                    <div className="meta">
-                        <a className="like">
-                            <i className="like icon"></i> 4 Likes
-                        </a>
-                    </div>
-                </div>
-            </div>
-*/
 module.exports = exports['default'];
 
 
@@ -49088,7 +49083,8 @@ exports['default'] = (0, _keymirror2['default'])({
     LOGIN: null,
     LOGOUT: null,
     CREATE_GUEST: null,
-    AUTHENTICATED: null
+    AUTHENTICATED: null,
+    GOT_PROFILE: null
 });
 module.exports = exports['default'];
 
@@ -49318,7 +49314,6 @@ exports['default'] = {
     },
 
     get_subscriber_id: function get_subscriber_id(channel_id, user_id) {
-        console.log(channel_id);
         return _superagentBluebirdPromise2['default'].get(Urls['subscribers-list']()).query({ channel__id: channel_id }).query({ user__id: user_id }).promise();
     },
 
@@ -49326,13 +49321,14 @@ exports['default'] = {
         return _superagentBluebirdPromise2['default'].del(Urls['subscribers-detail'](subscriber_id)).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).promise();
     },
 
-    create_message: function create_message(channel_id, username, text, cb) {
+    create_message: function create_message(channel_id, username, text, avatar, cb) {
         pubnub.publish({
             channel: channel_id,
             message: {
                 text: text,
                 uuid: username,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                avatar: avatar
             },
             callback: cb(),
             error: function error(err) {
@@ -49445,8 +49441,8 @@ exports['default'] = {
         return _superagentBluebirdPromise2['default'].post(Urls['api-token-refresh']()).send({ token: jwt }).promise();
     },
 
-    async_authenticate: function async_authenticate() {
-        return _superagentBluebirdPromise2['default'].get(Urls['me-list']()).promise();
+    get_profile: function get_profile(user_id) {
+        return _superagentBluebirdPromise2['default'].get(Urls['user-detail'](user_id)).promise();
     },
 
     authenticated: function authenticated(user) {
@@ -49796,6 +49792,7 @@ var UserStore = (function (_BaseStore) {
                     this._jwt = action.jwt;
                     this._authKey = this._jwt;
                     this._user = (0, _jwtDecode2['default'])(this._jwt);
+                    this._user = this.extend_user(this._user);
                     this._user['uuid'] = this._user.username;
                     this._isGuest = false;
                     this.emitChange();
@@ -49825,9 +49822,28 @@ var UserStore = (function (_BaseStore) {
                     this.emitChange();
                     break;
 
+                case _constantsUserConstants2['default'].GOT_PROFILE:
+                    this._user.profile.is_verified = action.profileObj.profile.is_verified;
+                    this._user.profile.follows = action.profileObj.profile.follows;
+                    if (action.profileObj.profile.avatar) this._user.profile.avatar = action.profileObj.profile.avatar;
+                    this.emitChange();
+                    break;
+
                 default:
                     break;
             }
+        }
+    }, {
+        key: 'extend_user',
+        value: function extend_user(userObj) {
+            return _lodash2['default'].merge({}, userObj, {
+                uuid: null,
+                profile: {
+                    is_verified: false,
+                    avatar: STATIC_URL + 'img/avatar.png',
+                    follows: []
+                }
+            });
         }
     }, {
         key: 'user',

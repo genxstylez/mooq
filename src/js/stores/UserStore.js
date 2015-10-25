@@ -21,6 +21,7 @@ class UserStore extends BaseStore {
                 this._jwt = action.jwt
                 this._authKey = this._jwt
                 this._user = jwt_decode(this._jwt)
+                this._user = this.extend_user(this._user)
                 this._user['uuid'] = this._user.username
                 this._isGuest = false
                 this.emitChange()
@@ -50,10 +51,29 @@ class UserStore extends BaseStore {
                 this.emitChange()
                 break
 
+            case UserConstants.GOT_PROFILE:
+                this._user.profile.is_verified = action.profileObj.profile.is_verified
+                this._user.profile.follows = action.profileObj.profile.follows
+                if(action.profileObj.profile.avatar)
+                this._user.profile.avatar = action.profileObj.profile.avatar
+                this.emitChange()
+                break
+
             default:
                 break
         }
 
+    }
+
+    extend_user(userObj) {
+        return _.merge({}, userObj, {
+            uuid: null,
+            profile: {
+                is_verified: false,
+                avatar: STATIC_URL + 'img/avatar.png',
+                follows: []
+            }
+        })
     }
 
     get user() {

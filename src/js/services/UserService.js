@@ -36,9 +36,9 @@ export default {
     },
 
 
-    async_authenticate() {
+    get_profile(user_id) {
         return request
-            .get(Urls['me-list']())
+            .get(Urls['user-detail'](user_id))
             .promise()
     },
 

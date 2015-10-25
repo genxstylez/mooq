@@ -27,6 +27,13 @@ export default {
         localStorage.setItem('jwt', jwt)
     },
 
+    got_profile(profileObj) {
+        AppDispatcher.dispatch({
+            actionType: UserConstants.GOT_PROFILE,
+            profileObj: profileObj
+        })
+    },
+
 
     logout() {
         history.replaceState(null, '/')

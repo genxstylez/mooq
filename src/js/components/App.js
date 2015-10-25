@@ -26,8 +26,10 @@ export default React.createClass({
     componentWillMount() {
         this.initialise_PubNub()
         this.get_top_channels()
-        if(this.state.is_authenticated)
+        if(this.state.is_authenticated) {
             this.handleAuthenticatedChange()
+            this.get_profile(this.state.user.user_id)
+        }
     },
 
     componentDidMount() {
@@ -44,8 +46,9 @@ export default React.createClass({
 
     componentDidUpdate(prevProps, prevState) {
         if(prevState.is_authenticated != this.state.is_authenticated) {
-            if(this.state.is_authenticated){
+            if(this.state.is_authenticated) {
                 this.handleAuthenticatedChange()
+                this.get_profile(this.state.user.user_id)
             }
         }
 
@@ -61,6 +64,16 @@ export default React.createClass({
             uuid: this.state.user.username,
             auth_key: this.state.authKey
         })
+    },
+
+    get_profile(user_id) {
+        UserService.get_profile(this.state.user.user_id)
+            .then((res) => {
+                UserActions.got_profile(res.body)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     },
 
     get_top_channels() {

@@ -4,5 +4,6 @@ export default KeyMirror({
     LOGIN: null,
     LOGOUT: null,
     CREATE_GUEST: null,
-    AUTHENTICATED: null
+    AUTHENTICATED: null,
+    GOT_PROFILE: null,
 })

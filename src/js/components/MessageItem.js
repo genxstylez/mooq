@@ -9,7 +9,7 @@ export default React.createClass({
         return (
             <div className="comment">
                 <a className="avatar">
-                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
+                    <img src={this.props.message.avatar || STATIC_URL + 'img/avatar.png'} />
                 </a>
                 <div className="content">
                     <a className="author">
@@ -26,29 +26,3 @@ export default React.createClass({
         );
     }
 })
-
-
-
-/*
-
-<div className="event">
-                <div className="label">
-                    <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-                </div>
-                <div className="content">
-                    <div className="summary">
-                        <a className="user">
-                            {this.props.message.uuid}
-                        </a> {this.props.message.text}
-                        <div className="date">
-                            {moment(this.props.message.timestamp).fromNow()}
-                        </div>
-                    </div>
-                    <div className="meta">
-                        <a className="like">
-                            <i className="like icon"></i> 4 Likes
-                        </a>
-                    </div>
-                </div>
-            </div>
-*/
