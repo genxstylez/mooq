@@ -13,4 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mooq.settings")
 
+def get_application():
+    return reduce(lambda app, wrapper: wrapper(app), [], get_wsgi_application())
+
 application = get_wsgi_application()

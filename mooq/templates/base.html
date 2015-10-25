@@ -1,12 +1,12 @@
-{% load i18n staticfiles %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <title>{% block title %}APPSE{% endblock %}</title>
-        <link rel="icon" href="{% static 'favicon.png' %}" type="image/png"/>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <link rel="icon" href="{% static 'favicon.png' %}" type="image/png" />
         <link rel="stylesheet" href="{% static 'css/app.css' %}" />
         <link rel="stylesheet" href="{% static 'vendor/semantic/semantic.min.css' %}" />
         <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -21,7 +21,7 @@
     </head>
     <body>
         {% block content %}{% endblock %}
-        <script type="text/javascript" src={% static 'js/main.js' %}></script>
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
         {% block post_scripts %}{% endblock %}
     </body>
 </html>
