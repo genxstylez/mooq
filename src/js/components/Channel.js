@@ -26,6 +26,7 @@ export default React.createClass({
             active_channel: ChannelStore.active_channel,
             user: UserStore.user,
             authKey: UserStore.authKey,
+            jwt: UserStore.jwt,
             is_authenticated: UserStore.is_authenticated,
             top_5_channels: _.slice(ChannelStore.top_channels, 0, 5)
         }
@@ -61,7 +62,6 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(nextProps) {
-        console.log('in recv props')
         if(nextProps.params.channelId != this.props.params.channelId) {
             let id = nextProps.params.channelId
             ChannelActions.mark_as_active(id)

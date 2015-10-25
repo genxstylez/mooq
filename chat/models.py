@@ -4,8 +4,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+def id_generator():
+    return uuid.uuid4().hex
+
 class Channel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(primary_key=True, default=id_generator, editable=False, max_length=32)
     name = models.CharField(_('Name'), max_length=40)
     stock = models.OneToOneField(Stock, null=True, blank=True)
     is_system = models.BooleanField(_('System chatroom'), default=False)

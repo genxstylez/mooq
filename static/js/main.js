@@ -46886,6 +46886,7 @@ exports['default'] = _react2['default'].createClass({
             active_channel: _storesChannelStore2['default'].active_channel,
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
+            jwt: _storesUserStore2['default'].jwt,
             is_authenticated: _storesUserStore2['default'].is_authenticated,
             top_5_channels: _lodash2['default'].slice(_storesChannelStore2['default'].top_channels, 0, 5)
         };
@@ -46921,7 +46922,6 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        console.log('in recv props');
         if (nextProps.params.channelId != this.props.params.channelId) {
             var id = nextProps.params.channelId;
             _actionsChannelActions2['default'].mark_as_active(id);
@@ -47417,13 +47417,27 @@ var _storesChannelStore = require('../stores/ChannelStore');
 
 var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
 
+var _storesUserStore = require('../stores/UserStore');
+
+var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
+
 exports['default'] = _react2['default'].createClass({
     displayName: 'ChannelNav',
 
     mixins: [_reactRouter.History],
 
     handleClickRemove: function handleClickRemove() {
-        _servicesChannelService2['default'].leave_channels([this.props.channel]);
+        var _this = this;
+
+        if (_storesUserStore2['default'].is_authenticated) {
+            _servicesChannelService2['default'].get_subscriber_id(this.props.channel.id, _storesUserStore2['default'].user.user_id).then(function (res) {
+                _servicesChannelService2['default'].unsubscribe_channel(_storesUserStore2['default'].jwt, res.body[0].id);
+            }).then(function () {
+                _servicesChannelService2['default'].leave_channels([_this.props.channel]);
+            });
+        } else {
+            _servicesChannelService2['default'].leave_channels([this.props.channel]);
+        }
     },
 
     render: function render() {
@@ -47449,7 +47463,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"classnames":4,"react":219,"react-router":85}],233:[function(require,module,exports){
+},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"classnames":4,"react":219,"react-router":85}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49250,6 +49264,15 @@ exports['default'] = {
 
     subscribe_to_channel: function subscribe_to_channel(token, channel_id, user_id) {
         return _superagentBluebirdPromise2['default'].post(Urls['subscribers-list']()).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).send({ channel: channel_id }).send({ user: user_id }).promise();
+    },
+
+    get_subscriber_id: function get_subscriber_id(channel_id, user_id) {
+        console.log(channel_id);
+        return _superagentBluebirdPromise2['default'].get(Urls['subscribers-list']()).query({ channel__id: channel_id }).query({ user__id: user_id }).promise();
+    },
+
+    unsubscribe_channel: function unsubscribe_channel(token, subscriber_id) {
+        return _superagentBluebirdPromise2['default'].del(Urls['subscribers-detail'](subscriber_id)).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).promise();
     },
 
     create_message: function create_message(channel_id, username, text, cb) {

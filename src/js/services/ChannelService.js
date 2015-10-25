@@ -49,6 +49,23 @@ export default {
             .promise()
     },
 
+    get_subscriber_id(channel_id, user_id) {
+        console.log(channel_id)
+        return request
+            .get(Urls['subscribers-list']())
+            .query({channel__id: channel_id})
+            .query({user__id: user_id})
+            .promise()
+    },
+
+    unsubscribe_channel(token, subscriber_id) {
+        return request
+            .del(Urls['subscribers-detail'](subscriber_id))
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'JWT ' + token)
+            .promise()
+    },
+
 
     create_message(channel_id, username, text, cb) {
         pubnub.publish({

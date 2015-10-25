@@ -3,12 +3,23 @@ import { Link, History } from 'react-router'
 import classnames from 'classnames'
 import ChannelService from '../services/ChannelService'
 import ChannelStore from '../stores/ChannelStore'
+import UserStore from '../stores/UserStore'
 
 export default React.createClass({
     mixins: [History],
 
     handleClickRemove() {
-        ChannelService.leave_channels([this.props.channel])
+        if(UserStore.is_authenticated) {
+            ChannelService.get_subscriber_id(this.props.channel.id, UserStore.user.user_id)
+                .then((res) => {
+                   ChannelService.unsubscribe_channel(UserStore.jwt, res.body[0].id)
+                })
+                .then(() => {
+                    ChannelService.leave_channels([this.props.channel])
+                })
+        } else  {
+            ChannelService.leave_channels([this.props.channel])
+        }
     },
 
     render() {

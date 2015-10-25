@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -13,10 +13,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Stock',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(verbose_name='Name', max_length=200)),
-                ('market_name', models.CharField(verbose_name='Market Name', max_length=50)),
-                ('code', models.CharField(verbose_name='Code', help_text='Used to query api such as YQL code', max_length=30)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=200, verbose_name='Name')),
+                ('market_name', models.CharField(max_length=50, verbose_name='Market Name')),
+                ('code', models.CharField(help_text='Used to query api such as YQL code', max_length=30, verbose_name='Code')),
             ],
         ),
     ]

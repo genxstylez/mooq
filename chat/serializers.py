@@ -71,4 +71,4 @@ class ChannelSubscribersSerializer(DynamicFieldsModelSerializer):
     is_moderator = serializers.BooleanField(default=False)
     class Meta:
         model = ChannelSubscribers
-        fields = ('channel', 'user', 'is_moderator')
+        fields = ('id', 'channel', 'user', 'is_moderator')

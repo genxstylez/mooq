@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import sorl.thumbnail.fields
+from django.db import migrations, models
+import member.models
 from django.conf import settings
+import sorl.thumbnail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,10 +17,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('avatar', sorl.thumbnail.fields.ImageField(upload_to=member.models.avatar_path, blank=True, null=True)),
                 ('is_verified', models.BooleanField(default=False, verbose_name='Verified?')),
-                ('avatar', sorl.thumbnail.fields.ImageField(upload_to='wherever')),
-                ('follows', models.ManyToManyField(verbose_name='follows', to='member.Profile', related_name='followed_by')),
+                ('follows', models.ManyToManyField(blank=True, related_name='followed_by', to='member.Profile', verbose_name='follows')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
         ),

@@ -32,6 +32,8 @@ class ChannelSubscribersViewSet(DynamicFields, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = ChannelSubscribers.objects.all()
     serializer_class = ChannelSubscribersSerializer
+    filter_backends = (filters.DjangoFilterBackend, )
+    filter_fields = ('channel__id', 'user__id', 'channel__name')
 
 
 @api_view(['POST'])
