@@ -46923,8 +46923,9 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps.params.channelId != this.props.params.channelId) {
-            var id = nextProps.params.channelId;
-            _actionsChannelActions2['default'].mark_as_active(id);
+            setTimeout(function () {
+                _actionsChannelActions2['default'].mark_as_active(nextProps.params.channelId);
+            }, 1);
             $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar('hide');
         }
     },
@@ -47010,16 +47011,21 @@ exports['default'] = _react2['default'].createClass({
                     _react2['default'].createElement(
                         'h5',
                         { className: 'ui header' },
-                        'Top 5 Stocks'
+                        'Top Stocks'
                     ),
                     _lodash2['default'].map(this.state.top_5_channels, function (channel) {
                         return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, channel: channel });
                     })
                 ),
                 _react2['default'].createElement(
-                    _reactRouter.Link,
-                    { to: '/search/' },
-                    'Search'
+                    'div',
+                    { className: 'item search-link' },
+                    _react2['default'].createElement(
+                        _reactRouter.Link,
+                        { to: '/search/', style: { marginLeft: '-3px' } },
+                        _react2['default'].createElement('i', { className: 'search icon' }),
+                        'More Stocks'
+                    )
                 ),
                 _react2['default'].createElement(_ChannelList2['default'], null),
                 _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, username: this.state.user.username })
@@ -47044,16 +47050,21 @@ exports['default'] = _react2['default'].createClass({
                             _react2['default'].createElement(
                                 'h5',
                                 { className: 'ui header' },
-                                'Top 5 Stocks'
+                                'Top Stocks'
                             ),
                             _lodash2['default'].map(this.state.top_5_channels, function (channel) {
                                 return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, channel: channel });
-                            })
-                        ),
-                        _react2['default'].createElement(
-                            _reactRouter.Link,
-                            { to: '/search/' },
-                            'Search'
+                            }),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'item search-link' },
+                                _react2['default'].createElement(
+                                    _reactRouter.Link,
+                                    { to: '/search/', style: { marginLeft: '-3px' } },
+                                    _react2['default'].createElement('i', { className: 'search icon' }),
+                                    'More Stocks'
+                                )
+                            )
                         ),
                         _react2['default'].createElement(_ChannelList2['default'], null)
                     ),
@@ -48251,6 +48262,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _reactRouter = require('react-router');
 
 var _SemanticInput = require('./SemanticInput');
@@ -48272,7 +48287,7 @@ var _storesUserStore2 = _interopRequireDefault(_storesUserStore);
 exports['default'] = _react2['default'].createClass({
     displayName: 'Search',
 
-    mixins: [],
+    mixins: [_reactRouter.History],
 
     limit: 10,
     offset: 0,
@@ -48287,15 +48302,16 @@ exports['default'] = _react2['default'].createClass({
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
             jwt: _storesUserStore2['default'].jwt,
-            changed: false
+            changed: false,
+            width: 40,
+            keyword: ''
         };
     },
-
-    componentWillMount: function componentWillMount() {},
 
     componentDidMount: function componentDidMount() {
         _storesChannelStore2['default'].addChangeListener(this._onChange);
         _storesUserStore2['default'].addChangeListener(this._onUserChange);
+        _reactDom2['default'].findDOMNode(this.refs.search).focus();
     },
 
     componentWillUnmount: function componentWillUnmount() {
@@ -48305,6 +48321,23 @@ exports['default'] = _react2['default'].createClass({
 
     componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
         if (nextState.stored_channels != this.state.stored_channels) this.forceUpdate();
+    },
+
+    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+
+        if (prevState.keyword != this.state.keyword) {
+            if (this.state.keyword.length > 0) {
+                this.getSearchResults(this.state.keyword);
+            } else {
+                this.setState({
+                    channels: _storesChannelStore2['default'].top_channels
+                });
+            }
+            var width = _reactDom2['default'].findDOMNode(this.refs.hidden_span).offsetWidth;
+            this.setState({
+                width: this.state.keyword.length ? width : 30
+            });
+        }
     },
 
     _getChannels: function _getChannels(offset, limit, kw, asc) {
@@ -48322,7 +48355,7 @@ exports['default'] = _react2['default'].createClass({
     },
 
     getSearchResults: function getSearchResults(kw) {
-        this._getChannels(this.limit, this.offset, kw);
+        this._getChannels(this.offset, this.limit, kw);
     },
 
     handleJoin: function handleJoin(channel) {
@@ -48342,19 +48375,15 @@ exports['default'] = _react2['default'].createClass({
             });
         }
     },
+    handleClickButton: function handleClickButton() {
+        this.history.pushState(null, '/channels/');
+    },
 
     handleChange: function handleChange(e) {
         this.setState({
-            changed: true
+            changed: true,
+            keyword: e.currentTarget.value
         });
-
-        if (e.currentTarget.value) {
-            this.getSearchResults(e.currentTarget.value);
-        } else {
-            this.setState({
-                channels: _storesChannelStore2['default'].top_channels
-            });
-        }
     },
 
     _onUserChange: function _onUserChange() {
@@ -48380,48 +48409,70 @@ exports['default'] = _react2['default'].createClass({
 
         return _react2['default'].createElement(
             'div',
-            { className: 'ui segment' },
-            _react2['default'].createElement(
-                _reactRouter.Link,
-                { to: '/channels/' },
-                'Go to Chat'
-            ),
-            _react2['default'].createElement(
-                'h2',
-                null,
-                'Search something'
-            ),
+            { className: 'ui container search-container' },
             _react2['default'].createElement(
                 'div',
-                { className: 'ui form' },
+                { className: 'ui center aligned grid search-grid' },
                 _react2['default'].createElement(
-                    _SemanticInput2['default'],
-                    { required: true, icon: true, name: 'search', placeholder: 'Enter Stock symbol e.g. APPL',
-                        type: 'text', onChange: this.handleChange, validation: false },
-                    _react2['default'].createElement('i', { className: 'search icon' })
+                    'div',
+                    { className: 'ui center aligned grid header' },
+                    _react2['default'].createElement(
+                        'h5',
+                        null,
+                        'Enter Stock symbol e.g. AAPL'
+                    )
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'ui center aligned grid input-symbol' },
+                    _react2['default'].createElement('i', { className: 'search icon' }),
+                    _react2['default'].createElement('input', { className: 'borderless', ref: 'search', name: 'search', style: { width: this.state.width + 'px' }, value: this.state.keyword, onChange: this.handleChange }),
+                    _react2['default'].createElement(
+                        'span',
+                        { className: 'hidden', ref: 'hidden_span' },
+                        this.state.keyword
+                    )
                 )
             ),
             _react2['default'].createElement(
-                'ul',
-                null,
-                _lodash2['default'].map(this.state.channels, function (channel) {
+                'div',
+                { className: 'ui center aligned grid' },
+                this.state.channels.length > 0 ? _lodash2['default'].map(this.state.channels, function (channel) {
                     return _react2['default'].createElement(
-                        'li',
-                        { key: channel.id },
-                        channel.name,
-                        ' - ',
-                        channel.subscribers_count,
-                        _storesChannelStore2['default'].get_channel(channel.id) ? _react2['default'].createElement(
-                            'button',
-                            { className: 'ui disabled button' },
-                            'Joined'
-                        ) : _react2['default'].createElement(
-                            'button',
-                            { className: 'ui basic teal button', onClick: _this2.handleJoin.bind(_this2, channel) },
-                            'Join'
+                        'div',
+                        { className: 'three wide computer five wide tablet twelve wide mobile column', key: channel.id },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'ui segment' },
+                            channel.name,
+                            ' - ',
+                            channel.subscribers_count,
+                            _storesChannelStore2['default'].get_channel(channel.id) ? _react2['default'].createElement(
+                                'button',
+                                { className: 'ui disabled button' },
+                                'Joined'
+                            ) : _react2['default'].createElement(
+                                'button',
+                                { className: 'ui basic teal button', onClick: _this2.handleJoin.bind(_this2, channel) },
+                                'Join'
+                            )
                         )
                     );
-                })
+                }) : _react2['default'].createElement(
+                    'div',
+                    { className: 'no-results' },
+                    'No results found for ',
+                    this.state.keyword
+                )
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: 'search-bottom ui grid aligned center' },
+                _react2['default'].createElement(
+                    'button',
+                    { className: 'ui huge button navy', onClick: this.handleClickButton },
+                    'Go to Chat'
+                )
             )
         );
     }
@@ -48429,7 +48480,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./SemanticInput":239,"lodash":62,"react":219,"react-router":85}],239:[function(require,module,exports){
+},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./SemanticInput":239,"lodash":62,"react":219,"react-dom":65,"react-router":85}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

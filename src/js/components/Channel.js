@@ -63,8 +63,9 @@ export default React.createClass({
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.params.channelId != this.props.params.channelId) {
-            let id = nextProps.params.channelId
-            ChannelActions.mark_as_active(id)
+            setTimeout(() => {
+                ChannelActions.mark_as_active(nextProps.params.channelId)
+            }, 1)
             $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide')
         }
     },
@@ -137,12 +138,14 @@ export default React.createClass({
                         <img src={STATIC_URL + 'img/logo.png'} />
                     </div>
                     <div className="ui list top-list">
-                        <h5 className="ui header">Top 5 Stocks</h5>
+                        <h5 className="ui header">Top Stocks</h5>
                         {_.map(this.state.top_5_channels, (channel) => {
                             return (<ChannelNav key={channel.id} channel={channel} />)
                         })}
                     </div>
-                    <Link to="/search/">Search</Link>
+                     <div className="item search-link">
+                        <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
+                    </div>
                     <ChannelList />
                     <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />
                 </div>
@@ -154,12 +157,14 @@ export default React.createClass({
                             </div>
 
                             <div className="ui list top-list">
-                                <h5 className="ui header">Top 5 Stocks</h5>
+                                <h5 className="ui header">Top Stocks</h5>
                                 {_.map(this.state.top_5_channels, (channel) => {
                                     return (<ChannelNav key={channel.id} channel={channel} />)
                                 })}
+                                <div className="item search-link">
+                                    <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
+                                </div>
                             </div>
-                            <Link to="/search/">Search</Link>
                             <ChannelList />
                         </div>
                         <Avatar is_authenticated={this.state.is_authenticated} username={this.state.user.username} />

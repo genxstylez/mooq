@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
-import { Link } from 'react-router'
+import ReactDOM from 'react-dom'
+import { History } from 'react-router'
 import SemanticInput from './SemanticInput'
 import ChannelService from '../services/ChannelService'
 import ChannelStore from '../stores/ChannelStore'
@@ -8,7 +9,7 @@ import UserStore from '../stores/UserStore'
 
 
 export default React.createClass({
-    mixins: [],
+    mixins: [History],
 
     limit: 10,
     offset: 0,
@@ -23,17 +24,16 @@ export default React.createClass({
             user: UserStore.user,
             authKey: UserStore.authKey,
             jwt: UserStore.jwt,
-            changed: false
+            changed: false,
+            width: 40,
+            keyword: ''
         }
-    },
-
-    componentWillMount() {
-
     },
 
     componentDidMount() {
         ChannelStore.addChangeListener(this._onChange)
         UserStore.addChangeListener(this._onUserChange)
+        ReactDOM.findDOMNode(this.refs.search).focus()
     },
 
     componentWillUnmount() {
@@ -44,6 +44,23 @@ export default React.createClass({
     componentWillUpdate(nextProps, nextState) {
         if (nextState.stored_channels != this.state.stored_channels)
             this.forceUpdate()
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+
+        if(prevState.keyword != this.state.keyword) {
+            if(this.state.keyword.length > 0) {
+                this.getSearchResults(this.state.keyword)
+            } else {
+                this.setState({
+                    channels: ChannelStore.top_channels,
+                })
+            }
+            let width = ReactDOM.findDOMNode(this.refs.hidden_span).offsetWidth
+            this.setState({
+                width: this.state.keyword.length ? width : 30
+            })
+        }
     },
 
     _getChannels(offset, limit, kw, asc) {
@@ -61,7 +78,7 @@ export default React.createClass({
     },
 
     getSearchResults(kw) {
-        this._getChannels(this.limit, this.offset, kw)
+        this._getChannels(this.offset, this.limit, kw)
     },
 
     handleJoin(channel) {
@@ -86,19 +103,15 @@ export default React.createClass({
                 })
         }
     },
+    handleClickButton() {
+        this.history.pushState(null, '/channels/')
+    },
 
     handleChange(e) {
         this.setState({
-            changed: true
+            changed: true,
+            keyword: e.currentTarget.value
         })
-
-        if(e.currentTarget.value) {
-            this.getSearchResults(e.currentTarget.value)
-        } else {
-            this.setState({
-                channels: ChannelStore.top_channels
-            })
-        }
     },
 
     _onUserChange() {
@@ -121,29 +134,39 @@ export default React.createClass({
 
     render() {
         return (
-            <div className="ui segment">
-                <Link to="/channels/">Go to Chat</Link>
-                <h2>Search something</h2>
-                <div className="ui form">
-                    <SemanticInput required={true} icon={true} name="search" placeholder="Enter Stock symbol e.g. APPL"
-                        type="text" onChange={this.handleChange} validation={false}>
+            <div className="ui container search-container">
+                <div className="ui center aligned grid search-grid" >
+                    <div className="ui center aligned grid header">
+                        <h5>Enter Stock symbol e.g. AAPL</h5>
+                    </div>
+                    <div className="ui center aligned grid input-symbol">
                         <i className="search icon" />
-                    </SemanticInput>
+                        <input className="borderless" ref="search" name="search" style={{width: this.state.width + 'px'}} value={this.state.keyword} onChange={this.handleChange}/>
+                        <span className="hidden" ref="hidden_span">{this.state.keyword}</span>
+                    </div>
                 </div>
-                <ul>
-                {_.map(this.state.channels, (channel) => {
-                    return (
-                        <li key={channel.id}>
-                            {channel.name} - {channel.subscribers_count}
-                            {ChannelStore.get_channel(channel.id) ?
-                                <button className="ui disabled button">Joined</button>
-                                :
-                                <button className="ui basic teal button" onClick={this.handleJoin.bind(this, channel)}>Join</button>
-                            }
-                        </li>
-                    )
-                })}
-                </ul>
+                <div className="ui center aligned grid">
+                {this.state.channels.length > 0 ?
+                    _.map(this.state.channels, (channel) => {
+                        return (
+                            <div className="three wide computer five wide tablet twelve wide mobile column" key={channel.id}>
+                                <div className="ui segment">
+                                    {channel.name} - {channel.subscribers_count}
+                                    {ChannelStore.get_channel(channel.id) ?
+                                        <button className="ui disabled button">Joined</button>
+                                        :
+                                        <button className="ui basic teal button" onClick={this.handleJoin.bind(this, channel)}>Join</button>
+                                    }
+                                </div>
+                            </div>
+                        )
+                    })
+                    : <div className="no-results">No results found for {this.state.keyword}</div>
+                }
+                </div>
+                <div className="search-bottom ui grid aligned center">
+                    <button className="ui huge button navy" onClick={this.handleClickButton}>Go to Chat</button>
+                </div>
             </div>
         )
     }

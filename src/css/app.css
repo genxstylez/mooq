@@ -19,6 +19,16 @@ body > #app > #main {
     height: 100%
 }
 
+.hidden {
+    visibility: hidden;
+}
+
+input.borderless {
+    border: none !important;
+    border-color: transparent !important;
+    outline: none;
+}
+
 button.ui.button.borderless {
     border: none !important;
     box-shadow: none !important;
@@ -26,6 +36,61 @@ button.ui.button.borderless {
 
 .ui.form textarea {
     resize: none !important;
+}
+
+.search-container {
+    height: 90%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.search-grid {
+    margin-top: 120px !important;
+}
+
+.search-grid > .input-symbol {
+    font-size: 60px;
+    width: 100%;
+    margin-top: 25px !important;
+}
+
+.search-grid > .header {
+    width: 100%;
+    margin-bottom: 20px !important;
+    letter-spacing: 2px;
+}
+
+.search-grid > .input-symbol > i.icon {
+    padding: 0px;
+    color: #808080;
+}
+
+.search-grid > .input-symbol > input.borderless {
+    height: 60px;
+    margin-top: -18px;
+}
+
+.search-grid span.hidden {
+    position: absolute;
+    top: 0px;
+}
+
+.no-results {
+    margin-top: 12px;
+    font-size: 20px;
+    color: #CCCCCC;
+}
+
+.search-bottom {
+    bottom: 3%;
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+}
+
+.search-bottom > .ui.button {
+    margin: 0 auto;
 }
 
 .login {
@@ -51,6 +116,22 @@ button.ui.button.borderless {
 .ui.comments>.comment>.avatar img {
     border-radius: .4rem !important;
 }
+
+.ui.button.navy {
+   background: rgba(39, 56, 72, 1);
+   color: #fff;
+}
+
+.ui.button.navy:hover {
+    background: rgba(39, 56, 72, .8);
+    color: #fff;
+}
+
+.ui.button.navy:active {
+    background: rgba(39, 56, 72, .8);
+    color: #fff;
+}
+
 .background {
     background: rgba(39, 56, 72, 1);
     height: 100%;
@@ -154,6 +235,8 @@ button.ui.button.borderless {
     padding: 0px !important;
 }
 
+
+
 .profile-menu .ui.list {
     margin-bottom: 1rem !important;
     padding: 0px;
@@ -235,6 +318,15 @@ button.ui.button.borderless {
     visibility: hidden;
 }
 
+.profile-menu .search-link {
+    text-decoration: underline !important;
+    font-style: italic;
+}
+
+.profile-menu .top-list .item.search-link a {
+    color: #D0D0D0 !important;
+}
+
 .link.icon {
     cursor: pointer;
 }
@@ -264,9 +356,6 @@ button.ui.button.borderless {
 .active .channel-icon, .unread .channel-icon {
     color: white !important;
 }
-
-
-
 
 #avatar {
     bottom: 0px;
