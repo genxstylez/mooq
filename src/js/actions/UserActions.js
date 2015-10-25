@@ -14,7 +14,7 @@ export default {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
-            history.replaceState(null, '/channels/')
+            history.pushState(null, '/channels/')
             localStorage.setItem('jwt', jwt)
         }
     },

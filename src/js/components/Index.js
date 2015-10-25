@@ -60,6 +60,9 @@ export default React.createClass({
                         </div>
                     </div>
                 </div>
+                <div className="footer">
+                    <div className="copyright">&copy; {new Date().getFullYear()} APPSE</div>
+                </div>
             </div>
         )
     }

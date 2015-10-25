@@ -46499,7 +46499,7 @@ exports['default'] = {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
-            _history2['default'].replaceState(null, '/channels/');
+            _history2['default'].pushState(null, '/channels/');
             localStorage.setItem('jwt', jwt);
         }
     },
@@ -47668,6 +47668,17 @@ exports['default'] = _react2['default'].createClass({
                         { className: 'ui inverted large form' },
                         _react2['default'].createElement('input', { placeholder: 'Enter Stock Symbol e.g. AAPL', onClick: this.handleSearch })
                     )
+                )
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: 'footer' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'copyright' },
+                    '© ',
+                    new Date().getFullYear(),
+                    ' APPSE'
                 )
             )
         );

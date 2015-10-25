@@ -138,7 +138,15 @@ button.ui.button.borderless {
 }
 
 .background {
-    background: rgba(39, 56, 72, 1);
+    background: linear-gradient(
+        to bottom,
+        rgba(39, 56, 72, .45) 0%,
+        rgba(39, 56, 72, .9) 100%
+    ), url('../img/royalse.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     height: 100%;
     position: absolute;
     top: 0;
@@ -191,6 +199,19 @@ button.ui.button.borderless {
 
 #index > .top.menu > .item > button:last-child {
     margin-right: 1rem;
+}
+
+#index .footer {
+    position: fixed;
+    bottom: 0px;
+    height: 30px;
+    left: 0px;
+    right: 0;
+}
+
+#index .footer .copyright {
+    text-align:  center;
+    color: #ffffff;
 }
 
 #main > .full.height {
@@ -344,7 +365,7 @@ button.ui.button.borderless {
     height: 100px;
     text-align: center;
     color: white;
-    margin: .3em 0 .3em 0;
+    margin: 1.5em 0;
 }
 
 .logo > img {
