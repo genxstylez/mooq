@@ -21,7 +21,11 @@
     </head>
     <body>
         {% block content %}{% endblock %}
+        {% if DEBUG %}
         <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+        {% else %}
+        <script type="text/javascript" src="{% static 'js/main.min.js' %}"></script>
+        {% endif %}
         {% block post_scripts %}{% endblock %}
     </body>
 </html>

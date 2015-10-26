@@ -11,7 +11,7 @@ import UserStore from '../stores/UserStore'
 export default React.createClass({
     mixins: [History],
 
-    limit: 10,
+    limit: 50,
     offset: 0,
 
     getInitialState() {

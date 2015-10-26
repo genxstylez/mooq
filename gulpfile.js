@@ -1,11 +1,13 @@
 var gulp = require('gulp');
     notify = require('gulp-notify');
     browserify = require('browserify');
+    uglify = require('gulp-uglify');
     reactify = require('reactify');
     source = require('vinyl-source-stream');
     babelify = require('babelify');
     livereload = require('gulp-livereload');
     plumber = require('gulp-plumber')
+    rename = require('gulp-rename')
 
 
 function handleErrors() {
@@ -38,7 +40,17 @@ gulp.task('img', function() {
         .pipe(gulp.dest('static/img'))
     });
 
+gulp.task('build', function() {
+  return gulp.src('static/js/main.js')
+    .pipe(uglify())
+    .pipe(rename({
+        extname: '.min.js'
+    }))
+    .pipe(gulp.dest('static/js'));
+});
+
 gulp.task('default', ['browserify', 'img', 'css'], function() {
     livereload.listen();
     return gulp.watch('./src/**/*.*', ['browserify', 'img', 'css'])
     });
+

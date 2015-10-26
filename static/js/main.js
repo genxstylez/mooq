@@ -46668,7 +46668,8 @@ exports['default'] = _react2['default'].createClass({
 
     get_top_channels: function get_top_channels() {
         // Get top 10 channels
-        _servicesChannelService2['default'].get_channels(0, 10).then(function (res) {
+        console.log('get top chjannels here');
+        _servicesChannelService2['default'].get_channels(0, 50).then(function (res) {
             _actionsChannelActions2['default'].got_top_channels(res.body.results);
         })['catch'](function (err) {
             alert('App: get top channels: Something went wrong');
@@ -48295,7 +48296,7 @@ exports['default'] = _react2['default'].createClass({
 
     mixins: [_reactRouter.History],
 
-    limit: 10,
+    limit: 50,
     offset: 0,
 
     getInitialState: function getInitialState() {

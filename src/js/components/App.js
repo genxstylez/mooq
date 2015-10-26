@@ -78,7 +78,8 @@ export default React.createClass({
 
     get_top_channels() {
         // Get top 10 channels
-        ChannelService.get_channels(0, 10)
+        console.log('get top chjannels here')
+        ChannelService.get_channels(0, 50)
             .then((res)=> {
                 ChannelActions.got_top_channels(res.body.results)
             })
