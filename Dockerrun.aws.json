@@ -31,6 +31,10 @@
           "sourceVolume": "nginx-config",
           "containerPath": "/etc/nginx/nginx.conf",
           "readOnly": true
+        },
+        {
+          "sourceVolume": "awseb-logs-nginx",
+          "containerPath": "/var/log/nginx"
         }
       ]
     }
