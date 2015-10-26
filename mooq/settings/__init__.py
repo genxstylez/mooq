@@ -56,7 +56,8 @@ INSTALLED_APPS = (
     'chat',
     'stock',
     'rest_framework',
-    'django_js_reverse'
+    'django_js_reverse',
+    'storages'
 )
 
 MIDDLEWARE_CLASSES = (
