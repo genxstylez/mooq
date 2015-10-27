@@ -49823,6 +49823,7 @@ var UserStore = (function (_BaseStore) {
                         uuid: username,
                         channels: []
                     };
+                    this._user = this.extend_user(this._user);
                     this._isGuest = true;
                     this._authKey = username;
                     this.emitChange();
