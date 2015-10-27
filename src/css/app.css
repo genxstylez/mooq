@@ -9,6 +9,11 @@ body {
 
 body > #app{
     height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
 }
 
 #app > #app-entry {
@@ -548,6 +553,14 @@ button.ui.button.borderless {
 .mobile-menu:hover {
     opacity: 1;
     color: rgba(0,0,0,1);
+}
+
+#privacy > .subheader {
+    width: 100%;
+    background: rgba(39, 56, 72, 1);
+    height: 140px;
+    padding-top: 30px;
+
 }
 
 @media only screen and (max-width: 1145px) {

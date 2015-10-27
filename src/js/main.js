@@ -9,6 +9,7 @@ import Channel from './components/Channel'
 import Login from './components/Login'
 import Signup from './components/Signup'
 import Search from './components/Search'
+import Privacy from './components/Privacy'
 import UserService from './services/UserService'
 import UserActions from './actions/UserActions'
 import ChannelActions from './actions/ChannelActions'
@@ -30,6 +31,7 @@ ReactDOM.render((
             <Route name="search" path="search/" component={Search} />
             <Route name="login" path="login/" component={Login} />
             <Route name="signup" path="signup/" component={Signup} />
+            <Route name="privacy" path="privacy/" component={Privacy} />
         </Route>
 
     </Router>

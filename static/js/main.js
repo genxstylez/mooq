@@ -46463,7 +46463,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":242,"../dispatchers/AppDispatcher":244,"../services/ChannelService":249,"lodash":62}],225:[function(require,module,exports){
+},{"../constants/ChannelConstants":243,"../dispatchers/AppDispatcher":245,"../services/ChannelService":250,"lodash":62}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46547,7 +46547,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":243,"../dispatchers/AppDispatcher":244,"../history":245,"lodash":62}],226:[function(require,module,exports){
+},{"../constants/UserConstants":244,"../dispatchers/AppDispatcher":245,"../history":246,"lodash":62}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46742,7 +46742,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../services/UserService":250,"../stores/UserStore":254,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65,"react-router":85}],227:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../mixins/SetIntervalMixin":249,"../services/ChannelService":250,"../services/UserService":251,"../stores/UserStore":255,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65,"react-router":85}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46820,7 +46820,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":250,"react":219,"react-dom":65}],228:[function(require,module,exports){
+},{"../services/UserService":251,"react":219,"react-dom":65}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47108,7 +47108,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":247,"../mixins/SetIntervalMixin":248,"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":236,"./SidebarChannelList":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":248,"../mixins/SetIntervalMixin":249,"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":236,"./SidebarChannelList":241,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47234,7 +47234,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../stores/ChannelStore":253,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],230:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../stores/ChannelStore":254,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47354,7 +47354,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../services/ChannelService":249,"../stores/ChannelStore":253,"./MessageInput":236,"./MessageItem":237,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../services/ChannelService":250,"../stores/ChannelStore":254,"./MessageInput":236,"./MessageItem":237,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47421,7 +47421,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":253,"./ChannelNav":232,"lodash":62,"react":219}],232:[function(require,module,exports){
+},{"../stores/ChannelStore":254,"./ChannelNav":232,"lodash":62,"react":219}],232:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47494,7 +47494,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"classnames":4,"react":219,"react-router":85}],233:[function(require,module,exports){
+},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"classnames":4,"react":219,"react-router":85}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47566,7 +47566,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":250,"react":219}],234:[function(require,module,exports){
+},{"../services/UserService":251,"react":219}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47690,7 +47690,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../components/SemanticInput":239,"../stores/UserStore":254,"react":219,"react-router":85}],235:[function(require,module,exports){
+},{"../components/SemanticInput":240,"../stores/UserStore":255,"react":219,"react-router":85}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48100,7 +48100,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],236:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../services/UserService":251,"../services/ValidationService":252,"../stores/UserStore":255,"./FacebookLoginButton":233,"./SemanticInput":240,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48196,7 +48196,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"react":219,"react-dom":65,"react-textarea-autosize":90}],237:[function(require,module,exports){
+},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"react":219,"react-dom":65,"react-textarea-autosize":90}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48253,6 +48253,330 @@ module.exports = exports['default'];
 
 
 },{"moment":63,"react":219}],238:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+exports["default"] = _react2["default"].createClass({
+    displayName: "Privacy",
+
+    render: function render() {
+        return _react2["default"].createElement(
+            "div",
+            { id: "privacy" },
+            _react2["default"].createElement(
+                "div",
+                { className: "subheader" },
+                _react2["default"].createElement(
+                    "div",
+                    { className: "ui container" },
+                    _react2["default"].createElement(
+                        "h2",
+                        { className: "ui header inverted" },
+                        " Privacy Policy"
+                    )
+                )
+            ),
+            _react2["default"].createElement(
+                "div",
+                { className: "ui container" },
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "This privacy policy has been compiled to better serve those who are concerned with how their 'Personally identifiable information' (PII) is being used online. PII, as used in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "Please read our privacy policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your Personally Identifiable Information in accordance with our website."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "What personal information do we collect from the people that visit our blog, website or app?"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "When ordering or registering on our site, as appropriate, you may be asked to enter your name, email address or other details to help you with your experience."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "When do we collect information?"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We collect information from you when you register on our site or enter information on our site."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "How do we use your information?"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We may use the information we collect from you when you register, make a purchase, sign up for our newsletter, respond to a survey or marketing communication, surf the website, or use certain other site features in the following ways:"
+                ),
+                _react2["default"].createElement(
+                    "div",
+                    { className: "ui bulleted list" },
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "To personalize user's experience and to allow us to deliver the type of content and product offerings in which you are most interested."
+                    ),
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "To improve our website in order to better serve you."
+                    ),
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "To allow us to better service you in responding to your customer service requests."
+                    ),
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "To send periodic emails regarding your order or other products and services."
+                    )
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "How do we protect visitor information?"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "Our website is scanned on a regular basis for security holes and known vulnerabilities in order to make your visit to our site as safe as possible."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "We use regular Malware Scanning."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "Your personal information is contained behind secured networks and is only accessible by a limited number of persons who have special access rights to such systems, and are required to keep the information confidential. In addition, all sensitive/credit information you supply is encrypted via Secure Socket Layer (SSL) technology."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We implement a variety of security measures when a user enters, submits, or accesses their information to maintain the safety of your personal information."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "All transactions are processed through a gateway provider and are not stored or processed on our servers."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Do we use 'cookies'?"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We do not use cookies for tracking purposes"
+                ),
+                _react2["default"].createElement(
+                    "div",
+                    { className: "ui bulleted list" },
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "Understand and save user's preferences for future visits."
+                    )
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "You can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies. You do this through your browser (like Internet Explorer) settings. Each browser is a little different, so look at your browser's Help menu to learn the correct way to modify your cookies."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "If you disable cookies off, some features will be disabled It won't affect the users experience that make your site experience more efficient and some of our services will not function properly."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "However, you can still place orders ."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Third Party Disclosure"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information unless we provide you with advance notice. This does not include website hosting partners and other parties who assist us in operating our website, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others' rights, property, or safety."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "However, non-personally identifiable visitor information may be provided to other parties for marketing, advertising, or other uses."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Third party links"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "Occasionally, at our discretion, we may include or offer third party products or services on our website. These third party sites have separate and independent privacy policies. We therefore have no responsibility or liability for the content and activities of these linked sites. Nonetheless, we seek to protect the integrity of our site and welcome any feedback about these sites."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Google"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "Google's advertising requirements can be summed up by Google's Advertising Principles. They are put in place to provide a positive experience for users. https://support.google.com/adwordspolicy/answer/1316548?hl=en"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We have not enabled Google AdSense on our site but we may do so in the future."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "COPPA (Children Online Privacy Protection Act)"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "When it comes to the collection of personal information from children under 13, the Children's Online Privacy Protection Act (COPPA) puts parents in control. The Federal Trade Commission, the nation's consumer protection agency, enforces the COPPA Rule, which spells out what operators of websites and online services must do to protect children's privacy and safety online."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We do not specifically market to children under 13."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Fair Information Practices"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "The Fair Information Practices Principles form the backbone of privacy law in the United States and the concepts they include have played a significant role in the development of data protection laws around the globe. Understanding the Fair Information Practice Principles and how they should be implemented is critical to comply with the various privacy laws that protect personal information."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "In order to be in line with Fair Information Practices we will take the following responsive action, should a data breach occur:"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We will notify the users via email"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We will notify the users via in site notification"
+                ),
+                _react2["default"].createElement(
+                    "div",
+                    { className: "ui bulleted list" },
+                    _react2["default"].createElement(
+                        "div",
+                        { className: "item" },
+                        "Within 7 business days"
+                    )
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We also agree to the individual redress principle, which requires that individuals have a right to pursue legally enforceable rights against data collectors and processors who fail to adhere to the law. This principle requires not only that individuals have enforceable rights against data users, but also that individuals have recourse to courts or a government agency to investigate and/or prosecute non-compliance by data processors."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "CAN SPAM Act"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "The CAN-SPAM Act is a law that sets the rules for commercial email, establishes requirements for commercial messages, gives recipients the right to have emails stopped from being sent to them, and spells out tough penalties for violations."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "We collect your email address in order to:"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "To be in accordance with CANSPAM we agree to the following:"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "If at any time you would like to unsubscribe from receiving future emails, you can email us at"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "and we will promptly remove you from ALL correspondence."
+                ),
+                _react2["default"].createElement(
+                    "h4",
+                    null,
+                    "Contacting Us"
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "If there are any questions regarding this privacy policy you may contact us using the information below."
+                ),
+                _react2["default"].createElement(
+                    "p",
+                    null,
+                    "appse.io ",
+                    _react2["default"].createElement("br", null),
+                    "No. 69, Lane116, De An Road ",
+                    _react2["default"].createElement("br", null),
+                    "Keelung City, 20311 ",
+                    _react2["default"].createElement("br", null),
+                    "Taiwan ",
+                    _react2["default"].createElement("br", null),
+                    "genxstylez@gmail.com ",
+                    _react2["default"].createElement("br", null)
+                ),
+                _react2["default"].createElement(
+                    "i",
+                    null,
+                    "Last Edited on 2015-10-27"
+                )
+            )
+        );
+    }
+});
+module.exports = exports["default"];
+
+
+},{"react":219}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48487,7 +48811,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":249,"../stores/ChannelStore":253,"../stores/UserStore":254,"./SemanticInput":239,"lodash":62,"react":219,"react-dom":65,"react-router":85}],239:[function(require,module,exports){
+},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"./SemanticInput":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48560,7 +48884,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"classnames":4,"react":219,"react-dom":65}],240:[function(require,module,exports){
+},{"classnames":4,"react":219,"react-dom":65}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48640,7 +48964,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":253,"./ChannelList":231,"./ChannelNav":232,"classnames":4,"lodash":62,"react":219,"react-router":85}],241:[function(require,module,exports){
+},{"../stores/ChannelStore":254,"./ChannelList":231,"./ChannelNav":232,"classnames":4,"lodash":62,"react":219,"react-router":85}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49049,7 +49373,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":247,"../services/UserService":250,"../services/ValidationService":251,"../stores/UserStore":254,"./FacebookLoginButton":233,"./SemanticInput":239,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],242:[function(require,module,exports){
+},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../services/UserService":251,"../services/ValidationService":252,"../stores/UserStore":255,"./FacebookLoginButton":233,"./SemanticInput":240,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49078,7 +49402,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],243:[function(require,module,exports){
+},{"keymirror":61}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49101,7 +49425,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],244:[function(require,module,exports){
+},{"keymirror":61}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49114,7 +49438,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":36}],245:[function(require,module,exports){
+},{"flux":36}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49131,7 +49455,7 @@ exports['default'] = (0, _historyLibCreateBrowserHistory2['default'])();
 module.exports = exports['default'];
 
 
-},{"history/lib/createBrowserHistory":44}],246:[function(require,module,exports){
+},{"history/lib/createBrowserHistory":44}],247:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -49174,6 +49498,10 @@ var _componentsSearch = require('./components/Search');
 
 var _componentsSearch2 = _interopRequireDefault(_componentsSearch);
 
+var _componentsPrivacy = require('./components/Privacy');
+
+var _componentsPrivacy2 = _interopRequireDefault(_componentsPrivacy);
+
 var _servicesUserService = require('./services/UserService');
 
 var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
@@ -49203,12 +49531,13 @@ _reactDom2['default'].render(_react2['default'].createElement(
         ),
         _react2['default'].createElement(_reactRouter.Route, { name: 'search', path: 'search/', component: _componentsSearch2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'login', path: 'login/', component: _componentsLogin2['default'] }),
-        _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] })
+        _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] }),
+        _react2['default'].createElement(_reactRouter.Route, { name: 'privacy', path: 'privacy/', component: _componentsPrivacy2['default'] })
     )
 ), document.getElementById('app'));
 
 
-},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/Login":235,"./components/Search":238,"./components/Signup":241,"./history":245,"./services/UserService":250,"react":219,"react-dom":65,"react-router":85}],247:[function(require,module,exports){
+},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/Login":235,"./components/Privacy":238,"./components/Search":239,"./components/Signup":242,"./history":246,"./services/UserService":251,"react":219,"react-dom":65,"react-router":85}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49244,7 +49573,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{}],248:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49275,7 +49604,7 @@ exports["default"] = {
 module.exports = exports["default"];
 
 
-},{}],249:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49402,7 +49731,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../constants/ChannelConstants":242,"../stores/ChannelStore":253,"lodash":62,"superagent-bluebird-promise":221}],250:[function(require,module,exports){
+},{"../actions/ChannelActions":224,"../constants/ChannelConstants":243,"../stores/ChannelStore":254,"lodash":62,"superagent-bluebird-promise":221}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49474,7 +49803,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../constants/UserConstants":243,"../services/ChannelService":249,"../stores/ChannelStore":253,"lodash":62,"superagent-bluebird-promise":221}],251:[function(require,module,exports){
+},{"../actions/UserActions":225,"../constants/UserConstants":244,"../services/ChannelService":250,"../stores/ChannelStore":254,"lodash":62,"superagent-bluebird-promise":221}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49516,7 +49845,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"lodash":62,"superagent-bluebird-promise":221}],252:[function(require,module,exports){
+},{"lodash":62,"superagent-bluebird-promise":221}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49582,7 +49911,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":244,"events":3}],253:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":245,"events":3}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49744,7 +50073,7 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":242,"./BaseStore":252,"lodash":62}],254:[function(require,module,exports){
+},{"../constants/ChannelConstants":243,"./BaseStore":253,"lodash":62}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49887,4 +50216,4 @@ exports['default'] = new UserStore();
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":243,"./BaseStore":252,"jwt-decode":59,"lodash":62}]},{},[246]);
+},{"../constants/UserConstants":244,"./BaseStore":253,"jwt-decode":59,"lodash":62}]},{},[247]);
