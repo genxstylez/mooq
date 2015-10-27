@@ -47023,7 +47023,7 @@ exports['default'] = _react2['default'].createClass({
                 _react2['default'].createElement(
                     'div',
                     { className: 'logo' },
-                    _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
+                    _react2['default'].createElement('img', { src: LOGO_URL })
                 ),
                 _react2['default'].createElement(
                     'div',
@@ -47062,7 +47062,7 @@ exports['default'] = _react2['default'].createClass({
                         _react2['default'].createElement(
                             'div',
                             { className: 'logo' },
-                            _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
+                            _react2['default'].createElement('img', { src: LOGO_URL })
                         ),
                         _react2['default'].createElement(
                             'div',
@@ -47654,7 +47654,7 @@ exports['default'] = _react2['default'].createClass({
                 _react2['default'].createElement(
                     'div',
                     { className: 'logo' },
-                    _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' })
+                    _react2['default'].createElement('img', { src: LOGO_URL })
                 ),
                 _react2['default'].createElement(
                     'div',
@@ -47969,7 +47969,7 @@ exports['default'] = _react2['default'].createClass({
                     _react2['default'].createElement(
                         'h2',
                         { className: 'ui image bottom aligned header white' },
-                        _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' }),
+                        _react2['default'].createElement('img', { src: LOGO_URL }),
                         _react2['default'].createElement(
                             'div',
                             { className: 'content' },
@@ -48225,7 +48225,7 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'a',
                 { className: 'avatar' },
-                _react2['default'].createElement('img', { src: this.props.message.avatar || STATIC_URL + 'img/avatar.png' })
+                _react2['default'].createElement('img', { src: this.props.message.avatar || AVATAR_URL })
             ),
             _react2['default'].createElement(
                 'div',
@@ -49234,7 +49234,7 @@ exports['default'] = _react2['default'].createClass({
                     _react2['default'].createElement(
                         'h2',
                         { className: 'ui image bottom aligned header white' },
-                        _react2['default'].createElement('img', { src: STATIC_URL + 'img/logo.png' }),
+                        _react2['default'].createElement('img', { src: LOGO_URL }),
                         _react2['default'].createElement(
                             'div',
                             { className: 'content' },
@@ -50182,7 +50182,7 @@ var UserStore = (function (_BaseStore) {
                 uuid: null,
                 profile: {
                     is_verified: false,
-                    avatar: STATIC_URL + 'img/avatar.png',
+                    avatar: AVATAR_URL,
                     follows: []
                 }
             });

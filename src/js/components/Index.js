@@ -49,7 +49,7 @@ export default React.createClass({
                 </div>
                 <div className="ui container">
                     <div className="logo">
-                        <img src={STATIC_URL + 'img/logo.png'} />
+                        <img src={LOGO_URL} />
                     </div>
                     <div className="description">
                         A messaging app where millionaires are born EVERYDAY!

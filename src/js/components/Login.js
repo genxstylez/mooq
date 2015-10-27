@@ -226,7 +226,7 @@ export default React.createClass({
                 <div className="login ui middle aligned center aligned grid ">
                     <div className={dimmable_cls} ref="dimmable">
                         <h2 className="ui image bottom aligned header white">
-                            <img src={STATIC_URL + 'img/logo.png'} />
+                            <img src={LOGO_URL} />
                             <div className="content">Log In</div>
                         </h2>
 

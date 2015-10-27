@@ -9,7 +9,7 @@ export default React.createClass({
         return (
             <div className="comment">
                 <a className="avatar">
-                    <img src={this.props.message.avatar || STATIC_URL + 'img/avatar.png'} />
+                    <img src={this.props.message.avatar || AVATAR_URL} />
                 </a>
                 <div className="content">
                     <a className="author">

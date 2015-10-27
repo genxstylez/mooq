@@ -135,7 +135,7 @@ export default React.createClass({
             <div id="main">
                 <div className="ui sidebar vertical left inline grid menu profile-menu" ref="sidebar">
                     <div className="logo">
-                        <img src={STATIC_URL + 'img/logo.png'} />
+                        <img src={LOGO_URL} />
                     </div>
                     <div className="ui list top-list">
                         <h5 className="ui header">Top Stocks</h5>
@@ -153,7 +153,7 @@ export default React.createClass({
                     <div id="profile-container">
                         <div id="profile-menu" className="ui vertical menu grid profile-menu">
                             <div className="logo">
-                                <img src={STATIC_URL + 'img/logo.png'} />
+                                <img src={LOGO_URL} />
                             </div>
 
                             <div className="ui list top-list">

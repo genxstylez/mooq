@@ -71,7 +71,7 @@ class UserStore extends BaseStore {
             uuid: null,
             profile: {
                 is_verified: false,
-                avatar: STATIC_URL + 'img/avatar.png',
+                avatar: AVATAR_URL,
                 follows: []
             }
         })

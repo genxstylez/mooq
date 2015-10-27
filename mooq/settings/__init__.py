@@ -215,8 +215,8 @@ SOCIAL_AUTH_PIPELINE = (
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'test')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY', 'test')
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')  # CDN address.
-AWS_MEDIA_STORAGE_BUCKET_NAME = os.environ.get('AWS_MEDIA_STORAGE_BUCKET_NAME', 'mooq-media-dev')
-AWS_STATIC_STORAGE_BUCKET_NAME = os.environ.get('AWS_STATIC_STORAGE_BUCKET_NAME', 'mooq-static-dev')
+AWS_MEDIA_STORAGE_BUCKET_NAME = os.environ.get('AWS_MEDIA_STORAGE_BUCKET_NAME', 'appse-media-dev')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STATIC_STORAGE_BUCKET_NAME', 'appse-static-dev')
 
 AWS_S3_SECURE_URLS = False
 AWS_QUERYSTRING_AUTH = False

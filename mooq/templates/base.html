@@ -14,7 +14,8 @@
         <script type="text/javascript" src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         <script type="text/javascript">
-            var STATIC_URL = '{{ STATIC_URL }}'
+            var LOGO_URL = '{% static 'img/logo.png' %}'
+            var AVATAR_URL = '{% static 'img/avatar.png' %}'
         </script>
         {% block styles %}{% endblock %}
         {% block pre_scripts %}{% endblock %}
