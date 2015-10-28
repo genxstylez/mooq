@@ -47769,7 +47769,8 @@ exports['default'] = _react2['default'].createClass({
             email: '',
             is_authenticated: _storesUserStore2['default'].is_authenticated,
             login_invalid_messages: [],
-            new_invalid_messages: []
+            username_error_message: '',
+            pw_error_message: ''
         };
     },
 
@@ -47801,26 +47802,21 @@ exports['default'] = _react2['default'].createClass({
         if (e.target.value) {
             var ret = _servicesValidationService2['default'].validate_password(e.target.value);
             if (ret) {
-                var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
                 this.setState({
                     password: e.target.value,
                     pw_is_valid: true,
-                    new_invalid_messages: invalid_messages
+                    pw_error_message: ''
                 });
             } else {
-                var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
-                invalid_messages.push({ key: 'password', value: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8' });
                 this.setState({
                     pw_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    pw_error_message: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'
                 });
             }
         } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
-            invalid_messages.push({ key: 'password', value: 'Password is required' });
             this.setState({
                 pw_is_valid: false,
-                new_invalid_messages: invalid_messages
+                pw_error_message: 'Please enter your password'
             });
         }
     },
@@ -47829,76 +47825,33 @@ exports['default'] = _react2['default'].createClass({
         var _this = this;
 
         if (e.target.value) {
-            _servicesValidationService2['default'].validate_username(e.target.value, function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
+            _servicesValidationService2['default'].validate_username(e.target.value.toLowerCase(), function () {
                 _this.setState({
                     username: e.target.value,
                     username_is_valid: true,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: ''
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
-                invalid_messages.push({ key: 'username', value: 'This username is already taken!' });
                 _this.setState({
                     username_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: 'This username is already taken!'
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
-                invalid_messages.push({ key: 'username', value: 'Username must be either number or characters, length must be 4-30' });
                 _this.setState({
                     username_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: 'Username must be either number or characters, length must be 4-30'
                 });
             });
         } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'email' });
-            invalid_messages.push({ key: 'username', value: 'Username is required' });
             this.setState({
                 username_is_valid: false,
-                new_invalid_messages: invalid_messages
-            });
-        }
-    },
-
-    handleChangeEmail: function handleChangeEmail(e) {
-        var _this2 = this;
-
-        if (e.target.value) {
-            _servicesValidationService2['default'].validate_email(e.target.value, function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
-                _this2.setState({
-                    email: e.target.value,
-                    email_is_valid: true,
-                    new_invalid_messages: invalid_messages
-                });
-            }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
-                invalid_messages.push({ key: 'email', value: 'This emails is already taken!' });
-                _this2.setState({
-                    email_is_valid: false,
-                    new_invalid_messages: invalid_messages
-                });
-            }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
-                invalid_messages.push({ key: 'email', value: 'Email is invalid' });
-                _this2.setState({
-                    email_is_valid: false,
-                    new_invalid_messages: invalid_messages
-                });
-            });
-        } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'email' });
-            invalid_messages.push({ key: 'email', value: 'Email is required' });
-            this.setState({
-                email_is_valid: false,
-                new_invalid_messages: invalid_messages
+                username_error_message: 'Please enter your username'
             });
         }
     },
 
     handleSubmit: function handleSubmit(e) {
-        var _this3 = this;
+        var _this2 = this;
 
         e.preventDefault();
         _servicesUserService2['default'].login(_extends({}, this.state)).then(function (res) {
@@ -47907,7 +47860,7 @@ exports['default'] = _react2['default'].createClass({
         })['catch'](function (err) {
             var invalid_messages = [];
             invalid_messages.push({ key: 'login', value: 'Incorrect username and password, please check it again' });
-            _this3.setState({
+            _this2.setState({
                 login_invalid_messages: invalid_messages
             });
         });
@@ -48058,13 +48011,15 @@ exports['default'] = _react2['default'].createClass({
                                     _react2['default'].createElement(
                                         _SemanticInput2['default'],
                                         { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off',
+                                            is_valid: this.state.username_is_valid, error_message: this.state.username_error_message },
                                         _react2['default'].createElement('i', { className: 'user icon' })
                                     ),
                                     _react2['default'].createElement(
                                         _SemanticInput2['default'],
                                         { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off',
+                                            is_valid: this.state.pw_is_valid, error_message: this.state.pw_error_message },
                                         _react2['default'].createElement('i', { className: 'lock icon' })
                                     ),
                                     _react2['default'].createElement(
@@ -48077,22 +48032,7 @@ exports['default'] = _react2['default'].createClass({
                                         { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
                                         'Cancel'
                                     )
-                                ),
-                                this.state.new_invalid_messages.length > 0 ? _react2['default'].createElement(
-                                    'div',
-                                    { className: 'ui error message' },
-                                    _react2['default'].createElement(
-                                        'ul',
-                                        { className: 'list' },
-                                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                                            return _react2['default'].createElement(
-                                                'li',
-                                                { key: message.key },
-                                                message.value
-                                            );
-                                        })
-                                    )
-                                ) : null
+                                )
                             )
                         )
                     )
@@ -48839,18 +48779,18 @@ var _classnames2 = _interopRequireDefault(_classnames);
 exports['default'] = _react2['default'].createClass({
     displayName: 'SemanticInput',
 
-    changed: false,
-
     getInitialState: function getInitialState() {
         return {
             is_valid: true,
-            changed: false
+            changed: false,
+            error_message: ''
         };
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (this.state.is_valid != nextProps.is_valid && this.changed && this.props.validation) this.setState({
-            is_valid: nextProps.is_valid
+            is_valid: nextProps.is_valid,
+            error_message: nextProps.error_message
         });
     },
 
@@ -48871,6 +48811,18 @@ exports['default'] = _react2['default'].createClass({
             icon: this.props.icon,
             input: true
         });
+
+        var error_div_cls = (0, _classnames2['default'])({
+            ui: true,
+            basic: true,
+            red: true,
+            pointing: true,
+            prompt: true,
+            label: true,
+            transition: true,
+            hidden: this.state.is_valid,
+            visible: !this.state.is_valid
+        });
         return _react2['default'].createElement(
             'div',
             { className: outer_div_class, ref: 'outer_div' },
@@ -48880,6 +48832,11 @@ exports['default'] = _react2['default'].createClass({
                 this.props.children,
                 _react2['default'].createElement('input', { name: this.props.name, placeholder: this.props.placeholder,
                     type: this.props.type, onChange: this.handleChange, value: this.props.value, autoComplete: this.props.autoComplete })
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: error_div_cls },
+                this.state.error_message
             )
         );
     }
@@ -49039,8 +48996,10 @@ exports['default'] = _react2['default'].createClass({
             password: '',
             username: '',
             email: '',
-            invalid_messages: [],
-            access_token: ''
+            access_token: '',
+            email_error_message: '',
+            username_error_message: '',
+            pw_error_message: ''
         };
     },
 
@@ -49066,26 +49025,21 @@ exports['default'] = _react2['default'].createClass({
         if (e.target.value) {
             var ret = _servicesValidationService2['default'].validate_password(e.target.value);
             if (ret) {
-                var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
                 this.setState({
                     password: e.target.value,
                     pw_is_valid: true,
-                    invalid_messages: invalid_messages
+                    pw_error_message: ''
                 });
             } else {
-                var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
-                invalid_messages.push({ key: 'password', value: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8' });
                 this.setState({
                     pw_is_valid: false,
-                    invalid_messages: invalid_messages
+                    pw_error_message: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'
                 });
             }
         } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'password' });
-            invalid_messages.push({ key: 'password', value: 'Password is required' });
             this.setState({
                 pw_is_valid: false,
-                invalid_messages: invalid_messages
+                pw_error_message: 'Please enter your password'
             });
         }
     },
@@ -49095,33 +49049,26 @@ exports['default'] = _react2['default'].createClass({
 
         if (e.target.value) {
             _servicesValidationService2['default'].validate_username(e.target.value.toLowerCase(), function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
                 _this.setState({
                     username: e.target.value,
                     username_is_valid: true,
-                    invalid_messages: invalid_messages
+                    username_error_message: ''
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
-                invalid_messages.push({ key: 'username', value: 'This username is already taken!' });
                 _this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    username_error_message: 'This username is already taken!'
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this.state.invalid_messages, { key: 'username' });
-                invalid_messages.push({ key: 'username', value: 'Username must be either number or characters, length must be 4-30' });
                 _this.setState({
                     username_is_valid: false,
-                    invalid_messages: invalid_messages
+                    username_error_message: 'Username must be either number or characters, length must be 4-30'
                 });
             });
         } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'email' });
-            invalid_messages.push({ key: 'username', value: 'Username is required' });
             this.setState({
                 username_is_valid: false,
-                invalid_messages: invalid_messages
+                username_error_message: 'Please enter your username'
             });
         }
     },
@@ -49131,33 +49078,26 @@ exports['default'] = _react2['default'].createClass({
 
         if (e.target.value) {
             _servicesValidationService2['default'].validate_email(e.target.value.toLowerCase(), function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
                 _this2.setState({
                     email: e.target.value,
                     email_is_valid: true,
-                    invalid_messages: invalid_messages
+                    email_error_message: ''
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
-                invalid_messages.push({ key: 'email', value: 'This emails is already taken!' });
                 _this2.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    email_error_message: 'This email is already taken!'
                 });
             }, function () {
-                var invalid_messages = _lodash2['default'].reject(_this2.state.invalid_messages, { key: 'email' });
-                invalid_messages.push({ key: 'email', value: 'Email is invalid' });
                 _this2.setState({
                     email_is_valid: false,
-                    invalid_messages: invalid_messages
+                    email_error_message: 'This does not look like an email'
                 });
             });
         } else {
-            var invalid_messages = _lodash2['default'].reject(this.state.invalid_messages, { key: 'email' });
-            invalid_messages.push({ key: 'email', value: 'Email is required' });
             this.setState({
                 email_is_valid: false,
-                invalid_messages: invalid_messages
+                email_error_message: 'Please enter your email'
             });
         }
     },
@@ -49191,7 +49131,9 @@ exports['default'] = _react2['default'].createClass({
 
     handleNewSocial: function handleNewSocial(access_token) {
         this.setState({
-            invalid_messages: [],
+            username_error_message: '',
+            pw_error_message: '',
+            email_error_message: '',
             pw_is_valid: true,
             email_is_valid: true,
             username_is_valid: true,
@@ -49254,19 +49196,22 @@ exports['default'] = _react2['default'].createClass({
                             _react2['default'].createElement(
                                 _SemanticInput2['default'],
                                 { required: true, icon: true, name: 'email', placeholder: 'Email', validation: true,
-                                    type: 'email', onChange: this.handleChangeEmail, autoComplete: 'off', is_valid: this.state.email_is_valid },
+                                    type: 'email', onChange: this.handleChangeEmail, autoComplete: 'off',
+                                    is_valid: this.state.email_is_valid, error_message: this.state.email_error_message },
                                 _react2['default'].createElement('i', { className: 'mail icon' })
                             ),
                             _react2['default'].createElement(
                                 _SemanticInput2['default'],
                                 { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                    type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                    type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off',
+                                    is_valid: this.state.username_is_valid, error_message: this.state.username_error_message },
                                 _react2['default'].createElement('i', { className: 'user icon' })
                             ),
                             _react2['default'].createElement(
                                 _SemanticInput2['default'],
                                 { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                    type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                    type: 'password', onChange: this.handleChangePassword, autoComplete: 'off',
+                                    is_valid: this.state.pw_is_valid, error_message: this.state.pw_error_message },
                                 _react2['default'].createElement('i', { className: 'lock icon' })
                             ),
                             _react2['default'].createElement(
@@ -49282,21 +49227,6 @@ exports['default'] = _react2['default'].createClass({
                             )
                         )
                     ),
-                    this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
-                        'div',
-                        { className: 'ui error message' },
-                        _react2['default'].createElement(
-                            'ul',
-                            { className: 'list' },
-                            _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                                return _react2['default'].createElement(
-                                    'li',
-                                    { key: message.key },
-                                    message.value
-                                );
-                            })
-                        )
-                    ) : null,
                     _react2['default'].createElement(
                         'div',
                         { className: 'ui bottom message' },
@@ -49331,13 +49261,15 @@ exports['default'] = _react2['default'].createClass({
                                     _react2['default'].createElement(
                                         _SemanticInput2['default'],
                                         { required: true, icon: true, name: 'username', placeholder: 'Username', validation: true,
-                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off', is_valid: this.state.username_is_valid },
+                                            type: 'text', onChange: this.handleChangeUsername, autoComplete: 'off',
+                                            is_valid: this.state.username_is_valid, error_message: this.state.username_error_message },
                                         _react2['default'].createElement('i', { className: 'user icon' })
                                     ),
                                     _react2['default'].createElement(
                                         _SemanticInput2['default'],
                                         { required: true, icon: true, name: 'password', placeholder: 'Password', validation: true,
-                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off', is_valid: this.state.pw_is_valid },
+                                            type: 'password', onChange: this.handleChangePassword, autoComplete: 'off',
+                                            is_valid: this.state.pw_is_valid, error_message: this.state.pw_error_message },
                                         _react2['default'].createElement('i', { className: 'lock icon' })
                                     ),
                                     _react2['default'].createElement(
@@ -49350,22 +49282,7 @@ exports['default'] = _react2['default'].createClass({
                                         { type: 'button', className: 'field ui fluid large button', onClick: this.handleCancelDimmer },
                                         'Cancel'
                                     )
-                                ),
-                                this.state.invalid_messages.length > 0 ? _react2['default'].createElement(
-                                    'div',
-                                    { className: 'ui error message' },
-                                    _react2['default'].createElement(
-                                        'ul',
-                                        { className: 'list' },
-                                        _lodash2['default'].map(this.state.invalid_messages, function (message) {
-                                            return _react2['default'].createElement(
-                                                'li',
-                                                { key: message.key },
-                                                message.value
-                                            );
-                                        })
-                                    )
-                                ) : null
+                                )
                             )
                         )
                     )
@@ -49551,7 +49468,7 @@ exports['default'] = {
     componentDidMount: function componentDidMount() {
         window.fbAsyncInit = (function () {
             FB.init({
-                appId: '860499974063343',
+                appId: FACEBOOK_ID,
                 xfbml: true,
                 version: 'v2.4'
             });

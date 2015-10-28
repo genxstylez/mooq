@@ -2,7 +2,7 @@ export default {
     componentDidMount() {
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '860499974063343',
+                appId      : FACEBOOK_ID,
                 xfbml      : true,
                 version    : 'v2.4'
             });

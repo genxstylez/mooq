@@ -1,22 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import classnames from 'classnames';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import classnames from 'classnames'
 
 
 export default React.createClass({
-    changed: false,
-
     getInitialState() {
         return ({
             is_valid: true,
-            changed: false
+            changed: false,
+            error_message: ''
         });
     },
 
     componentWillReceiveProps(nextProps) {
         if(this.state.is_valid != nextProps.is_valid && this.changed && this.props.validation)
             this.setState({
-                is_valid: nextProps.is_valid
+                is_valid: nextProps.is_valid,
+                error_message: nextProps.error_message
             });
     },
 
@@ -37,6 +37,18 @@ export default React.createClass({
             icon: this.props.icon,
             input: true
         });
+
+        let error_div_cls = classnames({
+            ui: true,
+            basic: true,
+            red: true,
+            pointing: true,
+            prompt: true,
+            label: true,
+            transition: true,
+            hidden: this.state.is_valid,
+            visible: !this.state.is_valid
+        })
         return(
             <div className={outer_div_class} ref="outer_div">
                 <div className={inner_div_class}>
@@ -44,6 +56,7 @@ export default React.createClass({
                     <input name={this.props.name} placeholder={this.props.placeholder}
                         type={this.props.type} onChange={this.handleChange} value={this.props.value} autoComplete={this.props.autoComplete} />
                 </div>
+                <div className={error_div_cls}>{this.state.error_message}</div>
             </div>
         );
     }

@@ -25,7 +25,8 @@ export default React.createClass({
             email: '',
             is_authenticated: UserStore.is_authenticated,
             login_invalid_messages: [],
-            new_invalid_messages: []
+            username_error_message: '',
+            pw_error_message: '',
         })
     },
 
@@ -61,26 +62,21 @@ export default React.createClass({
         if(e.target.value) {
             let ret = ValidationService.validate_password(e.target.value)
             if(ret) {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
                 this.setState({
                     password: e.target.value,
                     pw_is_valid: true,
-                    new_invalid_messages: invalid_messages
+                    pw_error_message: ''
                 });
             } else {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
-                invalid_messages.push({key: 'password', value: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'})
                 this.setState({
                     pw_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    pw_error_message: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'
                 });
             }
         } else {
-            let invalid_messages = _.reject(this.state.invalid_messages, {key: 'password'})
-            invalid_messages.push({key: 'password', value: 'Password is required'})
             this.setState({
                 pw_is_valid: false,
-                new_invalid_messages: invalid_messages
+                pw_error_message: 'Please enter your password'
             });
         }
 
@@ -88,68 +84,27 @@ export default React.createClass({
 
     handleChangeUsername(e) {
         if (e.target.value) {
-            ValidationService.validate_username(e.target.value, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
+            ValidationService.validate_username(e.target.value.toLowerCase(), () => {
                 this.setState({
                     username: e.target.value,
                     username_is_valid: true,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: ''
                 })
             }, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
-                invalid_messages.push({key: 'username', value: 'This username is already taken!'})
                 this.setState({
                     username_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: 'This username is already taken!'
                 })
             }, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'username'})
-                invalid_messages.push({key: 'username', value: 'Username must be either number or characters, length must be 4-30'})
                  this.setState({
                     username_is_valid: false,
-                    new_invalid_messages: invalid_messages
+                    username_error_message: 'Username must be either number or characters, length must be 4-30'
                 })
             })
         } else {
-            let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
-            invalid_messages.push({key: 'username', value: 'Username is required'})
              this.setState({
                 username_is_valid: false,
-                new_invalid_messages: invalid_messages
-            })
-        }
-    },
-
-    handleChangeEmail(e) {
-        if(e.target.value) {
-            ValidationService.validate_email(e.target.value, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
-                this.setState({
-                    email: e.target.value,
-                    email_is_valid: true,
-                    new_invalid_messages: invalid_messages
-                })
-            }, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
-                invalid_messages.push({key: 'email', value: 'This emails is already taken!'})
-                this.setState({
-                    email_is_valid: false,
-                    new_invalid_messages: invalid_messages
-                })
-            }, () => {
-                let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
-                invalid_messages.push({key: 'email', value: 'Email is invalid'})
-                this.setState({
-                    email_is_valid: false,
-                    new_invalid_messages: invalid_messages
-                })
-            })
-        } else {
-            let invalid_messages = _.reject(this.state.invalid_messages, {key: 'email'})
-            invalid_messages.push({key: 'email', value: 'Email is required'})
-            this.setState({
-                email_is_valid: false,
-                new_invalid_messages: invalid_messages
+                username_error_message: 'Please enter your username'
             })
         }
     },
@@ -274,30 +229,19 @@ export default React.createClass({
                                     <form className="ui large form" method="post" onSubmit={this.handleNewSocialSubmit}>
 
                                         <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
-                                            type="text" onChange={this.handleChangeUsername} autoComplete="off" is_valid={this.state.username_is_valid}>
+                                            type="text" onChange={this.handleChangeUsername} autoComplete="off"
+                                            is_valid={this.state.username_is_valid} error_message={this.state.username_error_message}>
                                             <i className="user icon" />
                                         </SemanticInput>
 
                                         <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
-                                            type="password" onChange={this.handleChangePassword} autoComplete="off" is_valid={this.state.pw_is_valid}>
+                                            type="password" onChange={this.handleChangePassword} autoComplete="off"
+                                            is_valid={this.state.pw_is_valid} error_message={this.state.pw_error_message}>
                                             <i className="lock icon" />
                                         </SemanticInput>
                                         <button type="submit" className="field ui fluid large teal button">Sign Up</button>
                                         <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>Cancel</button>
                                     </form>
-                                    {
-                                        this.state.new_invalid_messages.length > 0 ?
-                                        <div className="ui error message">
-                                            <ul className="list">
-                                                {
-                                                    _.map(this.state.invalid_messages, (message) => {
-                                                        return (<li key={message.key}>{message.value}</li>)
-                                                    })
-                                                }
-                                            </ul>
-                                        </div>
-                                        : null
-                                    }
                                 </div>
                             </div>
                         </div>
