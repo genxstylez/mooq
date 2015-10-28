@@ -47513,6 +47513,10 @@ var _servicesUserService = require('../services/UserService');
 
 var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
 
+var _actionsUserActions = require('../actions/UserActions');
+
+var _actionsUserActions2 = _interopRequireDefault(_actionsUserActions);
+
 exports['default'] = _react2['default'].createClass({
     displayName: 'FacebookLoginButton',
 
@@ -47541,7 +47545,7 @@ exports['default'] = _react2['default'].createClass({
                 access_token: access_token,
                 backend: 'facebook'
             }).then(function (res) {
-                UserActions.login(res.body.token);
+                _actionsUserActions2['default'].login(res.body.token);
             })['catch'](function (err) {
                 if (err.body.error_code == 'social_no_user') {
                     // prompt for a username and password
@@ -47566,7 +47570,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":251,"react":219}],234:[function(require,module,exports){
+},{"../actions/UserActions":225,"../services/UserService":251,"react":219}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

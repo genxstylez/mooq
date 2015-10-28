@@ -1,5 +1,6 @@
 import React from 'react';
 import UserService from '../services/UserService'
+import UserActions from '../actions/UserActions'
 
 export default React.createClass({
     checkLoginState() {
