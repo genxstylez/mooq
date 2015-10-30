@@ -43,6 +43,7 @@ gulp.task('img', function() {
 gulp.task('build', function() {
   return gulp.src('static/js/main.js')
     .pipe(uglify())
+    .on('error', handleErrors)
     .pipe(rename({
         extname: '.min.js'
     }))

@@ -4,7 +4,7 @@ export default {
             FB.init({
                 appId      : FACEBOOK_ID,
                 xfbml      : true,
-                version    : 'v2.4'
+                version    : 'v2.5'
             });
             FB.getLoginStatus(function(response) {
                 this.statusChangeCallback(response);
