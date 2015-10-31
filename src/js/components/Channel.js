@@ -1,21 +1,22 @@
-import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Link, History } from 'react-router';
-import ChannelNav from './ChannelNav';
-import ChannelList from './ChannelList';
-import ChannelHeader from './ChannelHeader';
-import ChannelItem from './ChannelItem';
-import ChannelStore from '../stores/ChannelStore';
-import ChannelActions from '../actions/ChannelActions';
-import ChannelService from '../services/ChannelService';
-import SidebarChannelList from './SidebarChannelList';
-import MessageInput from './MessageInput';
-import Avatar from './Avatar';
-import SetIntervalMixin from '../mixins/SetIntervalMixin';
+import _ from 'lodash'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Link, History } from 'react-router'
+import {t as __} from 'i18next-client'
+import ChannelNav from './ChannelNav'
+import ChannelList from './ChannelList'
+import ChannelHeader from './ChannelHeader'
+import ChannelItem from './ChannelItem'
+import ChannelStore from '../stores/ChannelStore'
+import ChannelActions from '../actions/ChannelActions'
+import ChannelService from '../services/ChannelService'
+import SidebarChannelList from './SidebarChannelList'
+import MessageInput from './MessageInput'
+import Avatar from './Avatar'
+import SetIntervalMixin from '../mixins/SetIntervalMixin'
 import FacebookOAuthMixin from '../mixins/FacebookOAuthMixin'
 
-import UserStore from '../stores/UserStore';
+import UserStore from '../stores/UserStore'
 
 export default React.createClass({
     mixins: [SetIntervalMixin, History, FacebookOAuthMixin],
@@ -123,13 +124,13 @@ export default React.createClass({
                         <img src={LOGO_URL} />
                     </div>
                     <div className="ui list top-list">
-                        <h5 className="ui header">Top Stocks</h5>
+                        <h5 className="ui header">{__('Top Stocks')}</h5>
                         {_.map(_.slice(this.state.channels, 0, 5), (channel) => {
                             return (<ChannelNav key={channel.id} channel={channel} />)
                         })}
                     </div>
                      <div className="item search-link">
-                        <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
+                        <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />{__('More Stocks')}</Link>
                     </div>
                     <ChannelList joinedChannels={this.state.joinedChannels} />
                     <Avatar is_authenticated={this.state.is_authenticated} avatar={this.state.user.profile.avatar} username={this.state.user.username} />
@@ -142,12 +143,12 @@ export default React.createClass({
                             </div>
 
                             <div className="ui list top-list">
-                                <h5 className="ui header">Top Stocks</h5>
+                                <h5 className="ui header">{__('Top Stocks')}</h5>
                                 {_.map(_.slice(this.state.channels, 0, 5), (channel) => {
                                     return (<ChannelNav key={channel.id} channel={channel} />)
                                 })}
                                 <div className="item search-link">
-                                    <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
+                                    <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />{__('More Stocks')}</Link>
                                 </div>
                             </div>
                             <ChannelList joinedChannels={this.state.joinedChannels} />

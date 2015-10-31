@@ -8,6 +8,7 @@ var gulp = require('gulp');
     livereload = require('gulp-livereload');
     plumber = require('gulp-plumber')
     rename = require('gulp-rename')
+    i18next = require('i18next-parser');
 
 
 function handleErrors() {
@@ -30,6 +31,8 @@ gulp.task('browserify', function() {
         .pipe(livereload())
     });
 
+
+
 gulp.task('css', function() {
     gulp.src('./src/css/**/*.*')
         .pipe(gulp.dest('static/css'))
@@ -41,7 +44,7 @@ gulp.task('img', function() {
     });
 
 gulp.task('build', function() {
-  return gulp.src('static/js/main.js')
+  gulp.src('static/js/main.js')
     .pipe(uglify())
     .on('error', handleErrors)
     .pipe(rename({
@@ -50,8 +53,19 @@ gulp.task('build', function() {
     .pipe(gulp.dest('static/js'));
 });
 
-gulp.task('default', ['browserify', 'img', 'css'], function() {
+
+gulp.task('i18next', function() {
+    gulp.src('./src/**/*.*')
+        .pipe(i18next({
+            locales: ['en', 'zh-TW'],
+            functions: ['__', '_e'],
+            output: '../static/locales'
+        }))
+        .pipe(gulp.dest('static/locales'));
+});
+
+gulp.task('default', ['browserify', 'img', 'css', 'build', 'i18next'], function() {
     livereload.listen();
-    return gulp.watch('./src/**/*.*', ['browserify', 'img', 'css'])
+    return gulp.watch('./src/**/*.*', ['browserify', 'img', 'css', 'build', 'i18next'])
     });
 

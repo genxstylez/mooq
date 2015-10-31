@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { t as __ } from 'i18next-client'
 import { History } from 'react-router'
 import SemanticInput from './SemanticInput'
 import ChannelService from '../services/ChannelService'
@@ -80,31 +81,6 @@ export default React.createClass({
         this._getChannels(this.offset, this.limit, kw)
     },
 
-    handleJoin(channel) {
-        /*
-        if(this.state.is_authenticated) {
-             ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
-            .then(ChannelService.grant(this.state.authKey, [channel]))
-            .then(() => {
-                    channel.subscribers_count += 1
-                    ChannelService.join_channels([channel])
-            })
-            .catch((err) => {
-                alert('Please try again!')
-            })
-        } else {
-            ChannelService.grant(this.state.authKey, [channel])
-                .then(() => {
-                        channel.subscribers_count += 1
-                        ChannelService.join_channels([channel])
-                })
-                .catch((err) => {
-                    alert('Please try again!')
-                })
-        }
-        */
-    },
-
     handleClickChannel(channel) {
         this.history.pushState(null, `/channels/${channel.id}/`)
     },
@@ -143,7 +119,7 @@ export default React.createClass({
             <div className="ui container search-container">
                 <div className="ui center aligned grid search-grid" >
                     <div className="ui center aligned grid header">
-                        <h5>Enter Stock symbol e.g. AAPL</h5>
+                        <h5>{__('Enter Stock Symbol, For example, AAPL')}</h5>
                     </div>
                     <div className="ui center aligned grid input-symbol">
                         <i className="search icon" />
@@ -155,14 +131,14 @@ export default React.createClass({
                 {this.state.channels.length > 0 ?
                     _.map(this.state.channels, (channel) => {
                         return (
-                            <div className="three wide computer five wide tablet twelve wide mobile column" key={channel.id} onClick={this.handleClickChannel.bind(this, channel)}>
+                            <div className="three wide computer five wide tablet twelve wide mobile column result-box" key={channel.id} onClick={this.handleClickChannel.bind(this, channel)}>
                                 <div className="ui segment">
                                     {channel.name} - {channel.subscribers_count}
                                 </div>
                             </div>
                         )
                     })
-                    : <div className="no-results">No results found for {this.state.keyword}</div>
+                    : <div className="no-results">{__('Sorry, no results found for', {keyword: this.state.keyword})}</div>
                 }
                 </div>
             </div>

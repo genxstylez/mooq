@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import i18n from 'i18next-client'
 import history from './history'
 import { Router, Route, IndexRoute } from 'react-router'
 import RouterContainer from './RouterContainer'
@@ -14,6 +15,15 @@ import Privacy from './components/Privacy'
 import UserService from './services/UserService'
 import UserActions from './actions/UserActions'
 import ChannelActions from './actions/ChannelActions'
+
+
+var option = {
+    resGetPath: STATIC_URL + '/locales/__lng__/__ns__.json',
+    getAsync: false
+}
+
+i18n.init(option)
+i18n.setLng('zh-TW')
 
 
 let jwt = localStorage.getItem('jwt')

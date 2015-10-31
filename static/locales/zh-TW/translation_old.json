@@ -1,0 +1,10 @@
+{
+  "Enter Stock Symbol e": {
+    "g": {
+      " AAPL": ""
+    }
+  },
+  "Enter Stock Symbol; For example: AAPL": "輸入股票代號; 例如:1101 台泥",
+  "No results found for": "無法找到符合__keyword__的相關結果。",
+  "Sign In": ""
+}

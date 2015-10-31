@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Link, History } from 'react-router'
+import {t as __} from 'i18next-client'
 import UserStore from '../stores/UserStore'
 import UserActions from '../actions/UserActions'
 import UserService from '../services/UserService'
@@ -61,13 +62,13 @@ export default React.createClass({
             } else {
                 this.setState({
                     pw_is_valid: false,
-                    pw_error_message: 'Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8'
+                    pw_error_message: __('Password must contain at least one uppercase, one digit and one lowercae, length must be at least 8')
                 });
             }
         } else {
             this.setState({
                 pw_is_valid: false,
-                pw_error_message: 'Please enter your password'
+                pw_error_message: __('Please enter your password')
             });
         }
 
@@ -84,18 +85,18 @@ export default React.createClass({
             }, () => {
                 this.setState({
                     username_is_valid: false,
-                    username_error_message: 'This username is already taken!'
+                    username_error_message: __('This username is already taken!')
                 })
             }, () => {
                  this.setState({
                     username_is_valid: false,
-                    username_error_message: 'Username must be either number or characters, length must be 4-30'
+                    username_error_message: __('Username must be either number or characters, length must be 4-30')
                 })
             })
         } else {
              this.setState({
                 username_is_valid: false,
-                username_error_message: 'Please enter your username'
+                username_error_message: __('Please enter your username')
             })
         }
     },
@@ -111,18 +112,18 @@ export default React.createClass({
             }, () => {
                 this.setState({
                     email_is_valid: false,
-                    email_error_message: 'This email is already taken!'
+                    email_error_message: __('This email is already taken!')
                 })
             }, () => {
                 this.setState({
                     email_is_valid: false,
-                    email_error_message: 'This does not look like an email'
+                    email_error_message: __('This does not look like an email')
                 })
             })
         } else {
             this.setState({
                 email_is_valid: false,
-                email_error_message: 'Please enter your email'
+                email_error_message: __('Please enter your email')
             })
         }
     },
@@ -140,7 +141,7 @@ export default React.createClass({
                 UserActions.login(res.body.token)
             })
             .catch((err) => {
-                alert('An error occured, please try again!')
+                alert(__('An error occured, please try again!'))
             })
         }
     },
@@ -154,7 +155,7 @@ export default React.createClass({
                 UserActions.login(res.body.token)
             })
             .catch((err) => {
-                alert('An error occured, please try again!')
+                alert(__('An error occured, please try again!'))
             })
         }
     },
@@ -204,40 +205,39 @@ export default React.createClass({
                     <div className={dimmable_cls} ref="dimmable">
                         <h2 className="ui image bottom aligned header white">
                             <img src={LOGO_URL} />
-                            <div className="content">Join us</div>
+                            <div className="content">{__('Join us')}</div>
                         </h2>
 
                         <div className="ui piled segment">
                             <form className="ui large form" method="post" onSubmit={this.handleSubmit}>
-                                <SemanticInput required={true} icon={true} name="email" placeholder="Email" validation={true}
+                                <SemanticInput required={true} icon={true} name="email" placeholder={__('Email')} validation={true}
                                     type="email" onChange={this.handleChangeEmail} autoComplete="off"
                                     is_valid={this.state.email_is_valid} error_message={this.state.email_error_message}>
                                     <i className="mail icon" />
                                 </SemanticInput>
 
-                                <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
+                                <SemanticInput required={true} icon={true} name="username" placeholder={__('Username')} validation={true}
                                     type="text" onChange={this.handleChangeUsername} autoComplete="off"
                                     is_valid={this.state.username_is_valid} error_message={this.state.username_error_message}>
                                     <i className="user icon" />
                                 </SemanticInput>
 
-                                <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
+                                <SemanticInput required={true} icon={true} name="password" placeholder={__('Password')} validation={true}
                                     type="password" onChange={this.handleChangePassword} autoComplete="off"
                                     is_valid={this.state.pw_is_valid} error_message={this.state.pw_error_message}>
                                     <i className="lock icon" />
                                 </SemanticInput>
-                                <button type="submit" className="field ui fluid large basic teal button">Sign Up</button>
+                                <button type="submit" className="field ui fluid large basic teal button">{__('Sign Up')}</button>
 
                                 <FacebookLoginButton className="field ui fluid large facebook button" new_social={this.handleNewSocial}>
                                     <i className="facebook icon"></i>
-                                    Sign up with Facebook
+                                    {__('Sign up with Facebook')}
                                 </FacebookLoginButton>
                             </form>
-
                         </div>
 
                         <div className="ui bottom message">
-                            Have an account? <Link to="/login/">Log In</Link>
+                            {__('Have an account?')} <Link to="/login/">{__('Sign in')}</Link>
                         </div>
 
                     </div>
@@ -245,23 +245,23 @@ export default React.createClass({
                         <div className="content">
                             <div className="center">
                                 <div style={{maxWidth: '450px', minWidth: '400px', margin: '0 auto'}}>
-                                    <h2>Please enter username and password</h2>
+                                    <h2>{__('Please enter username and password')}</h2>
                                     <form className="ui large form" method="post" onSubmit={this.handleNewSocialSubmit}>
 
-                                        <SemanticInput required={true} icon={true} name="username" placeholder="Username" validation={true}
+                                        <SemanticInput required={true} icon={true} name="username" placeholder={__('Username')} validation={true}
                                             type="text" onChange={this.handleChangeUsername} autoComplete="off"
                                             is_valid={this.state.username_is_valid} error_message={this.state.username_error_message}>
                                             <i className="user icon" />
                                         </SemanticInput>
 
-                                        <SemanticInput required={true} icon={true} name="password" placeholder="Password" validation={true}
+                                        <SemanticInput required={true} icon={true} name="password" placeholder={__('Password')} validation={true}
                                             type="password" onChange={this.handleChangePassword} autoComplete="off"
                                             is_valid={this.state.pw_is_valid} error_message={this.state.pw_error_message}>
                                             <i className="lock icon" />
                                         </SemanticInput>
 
-                                        <button type="submit" className="field ui fluid large teal button">Sign Up</button>
-                                        <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>Cancel</button>
+                                        <button type="submit" className="field ui fluid large teal button">{__('Sign Up')}</button>
+                                        <button type="button" className="field ui fluid large button" onClick={this.handleCancelDimmer}>{__('Cancel')}</button>
                                     </form>
                                 </div>
                             </div>

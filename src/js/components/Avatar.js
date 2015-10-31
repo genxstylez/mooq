@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import UserService from '../services/UserService'
+import {t as __} from 'i18next-client'
 
 export default React.createClass({
     getInitialState() {
@@ -34,7 +35,7 @@ export default React.createClass({
                         <i className="chevron up icon" />
                         <div className="menu transition hidden">
                             <div className="item" onClick={this.handleSignout}>
-                                <i className="sign out icon link" />Sign out
+                                <i className="sign out icon link" />{__('Sign out')}
                             </div>
                         </div>
                     </span>

@@ -91,16 +91,12 @@ button.ui.button.borderless {
     color: #CCCCCC;
 }
 
-.search-bottom {
-    bottom: 3%;
-    position: absolute;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
+.result-box {
+    cursor: pointer;
 }
 
-.search-bottom > .ui.button {
-    margin: 0 auto;
+.result-box:hover {
+    opacity: .6;
 }
 
 .login {
