@@ -6,4 +6,5 @@ export default KeyMirror({
     CREATE_GUEST: null,
     AUTHENTICATED: null,
     GOT_PROFILE: null,
+    ADD_CHANNEL: null,
 })

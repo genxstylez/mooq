@@ -550,6 +550,14 @@ button.ui.button.borderless {
     font-size: 2rem;
 }
 
+.preview {
+    text-align: center;
+}
+
+.preview > span {
+    margin-right: 10px;
+}
+
 .mobile-menu:hover {
     opacity: 1;
     color: rgba(0,0,0,1);

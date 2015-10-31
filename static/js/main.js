@@ -46365,6 +46365,27 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 },{"_process":64}],224:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports["default"] = {
+    _router: null,
+
+    set: function set(router) {
+        this._router = router;
+        console.log(this._router);
+    },
+
+    get: function get() {
+        return this._router;
+    }
+};
+module.exports = exports["default"];
+
+
+},{}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46410,9 +46431,9 @@ exports['default'] = {
         });
     },
 
-    got_top_channels: function got_top_channels(channels) {
+    got_channels: function got_channels(channels) {
         _dispatchersAppDispatcher2['default'].dispatch({
-            actionType: _constantsChannelConstants2['default'].GOT_TOP_CHANNELS,
+            actionType: _constantsChannelConstants2['default'].GOT_CHANNELS,
             channels: channels
         });
     },
@@ -46463,7 +46484,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":243,"../dispatchers/AppDispatcher":245,"../services/ChannelService":250,"lodash":62}],225:[function(require,module,exports){
+},{"../constants/ChannelConstants":244,"../dispatchers/AppDispatcher":246,"../services/ChannelService":251,"lodash":62}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46488,8 +46509,13 @@ var _constantsUserConstants = require('../constants/UserConstants');
 
 var _constantsUserConstants2 = _interopRequireDefault(_constantsUserConstants);
 
+var _RouterContainer = require('../RouterContainer');
+
+var _RouterContainer2 = _interopRequireDefault(_RouterContainer);
+
 exports['default'] = {
     login: function login(jwt) {
+
         var savedJwt = localStorage.getItem('jwt');
 
         _dispatchersAppDispatcher2['default'].dispatch({
@@ -46499,6 +46525,7 @@ exports['default'] = {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
+            var nextPath = _RouterContainer2['default'].get();
             _history2['default'].pushState(null, '/channels/');
             localStorage.setItem('jwt', jwt);
         }
@@ -46533,21 +46560,24 @@ exports['default'] = {
         });
     },
 
-    /*
-    @param  {object}  User object
-    */
-
     authenticated: function authenticated(user) {
         _dispatchersAppDispatcher2['default'].dispatch({
             actionType: _constantsUserConstants2['default'].AUTHENTICATED,
             user: user
+        });
+    },
+
+    add_channel: function add_channel(channel) {
+        _dispatchersAppDispatcher2['default'].dispatch({
+            actionType: _constantsUserConstants2['default'].ADD_CHANNEL,
+            channel: channel
         });
     }
 };
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":244,"../dispatchers/AppDispatcher":245,"../history":246,"lodash":62}],226:[function(require,module,exports){
+},{"../RouterContainer":224,"../constants/UserConstants":245,"../dispatchers/AppDispatcher":246,"../history":247,"lodash":62}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46619,7 +46649,6 @@ exports['default'] = _react2['default'].createClass({
         this.initialise_PubNub();
         this.get_top_channels();
         if (this.state.is_authenticated) {
-            this.handleAuthenticatedChange();
             this.get_profile(this.state.user.user_id);
         }
     },
@@ -46639,7 +46668,6 @@ exports['default'] = _react2['default'].createClass({
     componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
         if (prevState.is_authenticated != this.state.is_authenticated) {
             if (this.state.is_authenticated) {
-                this.handleAuthenticatedChange();
                 this.get_profile(this.state.user.user_id);
             }
         }
@@ -46668,27 +46696,11 @@ exports['default'] = _react2['default'].createClass({
 
     get_top_channels: function get_top_channels() {
         // Get top 10 channels
-        console.log('get top chjannels here');
         _servicesChannelService2['default'].get_channels(0, 50).then(function (res) {
-            _actionsChannelActions2['default'].got_top_channels(res.body.results);
+            _actionsChannelActions2['default'].got_channels(res.body.results);
         })['catch'](function (err) {
+            console.log(err);
             alert('App: get top channels: Something went wrong');
-        });
-    },
-
-    handleAuthenticatedChange: function handleAuthenticatedChange() {
-        var _this = this;
-
-        // Get channel list and join them
-        _servicesChannelService2['default'].get_subscribed_channels(this.state.user.user_id).then(function (res) {
-            var channels = res.body;
-            if (channels.length > 0) {
-                _servicesChannelService2['default'].grant(_this.state.authKey, channels).then(function () {
-                    _servicesChannelService2['default'].join_channels(channels);
-                });
-            } else {
-                _this.history.replaceState(null, '/search/');
-            }
         });
     },
 
@@ -46742,7 +46754,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../mixins/SetIntervalMixin":249,"../services/ChannelService":250,"../services/UserService":251,"../stores/UserStore":255,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65,"react-router":85}],227:[function(require,module,exports){
+},{"../actions/ChannelActions":225,"../actions/UserActions":226,"../mixins/FacebookOAuthMixin":249,"../mixins/SetIntervalMixin":250,"../services/ChannelService":251,"../services/UserService":252,"../stores/UserStore":256,"jwt-decode":59,"lodash":62,"react":219,"react-dom":65,"react-router":85}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46820,7 +46832,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/UserService":251,"react":219,"react-dom":65}],228:[function(require,module,exports){
+},{"../services/UserService":252,"react":219,"react-dom":65}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46902,13 +46914,12 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
+            joinedChannels: _storesChannelStore2['default'].joinedChannels,
             channels: _storesChannelStore2['default'].channels,
-            active_channel: _storesChannelStore2['default'].active_channel,
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
             jwt: _storesUserStore2['default'].jwt,
-            is_authenticated: _storesUserStore2['default'].is_authenticated,
-            top_5_channels: _lodash2['default'].slice(_storesChannelStore2['default'].top_channels, 0, 5)
+            is_authenticated: _storesUserStore2['default'].is_authenticated
         };
     },
 
@@ -46927,72 +46938,52 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentWillMount: function componentWillMount() {
-        if (!this.state.is_authenticated) {
-            if (this.props.params.channelId) {
-                this.handleGuestSession(this.props.params.channelId);
-            } else {
-                if (this.state.channels.length == 0) {
-                    // Happens to guest session who doesn't provide on channelId
-                    this.history.pushState(null, '/search/');
-                } else {
-                    _actionsChannelActions2['default'].mark_as_active(this.state.channels[0].id);
-                }
-            }
-        }
+        if (this.state.is_authenticated) this._joinSubscribedChannels();
+        if (this.props.params.channelId) this._joinChannel(this.props.params.channelId);
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (nextProps.params.channelId != this.props.params.channelId) {
-            setTimeout(function () {
-                _actionsChannelActions2['default'].mark_as_active(nextProps.params.channelId);
-            }, 1);
             $(_reactDom2['default'].findDOMNode(this.refs.sidebar)).sidebar('hide');
-        }
-    },
-
-    componentDidUpdate: function componentDidUpdate(nextProps, nextState) {
-        if (nextState.channels.length != this.state.channels.length || nextState.authKey != this.state.authKey) {
-            // if auth key changed, ask for permissions
-            // if channel changed handle it.
-            _servicesChannelService2['default'].grant(nextState.authKey, nextState.channels).done();
-
-            if (nextState.channels.length != this.state.channels.length) {
-                this.handleChannelChanged();
+            if (!_storesChannelStore2['default'].has_joinedChannel(nextProps.params.channelId)) {
+                this._joinChannel(nextProps.params.channelId);
             }
         }
     },
 
-    handleChannelChanged: function handleChannelChanged() {
+    _joinSubscribedChannels: function _joinSubscribedChannels() {
+        // Get channel list and join them
+        var channels = this.state.user.channels;
+        if (channels.length > 0) {
+            _servicesChannelService2['default'].grant(this.state.authKey, channels).then(function () {
+                _servicesChannelService2['default'].join_channels(channels);
+                //this.history.pushState(null, `/channels/${channels[0].id}/`)
+            });
+        }
+    },
+
+    _joinChannel: function _joinChannel(id) {
         var _this = this;
 
-        if (this.state.channels.length > 0) {
-            if (this.props.params.channelId && _storesChannelStore2['default'].get_channel(this.props.params.channelId)) {
-                setTimeout(function () {
-                    _actionsChannelActions2['default'].mark_as_active(_this.props.params.channelId);
-                }, 1);
-            } else {
-                // if no channel Id is provided, go to the first channel of the list
-                // or when a leave channel event occurs
-                this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/');
-            }
-        } else {
-            this.history.pushState(null, '/search/');
-        }
-    },
-
-    handleGuestSession: function handleGuestSession(id) {
-        var _this2 = this;
-
-        _servicesChannelService2['default'].get_channel_info(id).then(function (res) {
-            // res.body is a channel object
-            var channel = res.body;
-            _servicesChannelService2['default'].grant(_this2.state.authKey, [channel]).then(function () {
-                _servicesChannelService2['default'].join_channels([channel]);
-                _actionsChannelActions2['default'].mark_as_active(channel.id);
+        var channelObj = _lodash2['default'].findWhere(this.state.channels, { id: id });
+        if (channelObj == undefined) {
+            // if this we don't have the details for this id, get it from server
+            _servicesChannelService2['default'].get_channel_info(id).then(function (res) {
+                // res.body is a channel object
+                var channel = res.body;
+                _servicesChannelService2['default'].grant(_this.state.authKey, [channel]).then(function () {
+                    _servicesChannelService2['default'].join_channels([channel]);
+                });
+            }, function (err) {
+                console.log('Something went wrong');
             });
-        }, function (err) {
-            alert('Something went wrong');
-        });
+        } else {
+            _servicesChannelService2['default'].grant(this.state.authKey, [channelObj]).then(function () {
+                _servicesChannelService2['default'].join_channels([channelObj]);
+            }, function (err) {
+                console.log('Something went wrong');
+            });
+        }
     },
 
     _onUserChange: function _onUserChange() {
@@ -47001,18 +46992,18 @@ exports['default'] = _react2['default'].createClass({
             authKey: _storesUserStore2['default'].authKey,
             is_authenticated: _storesUserStore2['default'].is_authenticated
         });
+        if (_storesUserStore2['default'].is_authenticated) this._joinSubscribedChannels();
     },
 
     _onChange: function _onChange() {
         this.setState({
-            active_channel: _storesChannelStore2['default'].active_channel,
-            channels: _storesChannelStore2['default'].channels,
-            top_5_channels: _lodash2['default'].slice(_storesChannelStore2['default'].top_channels, 0, 5)
+            joinedChannels: _storesChannelStore2['default'].joinedChannels,
+            channels: _storesChannelStore2['default'].channels
         });
     },
 
     render: function render() {
-        var _this3 = this;
+        var _this2 = this;
 
         return _react2['default'].createElement(
             'div',
@@ -47033,7 +47024,7 @@ exports['default'] = _react2['default'].createClass({
                         { className: 'ui header' },
                         'Top Stocks'
                     ),
-                    _lodash2['default'].map(this.state.top_5_channels, function (channel) {
+                    _lodash2['default'].map(_lodash2['default'].slice(this.state.channels, 0, 5), function (channel) {
                         return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, channel: channel });
                     })
                 ),
@@ -47047,7 +47038,7 @@ exports['default'] = _react2['default'].createClass({
                         'More Stocks'
                     )
                 ),
-                _react2['default'].createElement(_ChannelList2['default'], null),
+                _react2['default'].createElement(_ChannelList2['default'], { joinedChannels: this.state.joinedChannels }),
                 _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, avatar: this.state.user.profile.avatar, username: this.state.user.username })
             ),
             _react2['default'].createElement(
@@ -47072,7 +47063,7 @@ exports['default'] = _react2['default'].createClass({
                                 { className: 'ui header' },
                                 'Top Stocks'
                             ),
-                            _lodash2['default'].map(this.state.top_5_channels, function (channel) {
+                            _lodash2['default'].map(_lodash2['default'].slice(this.state.channels, 0, 5), function (channel) {
                                 return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, channel: channel });
                             }),
                             _react2['default'].createElement(
@@ -47086,19 +47077,24 @@ exports['default'] = _react2['default'].createClass({
                                 )
                             )
                         ),
-                        _react2['default'].createElement(_ChannelList2['default'], null)
+                        _react2['default'].createElement(_ChannelList2['default'], { joinedChannels: this.state.joinedChannels })
                     ),
                     _react2['default'].createElement(_Avatar2['default'], { is_authenticated: this.state.is_authenticated, avatar: this.state.user.profile.avatar, username: this.state.user.username })
                 ),
                 _react2['default'].createElement(
                     'div',
                     { id: 'messages-container' },
-                    _react2['default'].createElement(_ChannelHeader2['default'], { channel: this.state.active_channel }),
-                    _lodash2['default'].map(this.state.channels, function (channel) {
+                    _react2['default'].createElement(_ChannelHeader2['default'], { channel_id: this.props.params.channelId }),
+                    _lodash2['default'].map(this.state.joinedChannels, function (channel) {
                         return _react2['default'].createElement(_ChannelItem2['default'], { key: channel.id,
                             channel_id: channel.id,
+                            name: channel.name,
                             messages: channel.messages,
-                            is_active: _this3.state.active_channel.id == channel.id });
+                            is_authenticated: _this2.state.is_authenticated,
+                            preview_mode: !_storesUserStore2['default'].has_channel(channel.id),
+                            jwt: _this2.state.jwt,
+                            user: _this2.state.user,
+                            is_active: _this2.props.params.channelId == channel.id });
                     })
                 )
             )
@@ -47108,7 +47104,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../mixins/FacebookOAuthMixin":248,"../mixins/SetIntervalMixin":249,"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"./Avatar":227,"./ChannelHeader":229,"./ChannelItem":230,"./ChannelList":231,"./ChannelNav":232,"./MessageInput":236,"./SidebarChannelList":241,"lodash":62,"react":219,"react-dom":65,"react-router":85}],229:[function(require,module,exports){
+},{"../actions/ChannelActions":225,"../mixins/FacebookOAuthMixin":249,"../mixins/SetIntervalMixin":250,"../services/ChannelService":251,"../stores/ChannelStore":255,"../stores/UserStore":256,"./Avatar":228,"./ChannelHeader":230,"./ChannelItem":231,"./ChannelList":232,"./ChannelNav":233,"./MessageInput":237,"./SidebarChannelList":242,"lodash":62,"react":219,"react-dom":65,"react-router":85}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47150,13 +47146,13 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            active_channel: this.props.channel
+            channel: _storesChannelStore2['default'].get_joinedChannel(this.props.channel_id)
         };
     },
 
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        if (nextProps.channel != this.state.channel) this.setState({
-            active_channel: nextProps.channel
+        this.setState({
+            channel: _storesChannelStore2['default'].get_joinedChannel(nextProps.channel_id)
         });
     },
 
@@ -47166,7 +47162,7 @@ exports['default'] = _react2['default'].createClass({
     },
 
     render: function render() {
-        return _react2['default'].createElement(
+        if (this.state.channel != undefined) return _react2['default'].createElement(
             'div',
             { id: 'header' },
             _react2['default'].createElement(
@@ -47181,7 +47177,7 @@ exports['default'] = _react2['default'].createClass({
                         _react2['default'].createElement(
                             'div',
                             { className: 'ui horizontal inverted list' },
-                            _lodash2['default'].map(this.state.active_channel.users, function (username) {
+                            _lodash2['default'].map(this.state.channel.users, function (username) {
                                 return _react2['default'].createElement(
                                     'div',
                                     { key: username, className: 'item' },
@@ -47214,19 +47210,42 @@ exports['default'] = _react2['default'].createClass({
                     _react2['default'].createElement(
                         'h2',
                         { className: 'ui header' },
-                        this.state.active_channel.name
+                        this.state.channel.name
                     )
                 ),
-                this.state.active_channel != '' ? _react2['default'].createElement(
+                _react2['default'].createElement(
                     'div',
                     { className: 'right menu' },
                     _react2['default'].createElement(
                         'div',
                         { className: 'item here_now', onClick: this.handleHereNow },
                         _react2['default'].createElement('i', { className: 'users icon' }),
-                        this.state.active_channel.occupancy || 0
+                        this.state.channel.occupancy
                     )
-                ) : _react2['default'].createElement('span', null)
+                )
+            )
+        );else return _react2['default'].createElement(
+            'div',
+            { className: 'ui top fixed menu channel-header' },
+            _react2['default'].createElement(
+                'div',
+                { className: 'icon item mobile-menu' },
+                _react2['default'].createElement('i', { className: 'content icon' })
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: 'item channel-name' },
+                _react2['default'].createElement('h2', { className: 'ui header' })
+            ),
+            _react2['default'].createElement(
+                'div',
+                { className: 'right menu' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'item here_now' },
+                    _react2['default'].createElement('i', { className: 'users icon' }),
+                    '0'
+                )
             )
         );
     }
@@ -47234,7 +47253,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../stores/ChannelStore":254,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],230:[function(require,module,exports){
+},{"../actions/ChannelActions":225,"../stores/ChannelStore":255,"classnames":4,"lodash":62,"react":219,"react-dom":65,"superagent":222}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47255,6 +47274,8 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _reactRouter = require('react-router');
+
 var _storesChannelStore = require('../stores/ChannelStore');
 
 var _storesChannelStore2 = _interopRequireDefault(_storesChannelStore);
@@ -47266,6 +47287,14 @@ var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
 var _servicesChannelService = require('../services/ChannelService');
 
 var _servicesChannelService2 = _interopRequireDefault(_servicesChannelService);
+
+var _servicesUserService = require('../services/UserService');
+
+var _servicesUserService2 = _interopRequireDefault(_servicesUserService);
+
+var _actionsUserActions = require('../actions/UserActions');
+
+var _actionsUserActions2 = _interopRequireDefault(_actionsUserActions);
 
 var _MessageItem = require('./MessageItem');
 
@@ -47282,9 +47311,15 @@ var _classnames2 = _interopRequireDefault(_classnames);
 exports['default'] = _react2['default'].createClass({
     displayName: 'ChannelItem',
 
+    mixins: [_reactRouter.History],
+
     getInitialState: function getInitialState() {
         return {
-            messages: this.props.messages
+            messages: this.props.messages,
+            preview_mode: this.props.preview_mode,
+            is_authenticated: this.props.is_authenticated,
+            jwt: this.props.jwt,
+            user: this.props.user
         };
     },
 
@@ -47313,7 +47348,10 @@ exports['default'] = _react2['default'].createClass({
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         var messages = _lodash2['default'].clone(nextProps.messages); // do a shallow copy of the instance to prevent data "too-synced"
         this.setState({
-            messages: messages
+            messages: messages,
+            preview_mode: nextProps.preview_mode,
+            is_authenticated: nextProps.is_authenticated
+
         });
     },
 
@@ -47324,11 +47362,55 @@ exports['default'] = _react2['default'].createClass({
         node.scrollTop = node.scrollHeight;
     },
 
+    handleJoin: function handleJoin() {
+        _servicesUserService2['default'].subscribe_to_channel(this.state.jwt, this.props.channel_id, this.state.user.user_id).then(function (res) {
+            _actionsUserActions2['default'].add_channel(res.body.channel);
+        })['catch'](function (err) {
+            console.log(err);
+        });
+    },
+
+    handleLogin: function handleLogin() {
+        this.history.pushState(null, '/login/');
+    },
+
     render: function render() {
         var cls = (0, _classnames2['default'])({
             active: this.props.is_active,
             channel: true
         });
+        var InputNode = _react2['default'].createElement(_MessageInput2['default'], { channel_id: this.props.channel_id, onHeightChange: this.handleHeightChange });
+        if (this.state.preview_mode) {
+            if (this.state.is_authenticated) InputNode = _react2['default'].createElement(
+                'div',
+                { className: 'preview' },
+                _react2['default'].createElement(
+                    'span',
+                    null,
+                    'You are viewing a preview of ',
+                    this.props.name
+                ),
+                _react2['default'].createElement(
+                    'button',
+                    { className: 'ui button tiny navy button', onClick: this.handleJoin },
+                    'Join this channel'
+                )
+            );else InputNode = _react2['default'].createElement(
+                'div',
+                { className: 'preview' },
+                _react2['default'].createElement(
+                    'span',
+                    null,
+                    'You are viewing a preview of ',
+                    this.props.name
+                ),
+                _react2['default'].createElement(
+                    'button',
+                    { className: 'ui button tiny navy button', onClick: this.handleLogin },
+                    'Please Login'
+                )
+            );
+        }
         return _react2['default'].createElement(
             'div',
             { className: cls },
@@ -47346,7 +47428,7 @@ exports['default'] = _react2['default'].createClass({
             _react2['default'].createElement(
                 'div',
                 { className: 'footer' },
-                _react2['default'].createElement(_MessageInput2['default'], { channel_id: this.props.channel_id, onHeightChange: this.handleHeightChange })
+                InputNode
             )
         );
     }
@@ -47354,7 +47436,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../services/ChannelService":250,"../stores/ChannelStore":254,"./MessageInput":236,"./MessageItem":237,"classnames":4,"lodash":62,"react":219,"react-dom":65}],231:[function(require,module,exports){
+},{"../actions/ChannelActions":225,"../actions/UserActions":226,"../services/ChannelService":251,"../services/UserService":252,"../stores/ChannelStore":255,"./MessageInput":237,"./MessageItem":238,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],232:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47382,24 +47464,16 @@ var _ChannelNav2 = _interopRequireDefault(_ChannelNav);
 exports['default'] = _react2['default'].createClass({
     displayName: 'ChannelList',
 
-    componentDidMount: function componentDidMount() {
-        _storesChannelStore2['default'].addChangeListener(this._onChange);
-    },
-
-    componentWillUnmount: function componentWillUnmount() {
-        _storesChannelStore2['default'].removeChangeListener(this._onChange);
-    },
-
-    _onChange: function _onChange() {
-        this.setState({
-            channels: _storesChannelStore2['default'].channels
-        });
-    },
-
     getInitialState: function getInitialState() {
         return {
-            channels: _storesChannelStore2['default'].channels
+            joinedChannels: this.props.joinedChannels
         };
+    },
+
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        this.setState({
+            joinedChannels: nextProps.joinedChannels
+        });
     },
 
     render: function render() {
@@ -47411,7 +47485,7 @@ exports['default'] = _react2['default'].createClass({
                 { className: 'ui header' },
                 'Your Stocks'
             ),
-            _lodash2['default'].map(this.state.channels, function (channel) {
+            _lodash2['default'].map(this.state.joinedChannels, function (channel) {
                 return _react2['default'].createElement(_ChannelNav2['default'], { key: channel.id, channel: channel });
             })
         );
@@ -47421,7 +47495,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":254,"./ChannelNav":232,"lodash":62,"react":219}],232:[function(require,module,exports){
+},{"../stores/ChannelStore":255,"./ChannelNav":233,"lodash":62,"react":219}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47475,7 +47549,7 @@ exports['default'] = _react2['default'].createClass({
         var cls = (0, _classnames2['default'])({
             unread: this.props.channel.unread,
             item: true,
-            active: this.history.isActive('/channels/' + this.props.channel.id + '/') || _storesChannelStore2['default'].active_channel == this.props.channel
+            active: this.history.isActive('/channels/' + this.props.channel.id + '/')
         });
 
         return _react2['default'].createElement(
@@ -47494,7 +47568,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"classnames":4,"react":219,"react-router":85}],233:[function(require,module,exports){
+},{"../services/ChannelService":251,"../stores/ChannelStore":255,"../stores/UserStore":256,"classnames":4,"react":219,"react-router":85}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47533,7 +47607,7 @@ exports['default'] = _react2['default'].createClass({
 
         FB.login(function (response) {
             _this2.checkLoginState();
-        }, { scope: 'public_profile,email,publish_actions' });
+        }, { scope: 'public_profile,email' });
     },
 
     statusChangeCallback: function statusChangeCallback(response) {
@@ -47570,7 +47644,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../services/UserService":251,"react":219}],234:[function(require,module,exports){
+},{"../actions/UserActions":226,"../services/UserService":252,"react":219}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -47694,7 +47768,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../components/SemanticInput":240,"../stores/UserStore":255,"react":219,"react-router":85}],235:[function(require,module,exports){
+},{"../components/SemanticInput":241,"../stores/UserStore":256,"react":219,"react-router":85}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48044,7 +48118,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../services/UserService":251,"../services/ValidationService":252,"../stores/UserStore":255,"./FacebookLoginButton":233,"./SemanticInput":240,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],236:[function(require,module,exports){
+},{"../actions/UserActions":226,"../mixins/FacebookOAuthMixin":249,"../services/UserService":252,"../services/ValidationService":253,"../stores/UserStore":256,"./FacebookLoginButton":234,"./SemanticInput":241,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48112,8 +48186,6 @@ exports['default'] = _react2['default'].createClass({
                         value: ''
                     });
                 });
-            } else {
-                alert('Please log in');
             }
         }
     },
@@ -48140,7 +48212,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"react":219,"react-dom":65,"react-textarea-autosize":90}],237:[function(require,module,exports){
+},{"../services/ChannelService":251,"../stores/ChannelStore":255,"../stores/UserStore":256,"react":219,"react-dom":65,"react-textarea-autosize":90}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48196,7 +48268,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"moment":63,"react":219}],238:[function(require,module,exports){
+},{"moment":63,"react":219}],239:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48520,7 +48592,7 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react":219}],239:[function(require,module,exports){
+},{"react":219}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48569,10 +48641,10 @@ exports['default'] = _react2['default'].createClass({
 
     getInitialState: function getInitialState() {
         return {
-            channels: _storesChannelStore2['default'].top_channels,
+            channels: _storesChannelStore2['default'].channels,
             next: null,
             previous: null,
-            stored_channels: _storesChannelStore2['default'].channels,
+            joinedChannels: _storesChannelStore2['default'].joinedChannels,
             is_authenticated: _storesUserStore2['default'].is_authenticated,
             user: _storesUserStore2['default'].user,
             authKey: _storesUserStore2['default'].authKey,
@@ -48599,13 +48671,12 @@ exports['default'] = _react2['default'].createClass({
     },
 
     componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-
         if (prevState.keyword != this.state.keyword) {
             if (this.state.keyword.length > 0) {
                 this.getSearchResults(this.state.keyword);
             } else {
                 this.setState({
-                    channels: _storesChannelStore2['default'].top_channels
+                    channels: _storesChannelStore2['default'].channels
                 });
             }
             var width = _reactDom2['default'].findDOMNode(this.refs.hidden_span).offsetWidth;
@@ -48634,22 +48705,34 @@ exports['default'] = _react2['default'].createClass({
     },
 
     handleJoin: function handleJoin(channel) {
-        if (this.state.is_authenticated) {
-            _servicesChannelService2['default'].subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id).then(_servicesChannelService2['default'].grant(this.state.authKey, [channel])).then(function () {
-                channel.subscribers_count += 1;
-                _servicesChannelService2['default'].join_channels([channel]);
-            })['catch'](function (err) {
-                alert('Please try again!');
-            });
+        /*
+        if(this.state.is_authenticated) {
+             ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
+            .then(ChannelService.grant(this.state.authKey, [channel]))
+            .then(() => {
+                    channel.subscribers_count += 1
+                    ChannelService.join_channels([channel])
+            })
+            .catch((err) => {
+                alert('Please try again!')
+            })
         } else {
-            _servicesChannelService2['default'].grant(this.state.authKey, [channel]).then(function () {
-                channel.subscribers_count += 1;
-                _servicesChannelService2['default'].join_channels([channel]);
-            })['catch'](function (err) {
-                alert('Please try again!');
-            });
+            ChannelService.grant(this.state.authKey, [channel])
+                .then(() => {
+                        channel.subscribers_count += 1
+                        ChannelService.join_channels([channel])
+                })
+                .catch((err) => {
+                    alert('Please try again!')
+                })
         }
+        */
     },
+
+    handleClickChannel: function handleClickChannel(channel) {
+        this.history.pushState(null, '/channels/' + channel.id + '/');
+    },
+
     handleClickButton: function handleClickButton() {
         this.history.pushState(null, '/channels/');
     },
@@ -48671,11 +48754,11 @@ exports['default'] = _react2['default'].createClass({
     _onChange: function _onChange() {
         if (!this.state.changed) {
             this.setState({
-                channels: _storesChannelStore2['default'].top_channels
+                channels: _storesChannelStore2['default'].channels
             });
         }
         this.setState({
-            stored_channel: _storesChannelStore2['default'].channels
+            joinedChannels: _storesChannelStore2['default'].joinedChannels
         });
     },
 
@@ -48715,22 +48798,13 @@ exports['default'] = _react2['default'].createClass({
                 this.state.channels.length > 0 ? _lodash2['default'].map(this.state.channels, function (channel) {
                     return _react2['default'].createElement(
                         'div',
-                        { className: 'three wide computer five wide tablet twelve wide mobile column', key: channel.id },
+                        { className: 'three wide computer five wide tablet twelve wide mobile column', key: channel.id, onClick: _this2.handleClickChannel.bind(_this2, channel) },
                         _react2['default'].createElement(
                             'div',
                             { className: 'ui segment' },
                             channel.name,
                             ' - ',
-                            channel.subscribers_count,
-                            _storesChannelStore2['default'].get_channel(channel.id) ? _react2['default'].createElement(
-                                'button',
-                                { className: 'ui disabled button' },
-                                'Joined'
-                            ) : _react2['default'].createElement(
-                                'button',
-                                { className: 'ui basic teal button', onClick: _this2.handleJoin.bind(_this2, channel) },
-                                'Join'
-                            )
+                            channel.subscribers_count
                         )
                     );
                 }) : _react2['default'].createElement(
@@ -48739,15 +48813,6 @@ exports['default'] = _react2['default'].createClass({
                     'No results found for ',
                     this.state.keyword
                 )
-            ),
-            _react2['default'].createElement(
-                'div',
-                { className: 'search-bottom ui grid aligned center' },
-                _react2['default'].createElement(
-                    'button',
-                    { className: 'ui huge button navy', onClick: this.handleClickButton },
-                    'Go to Chat'
-                )
             )
         );
     }
@@ -48755,7 +48820,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../services/ChannelService":250,"../stores/ChannelStore":254,"../stores/UserStore":255,"./SemanticInput":240,"lodash":62,"react":219,"react-dom":65,"react-router":85}],240:[function(require,module,exports){
+},{"../services/ChannelService":251,"../stores/ChannelStore":255,"../stores/UserStore":256,"./SemanticInput":241,"lodash":62,"react":219,"react-dom":65,"react-router":85}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48845,7 +48910,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"classnames":4,"react":219,"react-dom":65}],241:[function(require,module,exports){
+},{"classnames":4,"react":219,"react-dom":65}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -48925,7 +48990,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../stores/ChannelStore":254,"./ChannelList":231,"./ChannelNav":232,"classnames":4,"lodash":62,"react":219,"react-router":85}],242:[function(require,module,exports){
+},{"../stores/ChannelStore":255,"./ChannelList":232,"./ChannelNav":233,"classnames":4,"lodash":62,"react":219,"react-router":85}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49294,7 +49359,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../mixins/FacebookOAuthMixin":248,"../services/UserService":251,"../services/ValidationService":252,"../stores/UserStore":255,"./FacebookLoginButton":233,"./SemanticInput":240,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],243:[function(require,module,exports){
+},{"../actions/UserActions":226,"../mixins/FacebookOAuthMixin":249,"../services/UserService":252,"../services/ValidationService":253,"../stores/UserStore":256,"./FacebookLoginButton":234,"./SemanticInput":241,"classnames":4,"lodash":62,"react":219,"react-dom":65,"react-router":85}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49315,7 +49380,7 @@ exports['default'] = (0, _keymirror2['default'])({
     RECV_MESSAGE: null,
     RECV_PRESENCE: null,
     RECV_HISTORY: null,
-    GOT_TOP_CHANNELS: null,
+    GOT_CHANNELS: null,
     GOT_HERE_NOW: null,
 
     API_URL: 'http://localhost:8000/api/channels'
@@ -49323,7 +49388,7 @@ exports['default'] = (0, _keymirror2['default'])({
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],244:[function(require,module,exports){
+},{"keymirror":61}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49341,12 +49406,13 @@ exports['default'] = (0, _keymirror2['default'])({
     LOGOUT: null,
     CREATE_GUEST: null,
     AUTHENTICATED: null,
-    GOT_PROFILE: null
+    GOT_PROFILE: null,
+    ADD_CHANNEL: null
 });
 module.exports = exports['default'];
 
 
-},{"keymirror":61}],245:[function(require,module,exports){
+},{"keymirror":61}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49359,7 +49425,7 @@ exports['default'] = new _flux.Dispatcher();
 module.exports = exports['default'];
 
 
-},{"flux":36}],246:[function(require,module,exports){
+},{"flux":36}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49376,7 +49442,7 @@ exports['default'] = (0, _historyLibCreateBrowserHistory2['default'])();
 module.exports = exports['default'];
 
 
-},{"history/lib/createBrowserHistory":44}],247:[function(require,module,exports){
+},{"history/lib/createBrowserHistory":44}],248:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -49394,6 +49460,10 @@ var _history = require('./history');
 var _history2 = _interopRequireDefault(_history);
 
 var _reactRouter = require('react-router');
+
+var _RouterContainer = require('./RouterContainer');
+
+var _RouterContainer2 = _interopRequireDefault(_RouterContainer);
 
 var _componentsApp = require('./components/App');
 
@@ -49438,7 +49508,7 @@ var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
 var jwt = localStorage.getItem('jwt');
 if (jwt) _actionsUserActions2['default'].login(jwt);else _actionsUserActions2['default'].create_guest();
 
-_reactDom2['default'].render(_react2['default'].createElement(
+var router = _react2['default'].createElement(
     _reactRouter.Router,
     { history: _history2['default'] },
     _react2['default'].createElement(
@@ -49455,10 +49525,14 @@ _reactDom2['default'].render(_react2['default'].createElement(
         _react2['default'].createElement(_reactRouter.Route, { name: 'signup', path: 'signup/', component: _componentsSignup2['default'] }),
         _react2['default'].createElement(_reactRouter.Route, { name: 'privacy', path: 'privacy/', component: _componentsPrivacy2['default'] })
     )
-), document.getElementById('app'));
+);
+
+_RouterContainer2['default'].set(router);
+
+_reactDom2['default'].render(router, document.getElementById('app'));
 
 
-},{"./actions/ChannelActions":224,"./actions/UserActions":225,"./components/App":226,"./components/Channel":228,"./components/Index":234,"./components/Login":235,"./components/Privacy":238,"./components/Search":239,"./components/Signup":242,"./history":246,"./services/UserService":251,"react":219,"react-dom":65,"react-router":85}],248:[function(require,module,exports){
+},{"./RouterContainer":224,"./actions/ChannelActions":225,"./actions/UserActions":226,"./components/App":227,"./components/Channel":229,"./components/Index":235,"./components/Login":236,"./components/Privacy":239,"./components/Search":240,"./components/Signup":243,"./history":247,"./services/UserService":252,"react":219,"react-dom":65,"react-router":85}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49494,7 +49568,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{}],249:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49525,7 +49599,7 @@ exports["default"] = {
 module.exports = exports["default"];
 
 
-},{}],250:[function(require,module,exports){
+},{}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49571,10 +49645,6 @@ exports['default'] = {
         return _superagentBluebirdPromise2['default'].post(Urls['api-grant']()).send({ 'authKey': token }).send({ 'channels': _lodash2['default'].pluck(channels, 'id') }).promise();
     },
 
-    subscribe_to_channel: function subscribe_to_channel(token, channel_id, user_id) {
-        return _superagentBluebirdPromise2['default'].post(Urls['subscribers-list']()).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).send({ channel: channel_id }).send({ user: user_id }).promise();
-    },
-
     get_subscriber_id: function get_subscriber_id(channel_id, user_id) {
         return _superagentBluebirdPromise2['default'].get(Urls['subscribers-list']()).query({ channel__id: channel_id }).query({ user__id: user_id }).promise();
     },
@@ -49600,8 +49670,10 @@ exports['default'] = {
     },
 
     join_channels: function join_channels(channels) {
+        var _this = this;
+
         channels = _lodash2['default'].reject(channels, function (channel) {
-            return _storesChannelStore2['default'].get_channel(channel.id) != undefined;
+            return _storesChannelStore2['default'].has_joinedChannel(channel.id);
         });
         if (channels.length > 0) {
             pubnub.subscribe({
@@ -49610,7 +49682,10 @@ exports['default'] = {
                     _actionsChannelActions2['default'].recv_new_message(msg, ev, ch);
                 },
                 error: function error(_error) {
-                    alert('error join channel, please try again!');
+                    if (_error.status == 403) {
+                        console.log('403');
+                        _this.grant(_storesChannelStore2['default'].authKey, channels);
+                    }
                 },
                 presence: function presence(p, ev, ch) {
                     _actionsChannelActions2['default'].recv_presence(p, ev, ch);
@@ -49624,7 +49699,7 @@ exports['default'] = {
 
     leave_channels: function leave_channels(channels) {
         pubnub.unsubscribe({
-            channel: channels
+            channel: _lodash2['default'].pluck(channels, 'id')
         });
         _actionsChannelActions2['default'].leave(channels);
     },
@@ -49652,7 +49727,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../actions/ChannelActions":224,"../constants/ChannelConstants":243,"../stores/ChannelStore":254,"lodash":62,"superagent-bluebird-promise":221}],251:[function(require,module,exports){
+},{"../actions/ChannelActions":225,"../constants/ChannelConstants":244,"../stores/ChannelStore":255,"lodash":62,"superagent-bluebird-promise":221}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49712,19 +49787,24 @@ exports['default'] = {
     },
 
     logout: function logout() {
-        _servicesChannelService2['default'].leave_channels(_storesChannelStore2['default'].channels);
+        _servicesChannelService2['default'].leave_channels(_storesChannelStore2['default'].joinedChannels);
         _actionsUserActions2['default'].logout();
+        this.create_guest();
     },
 
     create_guest: function create_guest() {
         _actionsUserActions2['default'].create_guest();
+    },
+
+    subscribe_to_channel: function subscribe_to_channel(token, channel_id, user_id) {
+        return _superagentBluebirdPromise2['default'].post(Urls['subscribers-list']()).set('Content-Type', 'application/json').set('Authorization', 'JWT ' + token).send({ channel: channel_id }).send({ user: user_id }).promise();
     }
 
 };
 module.exports = exports['default'];
 
 
-},{"../actions/UserActions":225,"../constants/UserConstants":244,"../services/ChannelService":250,"../stores/ChannelStore":254,"lodash":62,"superagent-bluebird-promise":221}],252:[function(require,module,exports){
+},{"../actions/UserActions":226,"../constants/UserConstants":245,"../services/ChannelService":251,"../stores/ChannelStore":255,"lodash":62,"superagent-bluebird-promise":221}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49766,7 +49846,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"lodash":62,"superagent-bluebird-promise":221}],253:[function(require,module,exports){
+},{"lodash":62,"superagent-bluebird-promise":221}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49832,7 +49912,7 @@ exports['default'] = BaseStore;
 module.exports = exports['default'];
 
 
-},{"../dispatchers/AppDispatcher":245,"events":3}],254:[function(require,module,exports){
+},{"../dispatchers/AppDispatcher":246,"events":3}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -49873,8 +49953,8 @@ var ChannelStore = (function (_BaseStore) {
         this.subscribe(function () {
             return _this._registerToActions.bind(_this);
         });
+        this._joinedChannels = [];
         this._channels = [];
-        this._top_channels = [];
         this._active_channel = {};
     }
 
@@ -49885,37 +49965,32 @@ var ChannelStore = (function (_BaseStore) {
 
             switch (action.actionType) {
                 case _constantsChannelConstants2['default'].CHANNEL_JOIN:
-                    var changed = false;
                     _lodash2['default'].forEach(action.channels, function (channel) {
                         // for each channel prepare runtime properties such as occupancies and messages
-                        if (!_this2.get_channel(channel.id)) {
-                            var channel = _this2.extend_channel(channel);
-                            _this2._channels = _lodash2['default'].union(_this2._channels.concat(channel)).sort();
-                            changed = true;
-                        }
+                        var channel = _this2.extend_joinedChannel(channel);
+                        _this2._joinedChannels = _lodash2['default'].union(_this2._joinedChannels.concat(channel)).sort();
                     });
-                    if (changed) this.emitChange();
+                    this.emitChange();
                     break;
 
                 case _constantsChannelConstants2['default'].CHANNEL_LEAVE:
-                    this._channels = _lodash2['default'].filter(this._channels, function (channel) {
+                    this._joinedChannels = _lodash2['default'].filter(this._joinedChannels, function (channel) {
                         return !_lodash2['default'].findWhere(action.channels, { id: channel.id });
                     });
-                    if (this._channels.length == 0) this._active_channel = {};
                     this.emitChange();
                     break;
 
                 case _constantsChannelConstants2['default'].RECV_HISTORY:
                     var historyList = action.history[0];
                     if (historyList.length > 0) {
-                        var channel = this.get_channel(action.channel_id);
+                        var channel = this.get_joinedChannel(action.channel_id);
                         channel.messages = action.history[0].concat(channel.messages);
                         this.emitChange();
                     }
                     break;
 
                 case _constantsChannelConstants2['default'].RECV_MESSAGE:
-                    var channel = this.get_channel(action.channel_id);
+                    var channel = this.get_joinedChannel(action.channel_id);
                     channel.messages.push(action.msg);
                     if (channel.id != this._active_channel.id) channel.unread = true;
                     this.emitChange();
@@ -49924,7 +49999,7 @@ var ChannelStore = (function (_BaseStore) {
                 case _constantsChannelConstants2['default'].RECV_PRESENCE:
                     var channel_id = action.channel_id;
                     var presence = action.presence;
-                    var channel = this.get_channel(channel_id);
+                    var channel = this.get_joinedChannel(channel_id);
 
                     channel.occupancy = presence.occupancy;
                     if (presence.action == 'join') channel.users = _lodash2['default'].union(channel.users.concat(presence.uuid)).sort();
@@ -49932,13 +50007,13 @@ var ChannelStore = (function (_BaseStore) {
                     this.emitChange();
                     break;
 
-                case _constantsChannelConstants2['default'].GOT_TOP_CHANNELS:
-                    this._top_channels = action.channels;
+                case _constantsChannelConstants2['default'].GOT_CHANNELS:
+                    this._channels = this._channels.concat(action.channels);
                     this.emitChange();
                     break;
 
                 case _constantsChannelConstants2['default'].CHANNEL_ACTIVE:
-                    this._active_channel = this.get_channel(action.channel_id);
+                    this._active_channel = this.get_joinedChannel(action.channel_id);
                     this._active_channel.unread = false;
                     this.emitChange();
                     break;
@@ -49948,10 +50023,10 @@ var ChannelStore = (function (_BaseStore) {
                     _lodash2['default'].forEach(action.Obj.channels, function (value, key) {
                         if (!changed) {
                             // skip this if change is already true, an CHANGE event will fire anyway
-                            changed = !_lodash2['default'].isEqual(_this2.get_channel(key)['occupancy'], value['occupancy']) || !_lodash2['default'].isEqual(_this2.get_channel(key)['users'], value['uuids'].sort());
+                            changed = !_lodash2['default'].isEqual(_this2.get_joinedChannel(key)['occupancy'], value['occupancy']) || !_lodash2['default'].isEqual(_this2.get_joinedChannel(key)['users'], value['uuids'].sort());
                         }
-                        _this2.get_channel(key)['occupancy'] = value['occupancy'];
-                        _this2.get_channel(key)['users'] = value['uuids'].sort();
+                        _this2.get_joinedChannel(key)['occupancy'] = value['occupancy'];
+                        _this2.get_joinedChannel(key)['users'] = value['uuids'].sort();
                     });
                     if (changed) this.emitChange();
                     break;
@@ -49961,29 +50036,29 @@ var ChannelStore = (function (_BaseStore) {
             }
         }
     }, {
-        key: 'extend_channel',
-        value: function extend_channel(channelObj) {
-            return _lodash2['default'].merge({}, channelObj, { 'occupancy': 0, 'users': [], 'unread': false, 'messages': [] });
+        key: 'extend_joinedChannel',
+        value: function extend_joinedChannel(channelObj) {
+            return _lodash2['default'].merge({}, channelObj, { occupancy: 0, users: [], unread: false, messages: [], preview: true });
         }
     }, {
-        key: 'get_channel',
-        value: function get_channel(id) {
-            return _lodash2['default'].findWhere(this._channels, { 'id': id });
+        key: 'get_joinedChannel',
+        value: function get_joinedChannel(channel_id) {
+            return _lodash2['default'].findWhere(this._joinedChannels, { id: channel_id });
+        }
+    }, {
+        key: 'has_joinedChannel',
+        value: function has_joinedChannel(channel_id) {
+            return this.get_joinedChannel(channel_id) != undefined;
+        }
+    }, {
+        key: 'joinedChannels',
+        get: function get() {
+            return this._joinedChannels;
         }
     }, {
         key: 'channels',
         get: function get() {
             return this._channels;
-        }
-    }, {
-        key: 'top_channels',
-        get: function get() {
-            return this._top_channels;
-        }
-    }, {
-        key: 'active_channel',
-        get: function get() {
-            return this._active_channel;
         }
     }]);
 
@@ -49994,7 +50069,7 @@ exports['default'] = new ChannelStore();
 module.exports = exports['default'];
 
 
-},{"../constants/ChannelConstants":243,"./BaseStore":253,"lodash":62}],255:[function(require,module,exports){
+},{"../constants/ChannelConstants":244,"./BaseStore":254,"lodash":62}],256:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -50070,8 +50145,7 @@ var UserStore = (function (_BaseStore) {
                     var username = 'Guest' + Math.floor(Math.random() * 9999999 + 1);
                     this._user = {
                         username: username,
-                        uuid: username,
-                        channels: []
+                        uuid: username
                     };
                     this._user = this.extend_user(this._user);
                     this._isGuest = true;
@@ -50089,6 +50163,12 @@ var UserStore = (function (_BaseStore) {
                     this._user.profile.is_verified = action.profileObj.profile.is_verified;
                     this._user.profile.follows = action.profileObj.profile.follows;
                     if (action.profileObj.profile.avatar) this._user.profile.avatar = action.profileObj.profile.avatar;
+                    this._user.channels = action.profileObj.channels;
+                    this.emitChange();
+                    break;
+
+                case _constantsUserConstants2['default'].ADD_CHANNEL:
+                    this._user.channels = this._user.channels.concat(action.channel);
                     this.emitChange();
                     break;
 
@@ -50105,8 +50185,19 @@ var UserStore = (function (_BaseStore) {
                     is_verified: false,
                     avatar: AVATAR_URL,
                     follows: []
-                }
+                },
+                channels: []
             });
+        }
+    }, {
+        key: 'get_channel',
+        value: function get_channel(channel_id) {
+            return _lodash2['default'].findWhere(this._user.channels, { id: channel_id });
+        }
+    }, {
+        key: 'has_channel',
+        value: function has_channel(channel_id) {
+            return this.get_channel(channel_id) != undefined;
         }
     }, {
         key: 'user',
@@ -50137,4 +50228,4 @@ exports['default'] = new UserStore();
 module.exports = exports['default'];
 
 
-},{"../constants/UserConstants":244,"./BaseStore":253,"jwt-decode":59,"lodash":62}]},{},[247]);
+},{"../constants/UserConstants":245,"./BaseStore":254,"jwt-decode":59,"lodash":62}]},{},[248]);

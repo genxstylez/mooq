@@ -16,10 +16,10 @@ export default React.createClass({
 
     getInitialState() {
         return {
-            channels: ChannelStore.top_channels,
+            channels: ChannelStore.channels,
             next: null,
             previous: null,
-            stored_channels: ChannelStore.channels,
+            joinedChannels: ChannelStore.joinedChannels,
             is_authenticated: UserStore.is_authenticated,
             user: UserStore.user,
             authKey: UserStore.authKey,
@@ -47,13 +47,12 @@ export default React.createClass({
     },
 
     componentDidUpdate(prevProps, prevState) {
-
         if(prevState.keyword != this.state.keyword) {
             if(this.state.keyword.length > 0) {
                 this.getSearchResults(this.state.keyword)
             } else {
                 this.setState({
-                    channels: ChannelStore.top_channels,
+                    channels: ChannelStore.channels,
                 })
             }
             let width = ReactDOM.findDOMNode(this.refs.hidden_span).offsetWidth
@@ -82,6 +81,7 @@ export default React.createClass({
     },
 
     handleJoin(channel) {
+        /*
         if(this.state.is_authenticated) {
              ChannelService.subscribe_to_channel(this.state.jwt, channel.id, this.state.user.user_id)
             .then(ChannelService.grant(this.state.authKey, [channel]))
@@ -102,7 +102,13 @@ export default React.createClass({
                     alert('Please try again!')
                 })
         }
+        */
     },
+
+    handleClickChannel(channel) {
+        this.history.pushState(null, `/channels/${channel.id}/`)
+    },
+
     handleClickButton() {
         this.history.pushState(null, '/channels/')
     },
@@ -124,11 +130,11 @@ export default React.createClass({
     _onChange() {
         if(!this.state.changed) {
             this.setState({
-                channels: ChannelStore.top_channels
+                channels: ChannelStore.channels
             })
         }
         this.setState({
-            stored_channel: ChannelStore.channels
+            joinedChannels: ChannelStore.joinedChannels
         })
     },
 
@@ -149,23 +155,15 @@ export default React.createClass({
                 {this.state.channels.length > 0 ?
                     _.map(this.state.channels, (channel) => {
                         return (
-                            <div className="three wide computer five wide tablet twelve wide mobile column" key={channel.id}>
+                            <div className="three wide computer five wide tablet twelve wide mobile column" key={channel.id} onClick={this.handleClickChannel.bind(this, channel)}>
                                 <div className="ui segment">
                                     {channel.name} - {channel.subscribers_count}
-                                    {ChannelStore.get_channel(channel.id) ?
-                                        <button className="ui disabled button">Joined</button>
-                                        :
-                                        <button className="ui basic teal button" onClick={this.handleJoin.bind(this, channel)}>Join</button>
-                                    }
                                 </div>
                             </div>
                         )
                     })
                     : <div className="no-results">No results found for {this.state.keyword}</div>
                 }
-                </div>
-                <div className="search-bottom ui grid aligned center">
-                    <button className="ui huge button navy" onClick={this.handleClickButton}>Go to Chat</button>
                 </div>
             </div>
         )

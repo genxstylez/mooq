@@ -12,7 +12,7 @@ export default React.createClass({
     handleClick() {
         FB.login((response) => {
             this.checkLoginState();
-        }, {scope: 'public_profile,email,publish_actions'});
+        }, {scope: 'public_profile,email'});
     },
 
     statusChangeCallback(response) {

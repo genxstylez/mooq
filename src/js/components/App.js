@@ -27,7 +27,6 @@ export default React.createClass({
         this.initialise_PubNub()
         this.get_top_channels()
         if(this.state.is_authenticated) {
-            this.handleAuthenticatedChange()
             this.get_profile(this.state.user.user_id)
         }
     },
@@ -47,7 +46,6 @@ export default React.createClass({
     componentDidUpdate(prevProps, prevState) {
         if(prevState.is_authenticated != this.state.is_authenticated) {
             if(this.state.is_authenticated) {
-                this.handleAuthenticatedChange()
                 this.get_profile(this.state.user.user_id)
             }
         }
@@ -78,30 +76,14 @@ export default React.createClass({
 
     get_top_channels() {
         // Get top 10 channels
-        console.log('get top chjannels here')
         ChannelService.get_channels(0, 50)
             .then((res)=> {
-                ChannelActions.got_top_channels(res.body.results)
+                ChannelActions.got_channels(res.body.results)
             })
             .catch((err) => {
+                console.log(err)
                 alert('App: get top channels: Something went wrong')
             })
-    },
-
-    handleAuthenticatedChange() {
-        // Get channel list and join them
-        ChannelService.get_subscribed_channels(this.state.user.user_id)
-        .then((res) => {
-            let channels = res.body
-            if (channels.length > 0) {
-                ChannelService.grant(this.state.authKey, channels)
-                .then(() => {
-                    ChannelService.join_channels(channels)
-                })
-            } else {
-                this.history.replaceState(null, '/search/')
-            }
-        })
     },
 
     _onChange() {

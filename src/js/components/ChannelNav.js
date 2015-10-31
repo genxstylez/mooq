@@ -26,7 +26,7 @@ export default React.createClass({
         let cls = classnames({
             unread: this.props.channel.unread,
             item: true,
-            active: this.history.isActive(`/channels/${this.props.channel.id}/`) || ChannelStore.active_channel == this.props.channel
+            active: this.history.isActive(`/channels/${this.props.channel.id}/`)
         })
 
         return (

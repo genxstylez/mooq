@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import history from './history'
 import { Router, Route, IndexRoute } from 'react-router'
+import RouterContainer from './RouterContainer'
 
 import App from './components/App'
 import Index from './components/Index'
@@ -21,7 +22,7 @@ if (jwt)
 else
     UserActions.create_guest()
 
-ReactDOM.render((
+let router = (
     <Router history={history}>
         <Route path="/" component={App}>
             <IndexRoute component={Index} />
@@ -33,7 +34,9 @@ ReactDOM.render((
             <Route name="signup" path="signup/" component={Signup} />
             <Route name="privacy" path="privacy/" component={Privacy} />
         </Route>
-
     </Router>
+)
 
-), document.getElementById('app'));
+RouterContainer.set(router)
+
+ReactDOM.render((router), document.getElementById('app'));

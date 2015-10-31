@@ -38,7 +38,6 @@ class UserStore extends BaseStore {
                 this._user = {
                     username: username,
                     uuid: username,
-                    channels: []
                 }
                 this._user = this.extend_user(this._user)
                 this._isGuest = true
@@ -57,6 +56,12 @@ class UserStore extends BaseStore {
                 this._user.profile.follows = action.profileObj.profile.follows
                 if(action.profileObj.profile.avatar)
                 this._user.profile.avatar = action.profileObj.profile.avatar
+                this._user.channels = action.profileObj.channels
+                this.emitChange()
+                break
+
+            case UserConstants.ADD_CHANNEL:
+                this._user.channels = this._user.channels.concat(action.channel)
                 this.emitChange()
                 break
 
@@ -73,8 +78,17 @@ class UserStore extends BaseStore {
                 is_verified: false,
                 avatar: AVATAR_URL,
                 follows: []
-            }
+            },
+            channels: []
         })
+    }
+
+    get_channel(channel_id) {
+        return _.findWhere(this._user.channels, {id: channel_id})
+    }
+
+    has_channel(channel_id) {
+        return this.get_channel(channel_id) != undefined
     }
 
     get user() {

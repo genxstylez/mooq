@@ -2,9 +2,11 @@ import _ from 'lodash'
 import history from '../history'
 import AppDispatcher from '../dispatchers/AppDispatcher'
 import UserConstants from '../constants/UserConstants'
+import RouterContainer from '../RouterContainer'
 
 export default {
     login(jwt) {
+
         var savedJwt = localStorage.getItem('jwt')
 
         AppDispatcher.dispatch({
@@ -14,6 +16,7 @@ export default {
 
         if (savedJwt !== jwt) {
             // TODO: handle next path to transition to
+            let nextPath = RouterContainer.get()
             history.pushState(null, '/channels/')
             localStorage.setItem('jwt', jwt)
         }
@@ -34,7 +37,6 @@ export default {
         })
     },
 
-
     logout() {
         history.replaceState(null, '/')
         localStorage.removeItem('jwt');
@@ -46,17 +48,20 @@ export default {
     create_guest() {
         AppDispatcher.dispatch({
             actionType: UserConstants.CREATE_GUEST,
-        });
+        })
     },
-
-    /*
-    @param  {object}  User object
-    */
 
     authenticated(user) {
         AppDispatcher.dispatch({
             actionType: UserConstants.AUTHENTICATED,
             user: user
-        });
+        })
+    },
+
+    add_channel(channel) {
+        AppDispatcher.dispatch({
+            actionType: UserConstants.ADD_CHANNEL,
+            channel: channel
+        })
     }
 }

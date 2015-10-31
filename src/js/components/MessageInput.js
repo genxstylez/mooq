@@ -39,8 +39,6 @@ export default React.createClass({
                             value: ''
                         })
                     })
-            } else {
-                alert('Please log in')
             }
         }
     },

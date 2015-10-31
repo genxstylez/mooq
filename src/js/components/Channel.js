@@ -22,13 +22,12 @@ export default React.createClass({
 
     getInitialState() {
         return {
+            joinedChannels: ChannelStore.joinedChannels,
             channels: ChannelStore.channels,
-            active_channel: ChannelStore.active_channel,
             user: UserStore.user,
             authKey: UserStore.authKey,
             jwt: UserStore.jwt,
             is_authenticated: UserStore.is_authenticated,
-            top_5_channels: _.slice(ChannelStore.top_channels, 0, 5)
         }
     },
 
@@ -47,71 +46,56 @@ export default React.createClass({
     },
 
     componentWillMount() {
-        if (!this.state.is_authenticated) {
-            if (this.props.params.channelId) {
-                this.handleGuestSession(this.props.params.channelId)
-            } else {
-                if(this.state.channels.length == 0) {
-                    // Happens to guest session who doesn't provide on channelId
-                    this.history.pushState(null, '/search/')
-                } else {
-                    ChannelActions.mark_as_active(this.state.channels[0].id)
-                }
-            }
-        }
+        if(this.state.is_authenticated)
+            this._joinSubscribedChannels()
+        if (this.props.params.channelId)
+            this._joinChannel(this.props.params.channelId)
     },
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.params.channelId != this.props.params.channelId) {
-            setTimeout(() => {
-                ChannelActions.mark_as_active(nextProps.params.channelId)
-            }, 1)
             $(ReactDOM.findDOMNode(this.refs.sidebar)).sidebar('hide')
-        }
-    },
-
-    componentDidUpdate(nextProps, nextState) {
-        if(nextState.channels.length != this.state.channels.length ||
-            nextState.authKey != this.state.authKey) {
-            // if auth key changed, ask for permissions
-            // if channel changed handle it.
-            ChannelService.grant(nextState.authKey, nextState.channels).done()
-
-            if(nextState.channels.length != this.state.channels.length) {
-                this.handleChannelChanged()
+            if(!ChannelStore.has_joinedChannel(nextProps.params.channelId)) {
+                this._joinChannel(nextProps.params.channelId)
             }
         }
     },
 
-    handleChannelChanged() {
-        if(this.state.channels.length > 0) {
-            if (this.props.params.channelId && ChannelStore.get_channel(this.props.params.channelId)) {
-                setTimeout(() => {
-                    ChannelActions.mark_as_active(this.props.params.channelId)
-                }, 1)
-            } else {
-                // if no channel Id is provided, go to the first channel of the list
-                // or when a leave channel event occurs
-                this.history.replaceState(null, '/channels/' + this.state.channels[0].id + '/')
-            }
-        } else {
-            this.history.pushState(null, '/search/')
-        }
-    },
-
-    handleGuestSession(id) {
-        ChannelService.get_channel_info(id)
-            .then((res) => {
-                // res.body is a channel object
-                let channel = res.body
-                ChannelService.grant(this.state.authKey, [channel])
-                .then(() => {
-                    ChannelService.join_channels([channel])
-                    ChannelActions.mark_as_active(channel.id)
-                })
-            }, (err) => {
-                alert('Something went wrong');
+    _joinSubscribedChannels() {
+        // Get channel list and join them
+        let channels = this.state.user.channels
+        if (channels.length > 0) {
+            ChannelService.grant(this.state.authKey, channels)
+            .then(() => {
+                ChannelService.join_channels(channels)
+                //this.history.pushState(null, `/channels/${channels[0].id}/`)
             })
+        }
+    },
+
+    _joinChannel(id) {
+        let channelObj = _.findWhere(this.state.channels, {id: id})
+        if(channelObj == undefined) {
+            // if this we don't have the details for this id, get it from server
+            ChannelService.get_channel_info(id)
+                .then((res) => {
+                    // res.body is a channel object
+                    let channel = res.body
+                    ChannelService.grant(this.state.authKey, [channel])
+                    .then(() => {
+                        ChannelService.join_channels([channel])
+                    })
+                }, (err) => {
+                    console.log('Something went wrong');
+                })
+        } else {
+            ChannelService.grant(this.state.authKey, [channelObj])
+                .then(() => {
+                    ChannelService.join_channels([channelObj])
+                }, (err) => {
+                    console.log('Something went wrong');
+                })
+        }
     },
 
     _onUserChange() {
@@ -120,13 +104,14 @@ export default React.createClass({
             authKey: UserStore.authKey,
             is_authenticated: UserStore.is_authenticated
         })
+        if(UserStore.is_authenticated)
+            this._joinSubscribedChannels()
     },
 
     _onChange() {
         this.setState({
-            active_channel: ChannelStore.active_channel,
-            channels: ChannelStore.channels,
-            top_5_channels: _.slice(ChannelStore.top_channels, 0, 5)
+            joinedChannels: ChannelStore.joinedChannels,
+            channels: ChannelStore.channels
         })
     },
 
@@ -139,14 +124,14 @@ export default React.createClass({
                     </div>
                     <div className="ui list top-list">
                         <h5 className="ui header">Top Stocks</h5>
-                        {_.map(this.state.top_5_channels, (channel) => {
+                        {_.map(_.slice(this.state.channels, 0, 5), (channel) => {
                             return (<ChannelNav key={channel.id} channel={channel} />)
                         })}
                     </div>
                      <div className="item search-link">
                         <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
                     </div>
-                    <ChannelList />
+                    <ChannelList joinedChannels={this.state.joinedChannels} />
                     <Avatar is_authenticated={this.state.is_authenticated} avatar={this.state.user.profile.avatar} username={this.state.user.username} />
                 </div>
                 <div className="full height pusher">
@@ -158,24 +143,29 @@ export default React.createClass({
 
                             <div className="ui list top-list">
                                 <h5 className="ui header">Top Stocks</h5>
-                                {_.map(this.state.top_5_channels, (channel) => {
+                                {_.map(_.slice(this.state.channels, 0, 5), (channel) => {
                                     return (<ChannelNav key={channel.id} channel={channel} />)
                                 })}
                                 <div className="item search-link">
                                     <Link to="/search/" style={{marginLeft: '-3px'}}><i className="search icon" />More Stocks</Link>
                                 </div>
                             </div>
-                            <ChannelList />
+                            <ChannelList joinedChannels={this.state.joinedChannels} />
                         </div>
                         <Avatar is_authenticated={this.state.is_authenticated} avatar={this.state.user.profile.avatar}  username={this.state.user.username} />
                     </div>
                     <div id="messages-container">
-                        <ChannelHeader channel={this.state.active_channel} />
-                        {_.map(this.state.channels, (channel) => {
+                        <ChannelHeader channel_id={this.props.params.channelId} />
+                        {_.map(this.state.joinedChannels, (channel) => {
                         return (<ChannelItem key={channel.id}
                             channel_id={channel.id}
+                            name={channel.name}
                             messages={channel.messages}
-                            is_active={this.state.active_channel.id == channel.id} />);
+                            is_authenticated={this.state.is_authenticated}
+                            preview_mode={!UserStore.has_channel(channel.id)}
+                            jwt={this.state.jwt}
+                            user={this.state.user}
+                            is_active={this.props.params.channelId == channel.id} />);
                         })}
                     </div>
                 </div>

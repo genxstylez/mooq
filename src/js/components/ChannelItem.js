@@ -1,18 +1,27 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Link, History } from 'react-router'
 import ChannelStore from '../stores/ChannelStore'
 import ChannelActions from '../actions/ChannelActions'
 import ChannelService from '../services/ChannelService'
+import UserService from '../services/UserService'
+import UserActions from '../actions/UserActions'
 import MessageItem from './MessageItem'
 import MessageInput from './MessageInput'
 import classnames from 'classnames'
 
 
 export default React.createClass({
+    mixins: [History],
+
     getInitialState() {
         return {
-            messages: this.props.messages
+            messages: this.props.messages,
+            preview_mode: this.props.preview_mode,
+            is_authenticated: this.props.is_authenticated,
+            jwt: this.props.jwt,
+            user: this.props.user
         }
     },
 
@@ -41,7 +50,10 @@ export default React.createClass({
     componentWillReceiveProps(nextProps) {
         let messages = _.clone(nextProps.messages) // do a shallow copy of the instance to prevent data "too-synced"
         this.setState({
-            messages: messages
+            messages: messages,
+            preview_mode: nextProps.preview_mode,
+            is_authenticated: nextProps.is_authenticated
+
         })
     },
 
@@ -52,11 +64,38 @@ export default React.createClass({
         node.scrollTop = node.scrollHeight;
     },
 
+    handleJoin() {
+        UserService.subscribe_to_channel(this.state.jwt, this.props.channel_id, this.state.user.user_id)
+            .then((res) => {
+                UserActions.add_channel(res.body.channel)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    },
+
+    handleLogin() {
+        this.history.pushState(null, '/login/')
+    },
+
     render() {
         var cls = classnames({
             active: this.props.is_active,
             channel: true
         })
+        let InputNode = <MessageInput channel_id={this.props.channel_id} onHeightChange={this.handleHeightChange} />
+        if(this.state.preview_mode) {
+            if(this.state.is_authenticated)
+                InputNode = <div className="preview">
+                        <span>You are viewing a preview of {this.props.name}</span>
+                        <button className="ui button tiny navy button" onClick={this.handleJoin}>Join this channel</button>
+                    </div>
+            else
+                InputNode = <div className="preview">
+                        <span>You are viewing a preview of {this.props.name}</span>
+                        <button className="ui button tiny navy button" onClick={this.handleLogin}>Please Login</button>
+                    </div>
+        }
         return (
             <div className={cls}>
                 <div className="messages" ref="messages">
@@ -69,7 +108,7 @@ export default React.createClass({
                     </div>
                 </div>
                  <div className="footer">
-                    <MessageInput channel_id={this.props.channel_id} onHeightChange={this.handleHeightChange} />
+                    {InputNode}
                 </div>
             </div>
 

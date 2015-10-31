@@ -11,15 +11,14 @@ import request from 'superagent';
 export default React.createClass({
     getInitialState() {
         return {
-            active_channel: this.props.channel
+            channel: ChannelStore.get_joinedChannel(this.props.channel_id)
         }
     },
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.channel != this.state.channel)
-            this.setState({
-                active_channel: nextProps.channel
-            })
+        this.setState({
+            channel: ChannelStore.get_joinedChannel(nextProps.channel_id)
+        })
     },
 
     handleHereNow() {
@@ -28,43 +27,57 @@ export default React.createClass({
     },
 
     render() {
-        return (
-            <div id="header">
-                <div className="ui dimmer" ref="dimmer">
-                    <div className="content">
-                        <div className="center">
-                            <div className="ui horizontal inverted list">
-                                {_.map(this.state.active_channel.users, (username) => {
-                                    return (
-                                        <div key={username} className="item">
-                                            <div className="content">
-                                                <div className="header">{username}</div>
+        if (this.state.channel != undefined)
+            return (
+                <div id="header">
+                    <div className="ui dimmer" ref="dimmer">
+                        <div className="content">
+                            <div className="center">
+                                <div className="ui horizontal inverted list">
+                                    {_.map(this.state.channel.users, (username) => {
+                                        return (
+                                            <div key={username} className="item">
+                                                <div className="content">
+                                                    <div className="header">{username}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="ui top fixed menu channel-header">
+                        <div className="icon item mobile-menu">
+                            <i className="content icon"></i>
+                        </div>
+                        <div className="item channel-name">
+                            <h2 className="ui header">{this.state.channel.name}</h2>
+                        </div>
+                        <div className="right menu">
+                            <div className="item here_now" onClick={this.handleHereNow}>
+                                <i className="users icon"></i>{this.state.channel.occupancy}
                             </div>
                         </div>
                     </div>
                 </div>
+            )
+        else
+            return (
                 <div className="ui top fixed menu channel-header">
                     <div className="icon item mobile-menu">
                         <i className="content icon"></i>
                     </div>
                     <div className="item channel-name">
-                        <h2 className="ui header">{this.state.active_channel.name}</h2>
+                        <h2 className="ui header"></h2>
                     </div>
-                    {this.state.active_channel != '' ?
                     <div className="right menu">
-                        <div className="item here_now" onClick={this.handleHereNow}>
-                            <i className="users icon"></i>{this.state.active_channel.occupancy || 0}
+                        <div className="item here_now">
+                            <i className="users icon"></i>0
                         </div>
                     </div>
-                    : <span />
-                    }
                 </div>
-            </div>
-        );
+                )
     }
 });
 

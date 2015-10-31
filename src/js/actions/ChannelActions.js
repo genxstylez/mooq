@@ -24,9 +24,9 @@ export default {
         })
     },
 
-    got_top_channels(channels) {
+    got_channels(channels) {
         AppDispatcher.dispatch({
-            actionType: ChannelConstants.GOT_TOP_CHANNELS,
+            actionType: ChannelConstants.GOT_CHANNELS,
             channels: channels
         })
     },

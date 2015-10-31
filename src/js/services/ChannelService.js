@@ -39,15 +39,6 @@ export default {
             .promise()
     },
 
-    subscribe_to_channel(token, channel_id, user_id) {
-        return request
-            .post(Urls['subscribers-list']())
-            .set('Content-Type', 'application/json')
-            .set('Authorization', 'JWT ' + token)
-            .send({channel: channel_id})
-            .send({user: user_id})
-            .promise()
-    },
 
     get_subscriber_id(channel_id, user_id) {
         return request
@@ -84,7 +75,7 @@ export default {
 
     join_channels(channels) {
         channels = _.reject(channels, (channel) => {
-            return ChannelStore.get_channel(channel.id) != undefined
+            return ChannelStore.has_joinedChannel(channel.id)
         })
         if(channels.length > 0) {
             pubnub.subscribe({
@@ -93,7 +84,10 @@ export default {
                     ChannelActions.recv_new_message(msg, ev, ch);
                 },
                 error: (error) => {
-                    alert('error join channel, please try again!');
+                    if(error.status == 403) {
+                        console.log('403')
+                        this.grant(ChannelStore.authKey, channels)
+                    }
                 },
                 presence: (p, ev, ch) => {
                     ChannelActions.recv_presence(p, ev, ch)
@@ -107,7 +101,7 @@ export default {
 
     leave_channels(channels) {
         pubnub.unsubscribe({
-            channel: channels
+            channel: _.pluck(channels, 'id'),
         })
         ChannelActions.leave(channels)
     },

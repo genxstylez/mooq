@@ -29,7 +29,7 @@ class UserChannelField(serializers.RelatedField):
             name = value.channel.name,
             is_system = value.channel.is_system,
             is_moderator = value.is_moderator,
-            stock = StockSerializer(value.channel.stock).data
+            # stock = StockSerializer(value.channel.stock).data
         )
 
         return channel
@@ -49,6 +49,7 @@ class ChannelField(serializers.RelatedField):
         return dict(
             id=value.id,
             name=value.name,
+            is_system=value.is_system,
         )
 
     def to_internal_value(self, data):

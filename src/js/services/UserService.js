@@ -47,12 +47,23 @@ export default {
     },
 
     logout() {
-        ChannelService.leave_channels(ChannelStore.channels)
+        ChannelService.leave_channels(ChannelStore.joinedChannels)
         UserActions.logout()
+        this.create_guest()
     },
 
     create_guest() {
         UserActions.create_guest()
-    }
+    },
+
+    subscribe_to_channel(token, channel_id, user_id) {
+        return request
+            .post(Urls['subscribers-list']())
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'JWT ' + token)
+            .send({channel: channel_id})
+            .send({user: user_id})
+            .promise()
+    },
 
 }

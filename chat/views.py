@@ -52,7 +52,7 @@ def grant(request):
     channels = ','.join(channels)
 
     try:
-        pubnub.grant(channel=channels, auth_key=authKey, read=True, write=authenticated)
+        pubnub.grant(channel=channels, auth_key=authKey, read=True, write=authenticated, ttl=604800)
         return Response({'message': 'Granted!'})
     except:
         return Response({'message': 'Failed!'}, status=status.HTTP_401_UNAUTHORIZED)
