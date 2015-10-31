@@ -51821,7 +51821,7 @@ var _actionsChannelActions = require('./actions/ChannelActions');
 var _actionsChannelActions2 = _interopRequireDefault(_actionsChannelActions);
 
 var option = {
-    resGetPath: STATIC_URL + '/locales/__lng__/__ns__.json',
+    resGetPath: STATIC_URL + 'locales/__lng__/__ns__.json',
     getAsync: false
 };
 

@@ -18,7 +18,7 @@ import ChannelActions from './actions/ChannelActions'
 
 
 var option = {
-    resGetPath: STATIC_URL + '/locales/__lng__/__ns__.json',
+    resGetPath: STATIC_URL + 'locales/__lng__/__ns__.json',
     getAsync: false
 }
 
